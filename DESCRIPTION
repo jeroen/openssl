@@ -7,4 +7,4 @@ Author: Jeroen Ooms
 Maintainer: Jeroen Ooms <jeroenooms@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: Apache 2
-SystemRequirements: openssl
+SystemRequirements: openssl (libssl-dev)

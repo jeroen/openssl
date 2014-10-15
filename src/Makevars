@@ -1,0 +1,13 @@
+# To linked against 'brew install openssl' on OSX
+PKG_CPPFLAGS = -I/usr/local/Cellar/openssl/1.0.1i/include
+PKG_LIBS = -L/usr/local/Cellar/openssl/1.0.1i/lib -lssl
+
+SOURCES = rand.c
+
+OBJECTS = $(SOURCES:.c=.o)
+
+all: clean $(OBJECTS)
+
+clean:
+	rm -f $(OBJECTS)
+

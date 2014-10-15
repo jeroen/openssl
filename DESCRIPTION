@@ -1,0 +1,10 @@
+Package: ssl
+Type: Package
+Title: Bindings for OpenSSL
+Version: 0.1
+Date: 2014-10-15
+Author: Jeroen Ooms
+Maintainer: Jeroen Ooms <jeroenooms@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: Apache 2
+SystemRequirements: openssl

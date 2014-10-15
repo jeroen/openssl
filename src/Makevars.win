@@ -1,0 +1,2 @@
+PKG_CPPFLAGS= -I${LIB_CURL}${R_ARCH}/include
+PKG_LIBS= -L${LIB_CURL}${R_ARCH}/lib -lssl -lssl32 -leay32

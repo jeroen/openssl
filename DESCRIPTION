@@ -9,4 +9,4 @@ Description: This package interfaces to the OpenSSL libraries libssl and
     libcrypto. Currently it only implements bindings to the crypto secure
     OpenSSL random number generator.
 License: MIT + file LICENSE
-SystemRequirements: OpenSSL (libssl-dev)
+SystemRequirements: OpenSSL (libssl-dev or openssl-devel)

@@ -1,8 +1,8 @@
-# To linked against 'brew install openssl' on OSX
+# Links against 'brew install openssl' on OSX
 PKG_CPPFLAGS = -I/usr/local/Cellar/openssl/1.0.1i/include
 PKG_LIBS = -L/usr/local/Cellar/openssl/1.0.1i/lib -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i686-linux-gnu/ -lssl -lcrypto
 
-SOURCES = rand.c
+SOURCES = rand_bytes.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -10,4 +10,3 @@ all: clean $(OBJECTS)
 
 clean:
 	rm -f $(OBJECTS)
-

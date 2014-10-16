@@ -9,7 +9,7 @@ rand_pseudo_bytes(n = 1)
 rand_bytes(n = 1)
 }
 \arguments{
-\item{n}{how many bytes to generate}
+\item{n}{number of random bytes to generate}
 }
 \description{
 Generate random bytes with OpenSSL

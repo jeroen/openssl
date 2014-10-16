@@ -1,2 +1,2 @@
-PKG_CPPFLAGS= -IC:/OpenSSL-Win32/include
-PKG_LIBS= -LC:/OpenSSL-Win32/lib/MinGW -leay32
+PKG_CPPFLAGS= -I../windows/include
+PKG_LIBS= -L../windows/lib${R_ARCH} -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32

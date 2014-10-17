@@ -1,7 +1,14 @@
+# Check for include
+if [ ! -e /usr/include/openssl/rand.h ]
+then
+  echo "openssl/rand.h not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
+  exit 1
+fi
+
 # Not linux. Probably OSX.
 if [ ! -e /sbin/ldconfig ]
 then
-  echo "PKG_LIBS= -lssl -lcrypto" >> src/Makevars
+  echo "PKG_LIBS= -lssl -lcrypto" > src/Makevars
   exit 0
 fi
 
@@ -14,4 +21,4 @@ then
   exit 1
 fi
 
-echo "PKG_LIBS= -L"$(dirname $LIBFILE)" -lssl -lcrypto" >> src/Makevars
+echo "PKG_LIBS= -L"$(dirname $LIBFILE)" -lssl -lcrypto" > src/Makevars

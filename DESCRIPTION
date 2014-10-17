@@ -10,4 +10,6 @@ Description: This package interfaces to the OpenSSL libraries libssl and
     random number generator in order to generate crypto secure random
     bytes in R.
 License: MIT + file LICENSE
+URL: https://github.com/jeroenooms/openssl
+BugReports: https://github.com/jeroenooms/openssl/issues
 SystemRequirements: OpenSSL (libssl-dev, openssl-static or openssl-devel)

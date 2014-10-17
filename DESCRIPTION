@@ -6,7 +6,8 @@ Date: 2014-10-17
 Author: Jeroen Ooms
 Maintainer: Jeroen Ooms <jeroen.ooms@stat.ucla.edu>
 Description: This package interfaces to the OpenSSL libraries libssl and
-    libcrypto. Currently it only implements bindings to the crypto secure
-    OpenSSL random number generator.
+    libcrypto. Currently it only implements bindings to the OpenSSL
+    random number generator in order to generate crypto secure random
+    bytes in R.
 License: MIT + file LICENSE
-SystemRequirements: OpenSSL (libssl-dev or openssl-devel)
+SystemRequirements: OpenSSL (libssl-dev, openssl-static or openssl-devel)

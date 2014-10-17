@@ -13,7 +13,7 @@ then
 fi
 
 # looks like unix
-LIBFILE=$(/sbin/ldconfig -p | egrep -oh " [-_a-zA-Z0-9/]*/libssl.so$")
+LIBFILE=$(/sbin/ldconfig -p | egrep -ohm1 " [-_a-zA-Z0-9/]*/libssl[0-9]*.so$")
 
 if [ -z "$LIBFILE" ]
 then

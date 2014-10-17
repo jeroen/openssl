@@ -1,0 +1,17 @@
+# Not linux. Probably OSX.
+if [ ! -e /sbin/ldconfig ]
+then
+  echo "PKG_LIBS= -lssl -lcrypto" >> src/Makevars
+  exit 0
+fi
+
+# looks like unix
+LIBFILE=$(/sbin/ldconfig -p | egrep -oh " [-_a-zA-Z0-9/]*/libssl.so$")
+
+if [ -z "$LIBFILE" ]
+then
+  echo "libssl.so not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
+  exit 1
+fi
+
+echo "PKG_LIBS= -L"$(dirname $LIBFILE)" -lssl -lcrypto" >> src/Makevars

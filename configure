@@ -8,7 +8,6 @@ fi
 # Not linux. Probably OSX.
 if [ ! -e /sbin/ldconfig ]
 then
-  echo "PKG_LIBS= -lssl -lcrypto" > src/Makevars
   exit 0
 fi
 

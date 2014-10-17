@@ -3,14 +3,4 @@
 # PKG_CPPFLAGS = -I/usr/local/Cellar/openssl/1.0.1i/include
 # PKG_LIBS = -L/usr/local/Cellar/openssl/1.0.1i/lib -lssl -lcrypto
 
-# try finding libssl.a and libcrypto.a (or .so for dynamic linking)
-PKG_LIBS = -L/usr/lib64 -L/usr/lib -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/i686-linux-gnu/ -lssl -lcrypto
-
-SOURCES = rand_bytes.c
-
-OBJECTS = $(SOURCES:.c=.o)
-
-all: clean $(OBJECTS)
-
-clean:
-	rm -f $(OBJECTS)
+PKG_LIBS= -lssl -lcrypto

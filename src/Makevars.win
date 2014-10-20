@@ -1,2 +1,14 @@
 PKG_CPPFLAGS= -I../windows/openssl-1.0.1j/include
 PKG_LIBS= -L../windows/openssl-1.0.1j/lib${R_ARCH} -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
+
+SOURCES = rand_bytes.c
+
+OBJECTS = $(SOURCES:.c=.o)
+
+all: clean winlibs $(OBJECTS)
+
+clean:
+	rm -f $(OBJECTS)
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "winlibs.R"

@@ -1,3 +1,12 @@
+# This script is a temporary solution until I learn out how to make a proper configure
+# script using autoconf.
+
+# Skip this script on Solaris
+if [ -e /opt/csw ]
+then
+  exit 0
+fi
+
 # Check for include
 if [ ! -e /usr/include/openssl/rand.h ]
 then

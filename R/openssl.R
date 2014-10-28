@@ -17,12 +17,12 @@
 #' # numbers range from 0 to 255
 #' rnd <- rand_bytes(100000)
 #' hist(as.numeric(rnd), breaks=-1:255)
-rand_pseudo_bytes <- function(n = 1){
-  .Call(R_RAND_pseudo_bytes, n, TRUE)
+rand_bytes <- function(n = 1){
+  .Call(R_RAND_pseudo_bytes, n, FALSE)
 }
 
 #' @rdname rand_bytes
 #' @export
-rand_bytes <- function(n = 1){
-  .Call(R_RAND_pseudo_bytes, n, FALSE)
+rand_pseudo_bytes <- function(n = 1){
+  .Call(R_RAND_pseudo_bytes, n, TRUE)
 }

@@ -1,0 +1,18 @@
+#' Generate random numbers
+#'
+#' Simple wrapper for rand_bytes to generate random 32 bit doubles
+#' between 0 and 1. This is a somewhat more convenient and conventional
+#' interface to the RNG.
+#'
+#' @export
+#' @param n how many random numbers to generate
+#' @examples # Use CDF to map [0,1] to random draws from a probability distribution
+#' x <- qnorm(rand_num(1000), mean=100, sd=15)
+#' hist(x)
+#'
+#' y <- qbinom(rand_num(1000), size=10, prob=0.3)
+#' hist(y)
+rand_num <- function(n){
+  x <- matrix(as.numeric(rand_bytes(n*4)), ncol = 4)
+  as.numeric(x %*% 256^-(1:4))
+}

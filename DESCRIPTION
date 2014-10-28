@@ -1,7 +1,7 @@
 Package: openssl
 Type: Package
 Title: Bindings to OpenSSL
-Version: 0.1
+Version: 0.1.99
 Date: 2014-10-20
 Author: Jeroen Ooms
 Maintainer: Jeroen Ooms <jeroen.ooms@stat.ucla.edu>

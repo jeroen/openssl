@@ -17,12 +17,15 @@
 #' # numbers range from 0 to 255
 #' rnd <- rand_bytes(100000)
 #' hist(as.numeric(rnd), breaks=-1:255)
+#'
+#' # Generate random doubles between 0 and 1
+#' rand_num(5)
 rand_bytes <- function(n = 1){
-  .Call(R_RAND_pseudo_bytes, n, FALSE)
+  .Call(R_RAND_bytes, n, FALSE)
 }
 
 #' @rdname rand_bytes
 #' @export
 rand_pseudo_bytes <- function(n = 1){
-  .Call(R_RAND_pseudo_bytes, n, TRUE)
+  .Call(R_RAND_bytes, n, TRUE)
 }

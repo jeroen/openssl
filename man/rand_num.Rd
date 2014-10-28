@@ -14,7 +14,7 @@ between 0 and 1. This is a somewhat more convenient and conventional
 interface to the RNG.
 }
 \examples{
-# Use CDF to map [0,1] to random draws from a probability distribution
+# Use CDF to map [0,1] into random draws from a distribution
 x <- qnorm(rand_num(1000), mean=100, sd=15)
 hist(x)
 

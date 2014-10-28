@@ -23,6 +23,9 @@ as.logical(rawToBits(rnd))
 # numbers range from 0 to 255
 rnd <- rand_bytes(100000)
 hist(as.numeric(rnd), breaks=-1:255)
+
+# Generate random doubles between 0 and 1
+rand_num(5)
 }
 \references{
 OpenSSL manual: \url{https://www.openssl.org/docs/crypto/RAND_bytes.html}

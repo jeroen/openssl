@@ -6,7 +6,7 @@
 #'
 #' @export
 #' @param n how many random numbers to generate
-#' @examples # Use CDF to map [0,1] to random draws from a probability distribution
+#' @examples # Use CDF to map [0,1] into random draws from a distribution
 #' x <- qnorm(rand_num(1000), mean=100, sd=15)
 #' hist(x)
 #'

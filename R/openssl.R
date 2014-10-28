@@ -5,7 +5,7 @@
 #
 #' @title Generate random bytes with OpenSSL
 #' @rdname rand_bytes
-#' @useDynLib openssl R_RAND_pseudo_bytes
+#' @useDynLib openssl R_RAND_bytes
 #' @param n number of random bytes to generate
 #' @export
 #' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/RAND_bytes.html}

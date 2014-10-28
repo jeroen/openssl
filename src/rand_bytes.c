@@ -3,7 +3,7 @@
 #include "apple.h"
 #include <openssl/rand.h>
 
-SEXP R_RAND_pseudo_bytes(SEXP n, SEXP pseudo) {
+SEXP R_RAND_bytes(SEXP n, SEXP pseudo) {
   int use_pseudo = asLogical(pseudo);
   int length = asInteger(n);
   int result;

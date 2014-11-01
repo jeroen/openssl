@@ -1,32 +1,16 @@
-# This script is a temporary solution until I learn out how to make a proper configure
-# script using autoconf.
-
-# Skip this script on Solaris
-if [ -e /opt/csw ]
-then
-  exit 0
+# This script is a temporary solution until I get autoconf to work.
+#
+# Note that on most systems, the openssl headers and lib will be found
+# automatically if present, hence this script is not really required.
+#
+# On CRAN, we use $OPENSSL_INCLUDES. Elsewhere we default to the
+# standard linux location: /usr/include/openssl.
+if [ -z "$OPENSSL_INCLUDES" ]; then
+  OPENSSL_INCLUDES="/usr/include/openssl"
 fi
 
-# Check for include
-if [ ! -e /usr/include/openssl/rand.h ]
-then
-  echo "openssl/rand.h not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
+# Verify that openssl RNG is present
+if [ ! -e $OPENSSL_INCLUDES/rand.h ]; then
+  echo "File $OPENSSL_INCLUDES/rand.h not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
   exit 1
 fi
-
-# Not linux. Probably OSX.
-if [ ! -e /sbin/ldconfig ]
-then
-  exit 0
-fi
-
-# looks like unix
-LIBFILE=$(/sbin/ldconfig -p | grep -E -ohm1 " [-_a-zA-Z0-9/]*/libssl[0-9]*.so$")
-
-if [ -z "$LIBFILE" ]
-then
-  echo "libssl.so not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
-  exit 1
-fi
-
-echo "PKG_LIBS= -L"$(dirname $LIBFILE)" -lssl -lcrypto" > src/Makevars

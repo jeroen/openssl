@@ -12,6 +12,6 @@ fi
 
 # Verify that openssl RNG is present
 if [ ! -e $OPENSSL_INCLUDES/openssl/rand.h ]; then
-  echo "File $OPENSSL_INCLUDES/rand.h not found. Make sure libssl-dev (deb) or openssl-devel (rpm) is installed."
+  echo "File $OPENSSL_INCLUDES/openssl/rand.h not found. Make sure the OpenSSL development library is installed, e.g. libssl-dev (deb) or openssl-devel (rpm)."
   exit 1
 fi

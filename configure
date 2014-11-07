@@ -1,10 +1,9 @@
 # This script is a temporary solution until I get autoconf to work.
 #
-# Note that on most systems, the openssl headers and lib will be found
-# automatically if present, hence this script is not really required.
-#
-# On CRAN, we use $OPENSSL_INCLUDES. Elsewhere we default to the
-# standard linux location: /usr/include/openssl.
+# On most systems the openssl headers and lib will be found automatically
+# if present, hence this script is not really required. On CRAN, we use
+# the $OPENSSL_INCLUDES variable; elsewhere we assume to the standard
+# linux location: /usr/include/openssl.
 if [ -z "$OPENSSL_INCLUDES" ]; then
   OPENSSL_INCLUDES="/usr/include"
 else

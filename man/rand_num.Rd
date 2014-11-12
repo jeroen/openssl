@@ -9,7 +9,7 @@ rand_num(n)
 \item{n}{how many random numbers to generate}
 }
 \description{
-Simple wrapper for rand_bytes to generate random 32 bit doubles
+Simple wrapper for rand_bytes to generate random 64 bit doubles
 between 0 and 1. This is a somewhat more convenient and conventional
 interface to the RNG.
 }

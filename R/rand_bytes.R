@@ -35,12 +35,18 @@
 #' hist(y)
 #' @export
 rand_bytes <- function(n = 1){
+  if(!any(is.numeric(n),is.integer(n))){
+    stop("Please provide a numeric or integer value for n")
+  }
   .Call(R_RAND_bytes, n, FALSE)
 }
 
 #' @rdname rand_bytes
 #' @export
 pseudo_rand_bytes <- function(n = 1){
+  if(!any(is.numeric(n),is.integer(n))){
+    stop("Please provide a numeric or integer value for n")
+  }
   .Call(R_RAND_bytes, n, TRUE)
 }
 

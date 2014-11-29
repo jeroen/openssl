@@ -3,7 +3,7 @@ Type: Package
 Title: Bindings to OpenSSL
 Version: 0.2.99
 Date: 2014-11-07
-Author: Jeroen Ooms
+Author: Jeroen Ooms, Oliver Keyes
 Maintainer: Jeroen Ooms <jeroen.ooms@stat.ucla.edu>
 Description: Interfaces to the OpenSSL libraries libssl and libcrypto.
     Currently only implements bindings to the OpenSSL random number

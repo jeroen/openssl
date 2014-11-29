@@ -4,6 +4,7 @@
 # can generate crypto secure random numbers in R.
 #
 #' @title Generate random bytes with OpenSSL
+#' @aliases pseudo_rand_bytes rand_num
 #' @rdname rand_bytes
 #' @useDynLib openssl R_RAND_bytes
 #' @param n number of random bytes or numbers to generate
@@ -33,7 +34,7 @@ rand_bytes <- function(n = 1){
 
 #' @rdname rand_bytes
 #' @export
-rand_pseudo_bytes <- function(n = 1){
+pseudo_rand_bytes <- function(n = 1){
   .Call(R_RAND_bytes, n, TRUE)
 }
 

@@ -9,15 +9,16 @@ digest_vector <- function(x, algo){
 }
 
 # Make sure we are on the same page
-x1 <- digest_vector(c("foo", "bar"), "md5")
-x2 <- cryptohash(c("foo", "bar"), "md5")
-x3 <- openssl::digest(c("foo", "bar"), "md5")
+x1 <- digest_vector(c("foo", "bar"), "sha256")
+x2 <- cryptohash(c("foo", "bar"), "sha256")
+x3 <- openssl::digest(c("foo", "bar"), "sha256")
 stopifnot(identical(x1, x2), identical(x1, x3))
 rm(x1, x2, x3)
 
-test_all <- function(algo){
+test_all <- function(algo, n = 1){
   # random object
-  x <- rep(readLines(system.file("DESCRIPTION", package="base")), 1000)
+  str <- paste(readLines(system.file("DESCRIPTION", package="base")), collapse="\n")
+  x <- rep(str, n)
 
   microbenchmark(
     digest_vector(x, algo),
@@ -27,6 +28,15 @@ test_all <- function(algo){
   )
 }
 
+# Non vectorized
 test_all("md5")
 test_all("sha1")
 test_all("sha256")
+
+# Vectorized
+test_all("md5", 1000)
+test_all("sha1", 1000)
+test_all("sha256", 1000)
+
+
+

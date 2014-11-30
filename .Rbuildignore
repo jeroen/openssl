@@ -7,3 +7,4 @@
 ^\.Rproj\.user$
 windows
 README.md
+tools/benchmark.R

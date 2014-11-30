@@ -1,4 +1,4 @@
-context("Test the error handlers for input type")
+context("Test the error handlers for rand_* functions")
 
 test_that("rand_bytes detects non-numeric arguments", {
 

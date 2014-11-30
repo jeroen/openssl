@@ -11,7 +11,7 @@ digest_vector <- function(x, algo){
 # Make sure we are on the same page
 x1 <- digest_vector(c("foo", "bar"), "sha256")
 x2 <- cryptohash(c("foo", "bar"), "sha256")
-x3 <- openssl::digest(c("foo", "bar"), "sha256")
+x3 <- hash(c("foo", "bar"), "sha256")
 stopifnot(identical(x1, x2), identical(x1, x3))
 rm(x1, x2, x3)
 
@@ -23,7 +23,7 @@ test_all <- function(algo, n = 1){
   microbenchmark(
     digest_vector(x, algo),
     cryptohash::cryptohash(x, algo),
-    openssl::digest(x, algo),
+    openssl::hash(x, algo),
     times = 10
   )
 }

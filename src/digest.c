@@ -14,7 +14,7 @@ SEXP digest_string(const char *x, const char *algo, int string){
   unsigned int md_len;
   const EVP_MD *md = EVP_get_digestbyname(algo);
   if(!md)
-    error("Unknown message digest %s\n", algo);
+    error("Unknown cryptographic algorithm %s\n", algo);
   EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
   /* generate hash */

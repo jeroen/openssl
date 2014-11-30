@@ -2,21 +2,38 @@
 \name{hash}
 \alias{hash}
 \alias{rawhash}
-\title{Hash a string}
+\title{hash a string}
 \usage{
-hash(x, algo)
+hash(x, algo, rand_val = FALSE)
 
 rawhash(x, algo)
 }
 \arguments{
-\item{x}{strings to digest}
+\item{x}{a string, or a vector of strings, to hash.}
 
-\item{algo}{digest algorithm, e.g. 'md5' 'sha1', 'sha256', etc.}
+\item{algo}{the cryptographic algorithm to apply. Options are "md5", "sha", "sha1",
+"sha224","sha256", "sha384", "sha512", "ripemd160" and "dss1". See "Details".}
+
+\item{rand_val}{whether or not to include a cryptographically strong randomised value,
+generated with \code{\link{rand_bytes}}, with each string. This string is consistent
+within the call to \code{hash}, but inconsistent between runs, allowing you to
+maintain consistency within a dataset while simultaneously rendering the results
+incomparable to other datasets with some of the same data points. Set to FALSE by default.}
 }
 \description{
 The \code{rawhash} function creates a raw hash from a single string.
 The \code{hash} function is a vectorised version that creates digest strings
 from many strings at once.
+}
+\details{
+the \code{hash} family of functions act as a connector to OpenSSL's crypto
+module, and allow you to cryptographically hash anything that can be coerced to a character
+vector. The full range of OpenSSL-supported cryptographic functions are available, but they
+(and we) recommend either "sha256" or "sha512" for sensitive information; while md5 and
+weaker members of the sha family are probably sufficient for collision-resistant identifiers,
+cryptographic weaknesses have been directly or indirectly identified in their output.
+
+If the intent is to
 }
 \examples{
 library(digest)

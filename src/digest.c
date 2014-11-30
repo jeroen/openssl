@@ -67,13 +67,3 @@ SEXP R_digest(SEXP x, SEXP algo){
   UNPROTECT(1);
   return out;
 }
-
-SEXP R_openssl_init(){
-  OpenSSL_add_all_digests();
-  return R_NilValue;
-}
-
-SEXP R_openssl_cleanup(){
-  EVP_cleanup();
-  return R_NilValue;
-}

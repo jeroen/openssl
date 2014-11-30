@@ -31,9 +31,9 @@
 hash <- function(x, algo, rand_val = FALSE){
 
   #Check type, presence of NA values
-  if(!is.vector(x)){
+  if(any(is.list(x),is.data.frame(x))){
     warning("x must be a vector. Attempting to convert.")
-    x <- as.vector(x)
+    x <- unlist(x)
   }
   if(any(is.na(x))){
     warning("x contains NA values (possibly from conversion). These will all be returned with a consistent hash")

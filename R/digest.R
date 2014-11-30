@@ -20,13 +20,5 @@ digest <- function(x, algo){
 #' @rdname digest
 #' @export
 digest_string <- function(x, algo, string = FALSE){
-  if(!is.character(x) || length(x) != 1) {
-    stop("x must be a length one string.")
-  }
-  res <- .Call(R_digest_string, as.character(x), as.character(algo))
-  if(isTRUE(string)){
-    return(paste(res, collapse=""))
-  } else {
-    return(res)
-  }
+  .Call(R_digest_string, as.character(x), as.character(algo), as.logical(string))
 }

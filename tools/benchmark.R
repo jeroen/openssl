@@ -17,7 +17,7 @@ rm(x1, x2, x3)
 
 test_all <- function(algo, n = 1){
   # random object
-  str <- paste(readLines(system.file("DESCRIPTION", package="base")), collapse="\n")
+  str <- paste(readLines(file.path(Sys.getenv("R_HOME"), "COPYING")), collapse="\n")
   x <- rep(str, n)
 
   microbenchmark(

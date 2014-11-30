@@ -7,10 +7,13 @@
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_DigestInit.html
  */
 
-SEXP R_digest_string(SEXP x, SEXP algo){
+SEXP R_digest_string(SEXP x, SEXP algo, SEXP string){
   /* Check inputs */
   if(!isString(x))
     error("Argument 'object' must be a character vector.");
+
+  if(!isLogical(string))
+    error("Argument 'string' must be TRUE/FALSE.");
 
   /* init openssl stuff */
   OpenSSL_add_all_digests();
@@ -28,9 +31,19 @@ SEXP R_digest_string(SEXP x, SEXP algo){
   EVP_MD_CTX_destroy(mdctx);
 
   /* create outputs */
-  SEXP out = PROTECT(allocVector(RAWSXP, md_len));
-  for (int i = 0; i < md_len; i++) {
-    RAW(out)[i] = md_value[i];
+  SEXP out;
+  if(asLogical(string)){
+    char mdString[2*md_len+1];
+    for (int i = 0; i < md_len; i++) {
+      sprintf(&mdString[i*2], "%02x", (unsigned int) md_value[i]);
+    }
+    mdString[2*md_len+1] = '\0';
+    out = PROTECT(mkString(mdString));
+  } else {
+    out = PROTECT(allocVector(RAWSXP, md_len));
+    for (int i = 0; i < md_len; i++) {
+      RAW(out)[i] = md_value[i];
+    }
   }
 
   /* finish up */

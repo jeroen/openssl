@@ -5,7 +5,7 @@ library(microbenchmark)
 
 # Test digest
 digest_vector <- function(x, algo){
-  vapply(x, digest, character(1), algo=algo, serialize=FALSE, USE.NAMES=FALSE)
+  vapply(x, digest::digest, character(1), algo=algo, serialize=FALSE, USE.NAMES=FALSE)
 }
 
 # Make sure we are on the same page
@@ -22,9 +22,9 @@ test_all <- function(algo, n = 1){
 
   microbenchmark(
     digest_vector(x, algo),
-    cryptohash(x, algo),
+    cryptohash::cryptohash(x, algo),
     openssl::digest(x, algo),
-    times=10
+    times = 10
   )
 }
 
@@ -37,6 +37,3 @@ test_all("sha256")
 test_all("md5", 1000)
 test_all("sha1", 1000)
 test_all("sha256", 1000)
-
-
-

@@ -13,4 +13,5 @@ URL: https://github.com/jeroenooms/openssl
 BugReports: https://github.com/jeroenooms/openssl/issues
 SystemRequirements: OpenSSL (libssl-dev or openssl-devel)
 Suggests:
-    testthat
+    testthat,
+    digest

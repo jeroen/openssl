@@ -35,8 +35,8 @@ hash <- function(x, algo, rand_val = FALSE){
     warning("x must be a vector. Attempting to convert.")
     x <- unlist(x)
   }
-  if(any(is.na(x))){
-    warning("x contains NA values (possibly from conversion). These will all be returned with a consistent hash")
+  if(anyNA(x)){
+    warning("x contains NA values (possibly from conversion).")
   }
 
   #Is a random value desired?

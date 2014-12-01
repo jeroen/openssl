@@ -51,6 +51,11 @@ SEXP R_digest(SEXP x, SEXP algo){
   int len = length(x);
   SEXP out = PROTECT(allocVector(STRSXP, len));
   for (int i = 0; i < len; i++) {
+    /* check for NA */
+    if(STRING_ELT(x, i) == NA_STRING) {
+      SET_STRING_ELT(out, i, NA_STRING);
+      continue;
+    }
     /* create hash */
     unsigned char md_value[EVP_MAX_MD_SIZE];
     unsigned int md_len = digest_string(CHAR(STRING_ELT(x, i)), CHAR(asChar(algo)), md_value);

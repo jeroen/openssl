@@ -4,7 +4,7 @@
 \alias{rawhash}
 \title{hash a string}
 \usage{
-hash(x, algo, rand_val = FALSE)
+hash(x, algo, salt = FALSE)
 
 rawhash(x, algo)
 }
@@ -14,8 +14,8 @@ rawhash(x, algo)
 \item{algo}{the cryptographic algorithm to apply. Options are "md5", "sha", "sha1",
 "sha224","sha256", "sha384", "sha512", "ripemd160" and "dss1". See "Details".}
 
-\item{rand_val}{whether or not to include a cryptographically strong randomised value,
-generated with \code{\link{rand_bytes}}, with each string. This string is consistent
+\item{salt}{whether or not to include a cryptographically strong randomised value (or "salt"),
+generated with \code{\link{rand_bytes}}, with each string. This salt is consistent
 within the call to \code{hash}, but inconsistent between runs, allowing you to
 maintain consistency within a dataset while simultaneously rendering the results
 incomparable to other datasets with some of the same data points. Set to FALSE by default.}

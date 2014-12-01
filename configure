@@ -4,14 +4,14 @@
 # if present, hence this script is not really required. On CRAN, we use
 # the $OPENSSL_INCLUDES variable; elsewhere we assume to the standard
 # linux location: /usr/include/openssl.
-if [ -z "$OPENSSL_INCLUDES" ]; then
-  OPENSSL_INCLUDES="/usr/include"
-else
+if [ "$OPENSSL_INCLUDES" ]; then
   echo "PKG_CPPFLAGS= -I$OPENSSL_INCLUDES" >> src/Makevars
+else
+  OPENSSL_INCLUDES="/usr/include"
 fi
 
 # Verify that openssl RNG is present
-if [ ! -e $OPENSSL_INCLUDES/openssl/rand.h ]; then
+if [ ! -r $OPENSSL_INCLUDES/openssl/rand.h ]; then
   echo "File $OPENSSL_INCLUDES/openssl/rand.h not found. Make sure the OpenSSL development library is installed, e.g. libssl-dev (deb) or openssl-devel (rpm)."
   exit 1
 fi

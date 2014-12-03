@@ -87,12 +87,6 @@ md5 <- function(x, salt = ""){
 
 #' @rdname hash
 #' @export
-mdc2 <- function(x, salt = ""){
-  rawstringhash(x, "mdc2", salt)
-}
-
-#' @rdname hash
-#' @export
 ripemd160 <- function(x, salt = ""){
   rawstringhash(x, "ripemd160", salt)
 }

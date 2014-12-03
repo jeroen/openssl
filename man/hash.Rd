@@ -3,7 +3,6 @@
 \alias{crypto digest}
 \alias{md4}
 \alias{md5}
-\alias{mdc2}
 \alias{ripemd160}
 \alias{sha1}
 \alias{sha256}
@@ -19,8 +18,6 @@ sha512(x, salt = "")
 md4(x, salt = "")
 
 md5(x, salt = "")
-
-mdc2(x, salt = "")
 
 ripemd160(x, salt = "")
 }

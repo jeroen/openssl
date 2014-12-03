@@ -2,7 +2,6 @@
 
 export(md4)
 export(md5)
-export(mdc2)
 export(pseudo_rand_bytes)
 export(rand_bytes)
 export(rand_num)

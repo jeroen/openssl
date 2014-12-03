@@ -1,64 +1,131 @@
-#' @title hash a string
+#' @title Vectorized hashing functions
 #'
-#' @description The \code{rawhash} function creates a raw hash from a single string.
-#' The \code{hash} function is a vectorised version that creates digest strings
-#' from many strings at once.
+#' @description Bindings to the various cryptographic hashing functions available in
+#' OpenSSL's libcrypto. Both binary and string inputs are supported and the output type
+#' will match the input type. Functions are fully vectorized for the case of character
+#' vectors: a vector with \code{n} strings will return \code{n} hashes.
 #'
-#' @rdname hash
-#' @useDynLib openssl R_digest_raw R_digest R_openssl_init R_openssl_cleanup
-#' @param x a string, or a vector of strings, to hash.
-#' @param algo the cryptographic algorithm to apply. Options are "md5", "sha", "sha1",
-#' "sha224","sha256", "sha384", "sha512", "ripemd160" and "dss1". See "Details".
-#' @param salt whether or not to include a cryptographically strong randomised value (or "salt"),
-#' generated with \code{\link{rand_bytes}}, with each string. This salt is consistent
-#' within the call to \code{hash}, but inconsistent between runs, allowing you to
-#' maintain consistency within a dataset while simultaneously rendering the results
-#' incomparable to other datasets with some of the same data points. Set to FALSE by default.
+#' @param x a character or raw vector.
+#' @param salt a \href{http://en.wikipedia.org/wiki/Salt_(cryptography)}{salt}
+#' appended to each input element to anonymize or prevent dictionary attacks. See details.
 #'
-#' @details the \code{hash} family of functions act as a connector to OpenSSL's crypto
-#' module, and allow you to cryptographically hash anything that can be coerced to a character
-#' vector. The full range of OpenSSL-supported cryptographic functions are available, but they
-#' (and we) recommend either "sha256" or "sha512" for sensitive information; while md5 and
+#' @details The family of hashing functions implement bindings to OpenSSL's crypto module,
+#' and allow for cryptographically hashing strings and raw (binary) vectors. To hash other
+#' types of objects, use a suitable mapping function such as \code{\link{serialize}} or
+#' \code{\link{as.character}}.
+#'
+#' The full range of OpenSSL-supported cryptographic functions are available. The "sha256"
+#' or "sha512" algorithm is generally recommended for sensitive information. While md5 and
 #' weaker members of the sha family are probably sufficient for collision-resistant identifiers,
 #' cryptographic weaknesses have been directly or indirectly identified in their output.
 #'
-#' If the intent is to
+#' In applications where hashes should be irreversible (such as names or passwords) it is
+#' often recommended to add a random, fixed \emph{salt} to each input before hashing. This
+#' prevents attacks where we can lookup hashes of common and/or short strings. See examples.
+#' An common special case is adding a random salt to a large number of records to test for
+#' uniqueness within the dataset, while simultaneously rendering the results incomparable
+#' to other datasets with some of the same data points.
+#'
+#' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}.
+#' Digest types: \url{https://www.openssl.org/docs/apps/dgst.html}
 #' @export
-#' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}
-#' @examples library(digest)
-#' hash("foo", "md5")
+#' @rdname hash
+#' @name crypto digest
+#' @useDynLib openssl R_digest_raw R_digest R_openssl_init R_openssl_cleanup
+#' @examples # Support both strings and binary
+#' md5("foo")
+#' md5(charToRaw("foo"))
+#'
+#' # Compare to digest
+#' library(digest)
 #' digest("foo", "md5", serialize = FALSE)
-hash <- function(x, algo, salt = FALSE){
-
-  #Checks
-  x <- hash_checks(x,salt)
-
-  #Call and return
-  .Call(R_digest, as.character(x), as.character(algo))
+#'
+#' # Vectorized for strings
+#' md5(c("foo", "bar", "baz"))
+#'
+#' # Use serialize to digest objects
+#' md5(serialize(cars, NULL))
+#'
+#' # Verify the hash of a file
+#' myfile <- system.file("CITATION", package="base")
+#' md5(file(myfile))
+#'
+#' # Use a salt to prevent dictionary attacks
+#' sha1("admin") # googleable
+#' sha1("admin", salt="some_random_salt_value") #not googleable
+#'
+#' # Use a random salt to identify duplicates while anonymizing values
+#' sha256("john") # googleable
+#' sha256(c("john", "mary", "john"), salt = rand_bytes(100))
+sha1 <- function(x, salt = ""){
+  rawstringhash(x, "sha1", salt)
 }
 
 #' @rdname hash
 #' @export
-rawhash <- function(x, algo){
-  .Call(R_digest_raw, x, as.character(algo))
+sha256 <- function(x, salt = ""){
+  rawstringhash(x, "sha256", salt)
 }
 
-hash_checks <- function(x,salt){
+#' @rdname hash
+#' @export
+sha512 <- function(x, salt = ""){
+  rawstringhash(x, "sha512", salt)
+}
 
-  #Check type, presence of NA values
-  if(any(is.list(x),is.data.frame(x))){
-    warning("x must be a vector. Attempting to convert.")
-    x <- unlist(x)
-  }
-  if(any(is.na(x))){
-    warning("x contains NA values (possibly from conversion).")
-  }
+#' @rdname hash
+#' @export
+md4 <- function(x, salt = ""){
+  rawstringhash(x, "md4", salt)
+}
 
-  #Is a random value desired?
-  if(salt){
-    x <- paste0(x,rand_bytes(1))
-  }
+#' @rdname hash
+#' @export
+md5 <- function(x, salt = ""){
+  rawstringhash(x, "md5", salt)
+}
 
-  #Return
-  return(x)
+#' @rdname hash
+#' @export
+mdc2 <- function(x, salt = ""){
+  rawstringhash(x, "mdc2", salt)
+}
+
+#' @rdname hash
+#' @export
+ripemd160 <- function(x, salt = ""){
+  rawstringhash(x, "ripemd160", salt)
+}
+
+# Low level interfaces, not exported.
+rawhash <- function(x, algo, salt = raw()){
+  stopifnot(is.raw(x))
+  if(is.character(salt)){
+    salt <- charToRaw(salt)
+  }
+  stopifnot(is.raw(salt))
+  .Call(R_digest_raw, c(x, salt), as.character(algo))
+}
+
+rawstringhash <- function(x, algo, salt){
+  if(is(x, "file")){
+    fsize <- file.info(summary(x)$description)$size;
+    open(x, "rb")
+    data <- readBin(x, raw(), fsize)
+    close(x)
+    rawhash(data, algo, salt)
+  } else if(is.raw(x)){
+    rawhash(x, algo, salt)
+  } else if(is.character(x)){
+    stringhash(x, algo, salt)
+  } else {
+    error("Argument 'x' must be raw or character vector.")
+  }
+}
+
+stringhash <- function(x, algo, salt = ""){
+  # Must be character vector
+  stopifnot(is.character(x))
+  salt <- paste0(salt, collapse="")
+  .Call(R_digest, paste0(x, salt), as.character(algo))
 }

@@ -119,7 +119,7 @@ rawstringhash <- function(x, algo, salt){
   } else if(is.character(x)){
     stringhash(x, algo, salt)
   } else {
-    error("Argument 'x' must be raw or character vector.")
+    stop("Argument 'x' must be raw or character vector.")
   }
 }
 

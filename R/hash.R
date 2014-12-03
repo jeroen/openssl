@@ -40,9 +40,6 @@ hash <- function(x, algo, salt = FALSE){
 #' @rdname hash
 #' @export
 rawhash <- function(x, algo){
-  if(is.character(x)) {
-    x <- charToRaw(x)
-  }
   .Call(R_digest_raw, x, as.character(algo))
 }
 

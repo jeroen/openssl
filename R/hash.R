@@ -40,7 +40,10 @@ hash <- function(x, algo, salt = FALSE){
 #' @rdname hash
 #' @export
 rawhash <- function(x, algo){
-  .Call(R_digest_raw, as.character(x), as.character(algo))
+  if(is.character(x)) {
+    x <- charToRaw(x)
+  }
+  .Call(R_digest_raw, x, as.character(algo))
 }
 
 hash_checks <- function(x,salt){

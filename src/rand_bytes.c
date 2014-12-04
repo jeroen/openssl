@@ -18,9 +18,7 @@ SEXP R_RAND_bytes(SEXP n, SEXP pseudo) {
   }
 
   SEXP out = PROTECT(allocVector(RAWSXP, length));
-  for (int i = 0; i < length; i++) {
-    RAW(out)[i] = buf[i];
-  }
+  memcpy(RAW(out), buf, length);
   UNPROTECT(1);
   return out;
 }

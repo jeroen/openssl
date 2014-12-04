@@ -99,8 +99,19 @@ rawhash <- function(x, algo, salt = raw()){
     salt <- charToRaw(salt)
   }
   stopifnot(is.raw(salt))
-  .Call(R_digest_raw, c(x, salt), as.character(algo))
+  if(length(salt)){
+    x <- c(x, salt)
+  }
+  .Call(R_digest_raw, x, as.character(algo))
 }
+
+stringhash <- function(x, algo, salt = ""){
+  # Must be character vector
+  stopifnot(is.character(x))
+  salt <- paste0(salt, collapse="")
+  .Call(R_digest, paste0(x, salt), as.character(algo))
+}
+
 
 rawstringhash <- function(x, algo, salt){
   if(is(x, "file")){
@@ -116,11 +127,4 @@ rawstringhash <- function(x, algo, salt){
   } else {
     stop("Argument 'x' must be raw or character vector.")
   }
-}
-
-stringhash <- function(x, algo, salt = ""){
-  # Must be character vector
-  stopifnot(is.character(x))
-  salt <- paste0(salt, collapse="")
-  .Call(R_digest, paste0(x, salt), as.character(algo))
 }

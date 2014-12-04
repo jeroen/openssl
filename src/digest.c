@@ -30,29 +30,12 @@ SEXP R_digest_raw(SEXP x, SEXP algo){
     error("Argument 'x' must be a raw vector.");
 
   /* Convert the Raw vector to an unsigned char */
-  size_t len = length(x);
-  unsigned int md_len;
   unsigned char md_value[EVP_MAX_MD_SIZE];
-
-  /* get hash function */
-  const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
-  if(!md)
-    error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
-
-  /* build hash */
-  EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-  EVP_DigestInit_ex(mdctx, md, NULL);
-  for (int i = 0; i < len; i++) {
-    EVP_DigestUpdate(mdctx, &(RAW(x)[i]), 1);
-  }
-  EVP_DigestFinal_ex(mdctx, md_value, &md_len);
-  EVP_MD_CTX_destroy(mdctx);
+  unsigned int md_len = digest_string((const char*) RAW(x), CHAR(asChar(algo)), length(x), md_value);
 
   /* create raw output vector */
   SEXP out = PROTECT(allocVector(RAWSXP, md_len));
-  for (int i = 0; i < md_len; i++) {
-    RAW(out)[i] = md_value[i];
-  }
+  memcpy(RAW(out), md_value, md_len);
   UNPROTECT(1);
   return out;
 }

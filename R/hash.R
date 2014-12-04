@@ -40,6 +40,10 @@
 #' library(digest)
 #' digest("foo", "md5", serialize = FALSE)
 #'
+#' # Other way around
+#' digest(cars, skip = 0)
+#' md5(serialize(cars, NULL))
+#'
 #' # Vectorized for strings
 #' md5(c("foo", "bar", "baz"))
 #'

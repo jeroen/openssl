@@ -4,3 +4,6 @@
 # PKG_LIBS = -L/usr/local/Cellar/openssl/1.0.1i/lib -lssl -lcrypto
 
 PKG_LIBS= -lssl -lcrypto
+
+# Disable on CRAN:
+PKG_CFLAGS= -Wall -pedantic

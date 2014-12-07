@@ -50,10 +50,13 @@
 #' # Use serialize to digest objects
 #' md5(serialize(cars, NULL))
 #'
+#' \dontrun{
 #' # Verify md5 from: http://cran.r-project.org/bin/windows/base/md5sum.txt
 #' tmp <- tempfile()
 #' download.file("http://cran.r-project.org/bin/windows/base/R-3.1.2-win.exe", tmp)
 #' md5(file(tmp))
+#' file.remove(tmp)
+#' }
 #'
 #' # Use a salt to prevent dictionary attacks
 #' sha1("admin") # googleable

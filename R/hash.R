@@ -115,8 +115,10 @@ rawhash <- function(x, algo, salt = raw()){
 stringhash <- function(x, algo, salt = ""){
   # Must be character vector
   stopifnot(is.character(x))
-  salt <- paste0(salt, collapse="")
-  .Call(R_digest, paste0(x, salt), as.character(algo))
+  if(nchar(salt)){
+    x <- paste0(salt, collapse="")
+  }
+  .Call(R_digest,x, as.character(algo))
 }
 
 

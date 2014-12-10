@@ -7,7 +7,7 @@
 \description{
 Interfaces to the OpenSSL libraries libssl and libcrypto.
 Currently only implements bindings to the OpenSSL secure random number
-generator and digest functions.
+generator and cryptographic hash functions.
 }
 \author{
 Jeroen Ooms, Oliver Keyes

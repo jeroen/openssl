@@ -50,13 +50,12 @@
 #' # Use serialize to digest objects
 #' md5(serialize(cars, NULL))
 #'
-#' \dontrun{
-#' # Verify md5 from: http://cran.r-project.org/bin/windows/base/md5sum.txt
-#' tmp <- tempfile()
-#' download.file("http://cran.r-project.org/bin/windows/base/R-3.1.2-win.exe", tmp)
-#' md5(file(tmp))
-#' file.remove(tmp)
-#' }
+#' # Stream-verify from connections (including files)
+#' myfile <- system.file(CITATION)
+#' md5(file(myfile))
+#'
+#' \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/md5sum.txt
+#' md5(url("http://cran.r-project.org/bin/windows/base/R-3.1.2-win.exe"))}
 #'
 #' # Use a salt to prevent dictionary attacks
 #' sha1("admin") # googleable
@@ -121,14 +120,26 @@ stringhash <- function(x, algo, salt = ""){
   .Call(R_digest,x, as.character(algo))
 }
 
+connectionhash <- function(con, algo, salt){
+  md <- md_init(algo);
+  open(con, "rb")
+  on.exit(close(con))
+  if(is.character(salt)){
+    salt <- charToRaw(salt);
+  }
+  stopifnot(is.raw(salt))
+  md_feed(md, salt)
+  while(length(data <- readBin(con, raw(), 102400))){
+    md_feed(md, data)
+    cat(".")
+  }
+  cat("\n")
+  md_final(md)
+}
 
 rawstringhash <- function(x, algo, salt){
-  if(is(x, "file")){
-    fsize <- file.info(summary(x)$description)$size;
-    open(x, "rb")
-    data <- readBin(x, raw(), fsize)
-    close(x)
-    rawhash(data, algo, salt)
+  if(is(x, "connection")){
+    connectionhash(x, algo, salt)
   } else if(is.raw(x)){
     rawhash(x, algo, salt)
   } else if(is.character(x)){

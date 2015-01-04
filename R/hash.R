@@ -51,7 +51,7 @@
 #' md5(serialize(cars, NULL))
 #'
 #' # Stream-verify from connections (including files)
-#' myfile <- system.file(CITATION)
+#' myfile <- system.file("CITATION")
 #' md5(file(myfile))
 #'
 #' \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/md5sum.txt

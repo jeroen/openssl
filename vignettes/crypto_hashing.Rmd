@@ -4,7 +4,7 @@ author: "Jeroen Ooms"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Generating Secure Random Numbers}
+  %\VignetteIndexEntry{Cryptographic Hashing in R}
 output:
   knitr:::html_vignette:
     toc: yes
@@ -15,7 +15,7 @@ knitr::opts_chunk$set(comment = "")
 library(openssl)
 ```
 
-## Cryptographic Hashing in R
+## Digest functions
 
 The functions `sha1`, `sha256`, `sha512`, `md4`, `md5` and `ripemd160` bind to the respective [digest functions](https://www.openssl.org/docs/apps/dgst.html) in OpenSSL's libcrypto. Both binary and string inputs are supported and the output type will match the input type.
 

@@ -5,7 +5,9 @@ date: "`r Sys.Date()`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{Generating Secure Random Numbers}
-output: knitr:::html_vignette
+output:
+  knitr:::html_vignette:
+    toc: yes
 ---
 
 ```{r, echo = FALSE, message = FALSE}

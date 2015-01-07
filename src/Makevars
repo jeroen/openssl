@@ -6,4 +6,4 @@
 PKG_LIBS= -lssl -lcrypto
 
 # Disable on CRAN:
-PKG_CFLAGS= -Wall -pedantic
+# PKG_CFLAGS= -Wall -pedantic

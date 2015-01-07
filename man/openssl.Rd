@@ -7,7 +7,7 @@
 \title{R bindings for the OpenSSL library}
 \description{
 Interfaces to the OpenSSL libraries libssl and libcrypto.
-Currently only implements bindings to the OpenSSL secure random number
+Currently implements bindings to the OpenSSL secure random number
 generator and cryptographic hash functions.
 }
 \author{

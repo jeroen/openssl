@@ -1,17 +1,14 @@
-#' @title Vectorized hashing functions
+#' Vectorized hashing functions
 #'
-#' @description Bindings to the various cryptographic hashing functions available in
-#' OpenSSL's libcrypto. Both binary and string inputs are supported and the output type
-#' will match the input type. Functions are fully vectorized for the case of character
-#' vectors: a vector with \code{n} strings will return \code{n} hashes.
+#' Bindings to cryptographic hashing functions available in OpenSSL's libcrypto. Both
+#' binary and string inputs are supported and the output type will match the input type.
+#' Functions are fully vectorized for the case of character vectors: a vector with
+#' \code{n} strings will return \code{n} hashes.
 #'
-#' @param x a character or raw vector.
-#' @param salt a \href{http://en.wikipedia.org/wiki/Salt_(cryptography)}{salt}
-#' appended to each input element to anonymize or prevent dictionary attacks. See details.
-#'
-#' @details The family of hashing functions implement bindings to OpenSSL's crypto module,
-#' and allow for cryptographically hashing strings and raw (binary) vectors. To hash other
-#' types of objects, use a suitable mapping function such as \code{\link{serialize}} or
+#' The family of hashing functions implement bindings to OpenSSL's crypto module, which
+#' allow for cryptographically hashing strings and raw (binary) vectors. When passing
+#' a connection object, they will stream-hash binary contents. To hash other types of
+#' objects, use a suitable mapping function such as \code{\link{serialize}} or
 #' \code{\link{as.character}}.
 #'
 #' The full range of OpenSSL-supported cryptographic functions are available. The "sha256"
@@ -24,8 +21,11 @@
 #' prevents attacks where we can lookup hashes of common and/or short strings. See examples.
 #' An common special case is adding a random salt to a large number of records to test for
 #' uniqueness within the dataset, while simultaneously rendering the results incomparable
-#' to other datasets with some of the same data points.
+#' to other datasets.
 #'
+#' @param x a character, raw vector or connection object.
+#' @param salt a \href{http://en.wikipedia.org/wiki/Salt_(cryptography)}{salt}
+#' appended to each input element to anonymize or prevent dictionary attacks. See details.
 #' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}.
 #' Digest types: \url{https://www.openssl.org/docs/apps/dgst.html}
 #' @export
@@ -46,9 +46,6 @@
 #'
 #' # Vectorized for strings
 #' md5(c("foo", "bar", "baz"))
-#'
-#' # Use serialize to digest objects
-#' md5(serialize(cars, NULL))
 #'
 #' # Stream-verify from connections (including files)
 #' myfile <- system.file("CITATION")
@@ -129,7 +126,8 @@ connectionhash <- function(con, algo, salt){
   }
   stopifnot(is.raw(salt))
   md_feed(md, salt)
-  while(length(data <- readBin(con, raw(), 102400))){
+  cat("Hashing...")
+  while(length(data <- readBin(con, raw(), 512*1024))){
     md_feed(md, data)
     cat(".")
   }

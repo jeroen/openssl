@@ -1,17 +1,18 @@
 Package: openssl
 Type: Package
-Title: Bindings to OpenSSl
+Title: Bindings to OpenSSL
 Version: 0.3
 Date: 2015-01-06
 Author: Jeroen Ooms, Oliver Keyes
 Maintainer: Jeroen Ooms <jeroen.ooms@stat.ucla.edu>
 Description: Interfaces to the OpenSSL libraries libssl and libcrypto.
-    Currently only implements bindings to the OpenSSL secure random number
-    generator and digest functions.
+    Currently implements bindings to the OpenSSL secure random number
+    generator and hashing functions.
 License: MIT + file LICENSE
 URL: https://github.com/jeroenooms/openssl
 BugReports: https://github.com/jeroenooms/openssl/issues
 SystemRequirements: OpenSSL (libssl-dev or openssl-devel)
+VignetteBuilder: knitr
 Suggests:
     testthat,
     digest,

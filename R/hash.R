@@ -51,8 +51,8 @@
 #' myfile <- system.file("CITATION")
 #' md5(file(myfile))
 #'
-#' \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/md5sum.txt
-#' md5(url("http://cran.r-project.org/bin/windows/base/R-3.1.2-win.exe"))}
+#' \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/old/3.1.1/md5sum.txt
+#' md5(url("http://cran.r-project.org/bin/windows/base/old/3.1.1/R-3.1.1-win.exe"))}
 #'
 #' # Use a salt to prevent dictionary attacks
 #' sha1("admin") # googleable

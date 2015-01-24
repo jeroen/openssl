@@ -112,7 +112,7 @@ stringhash <- function(x, algo, salt = ""){
   # Must be character vector
   stopifnot(is.character(x))
   if(nchar(salt)){
-    x <- paste0(salt, collapse="")
+    x <- paste0(x, salt)
   }
   .Call(R_digest,x, as.character(algo))
 }

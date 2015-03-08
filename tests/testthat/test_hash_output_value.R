@@ -12,7 +12,7 @@ test_that("MD5 outputs appropriate values for possible inputs", {
 
 })
 
-test_that("SHA1 outputs appropriate values for possible inputs", {
+test_that("RIPEMD160 outputs appropriate values for possible inputs", {
 
   expect_that(ripemd160("foo"), equals("42cfa211018ea492fdee45ac637b7972a0ad6873"))
 

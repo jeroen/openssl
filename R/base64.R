@@ -4,6 +4,7 @@
 #' automatically collapse into a single string.
 #'
 #' @rdname base64
+#' @name base64
 #' @useDynLib openssl R_base64_encode
 #' @param bin Data to encode. Must be raw or character vector.
 #' @param text The base64 message to decode. Must be a string.

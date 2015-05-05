@@ -1,21 +1,18 @@
 ---
 title: "Generating Secure Random Numbers in R"
-author: "Jeroen Ooms"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Generating Secure Random Numbers}
+  %\VignetteIndexEntry{Generating Secure Random Numbers in R}
+  \usepackage[utf8]{inputenc}  
 output:
-  knitr:::html_vignette:
-    toc: yes
+  html_document
 ---
 
 ```{r, echo = FALSE, message = FALSE}
 knitr::opts_chunk$set(comment = "")
 library(openssl)
 ```
-
-## Secure Random Bytes
 
 The `rand_bytes` function binds to [RAND_bytes](https://www.openssl.org/docs/crypto/RAND_bytes.html) in OpenSSL to generate cryptographically strong pseudo-random bytes. See the OpenSSL documentation for what this means. 
 

@@ -7,18 +7,19 @@
 #' @name base64
 #' @useDynLib openssl R_base64_encode
 #' @param bin Data to encode. Must be raw or character vector.
+#' @param linebreaks Insert linebreaks in the base64 message to make it more readable.
 #' @param text The base64 message to decode. Must be a string.
 #' @export
 #' @examples input <- charToRaw("foo = bar + 5")
 #' message <- base64_encode(input)
 #' output <- base64_decode(message)
 #' identical(output, input)
-base64_encode <- function(bin){
+base64_encode <- function(bin, linebreaks = TRUE){
   if(is.character(bin)){
     bin <- charToRaw(paste(bin, collapse=""))
   }
   stopifnot(is.raw(bin))
-  .Call(R_base64_encode, bin)
+  .Call(R_base64_encode, bin, as.logical(linebreaks))
 }
 
 #' @rdname base64
@@ -29,5 +30,7 @@ base64_decode <- function(text){
     text <- rawToChar(text)
   }
   stopifnot(is.character(text))
-  .Call(R_base64_decode, paste(text, collapse=""))
+  text <- paste(text, collapse="")
+  text <- gsub("[\r\n]", "", text)[[1]]
+  .Call(R_base64_decode, text)
 }

@@ -6,12 +6,14 @@
 \alias{base64_encode}
 \title{Encode and decode base64}
 \usage{
-base64_encode(bin)
+base64_encode(bin, linebreaks = TRUE)
 
 base64_decode(text)
 }
 \arguments{
 \item{bin}{Data to encode. Must be raw or character vector.}
+
+\item{linebreaks}{Insert linebreaks in the base64 message to make it more readable.}
 
 \item{text}{The base64 message to decode. Must be a string.}
 }

@@ -7,12 +7,14 @@
 #include <openssl/buffer.h>
 #include <string.h>
 
-SEXP R_base64_encode(SEXP bin){
+SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   //setup encoder
   BIO *bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new(BIO_s_mem()));
 
   //No linebreaks
-  BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
+  if(!asLogical(linebreaks))
+    BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
+
   BIO_set_close(bio, BIO_NOCLOSE);
   BIO_write(bio, RAW(bin), length(bin));
   BIO_flush(bio);
@@ -37,11 +39,11 @@ SEXP R_base64_decode(SEXP text){
   int len = strlen(msg);
   BIO *bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new_mem_buf(msg, len));
 
-  //Do not use newlines to flush buffer
+  //Assume on linebreaks
   BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
-  //get output
-  unsigned char *bin = malloc(len * (3/4));
+  //binary size is always smaller than base64 msg
+  unsigned char *bin = malloc(len);
   int bin_len = BIO_read(bio, bin, len);
 
   //create raw output vector

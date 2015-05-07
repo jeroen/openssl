@@ -1,9 +1,4 @@
-# This script is a temporary solution until I get autoconf to work.
-#
-# On most systems the openssl headers and lib will be found automatically
-# if present, hence this script is not really required. On CRAN, we use
-# the $OPENSSL_INCLUDES variable; elsewhere we assume to the standard
-# linux location: /usr/include/openssl.
+# CRAN uses $OPENSSL_INCLUDES; elsewhere assume standard unix locations.
 if [ "$OPENSSL_INCLUDES" ]; then
   echo "PKG_CPPFLAGS= -I$OPENSSL_INCLUDES" >> src/Makevars
 else

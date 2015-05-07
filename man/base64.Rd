@@ -6,7 +6,7 @@
 \alias{base64_encode}
 \title{Encode and decode base64}
 \usage{
-base64_encode(bin, linebreaks = TRUE)
+base64_encode(bin, linebreaks = FALSE)
 
 base64_decode(text)
 }

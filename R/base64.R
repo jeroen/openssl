@@ -14,7 +14,7 @@
 #' message <- base64_encode(input)
 #' output <- base64_decode(message)
 #' identical(output, input)
-base64_encode <- function(bin, linebreaks = TRUE){
+base64_encode <- function(bin, linebreaks = FALSE){
   if(is.character(bin)){
     bin <- charToRaw(paste(bin, collapse=""))
   }

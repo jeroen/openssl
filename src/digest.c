@@ -64,7 +64,7 @@ SEXP R_digest(SEXP x, SEXP algo){
     for (int i = 0; i < md_len; i++) {
       sprintf(&mdString[i*2], "%02x", (unsigned int) md_value[i]);
     }
-    mdString[2*md_len+1] = '\0';
+    mdString[2*md_len] = '\0';
     SET_STRING_ELT(out, i, mkChar(mdString));
   }
   UNPROTECT(1);

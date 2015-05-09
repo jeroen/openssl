@@ -8,3 +8,4 @@
 windows
 README.md
 tools/benchmark.R
+^vignettes/figure

@@ -1,12 +1,43 @@
-# CRAN uses $OPENSSL_INCLUDES; elsewhere assume standard unix locations.
+# Custom include path for compatibility
 if [ "$OPENSSL_INCLUDES" ]; then
-  echo "PKG_CPPFLAGS= -I$OPENSSL_INCLUDES" >> src/Makevars
-else
-  OPENSSL_INCLUDES="/usr/include"
+  echo "PKG_CPPFLAGS= -I$OPENSSL_INCLUDES" > src/Makevars
+  echo "PKG_LIBS= -lssl -lcrypto" >> src/Makevars
+  exit 0
 fi
 
-# Verify that openssl RNG is present
-if [ ! -r $OPENSSL_INCLUDES/openssl/rand.h ]; then
-  echo "File $OPENSSL_INCLUDES/openssl/rand.h not found. Make sure the OpenSSL development library is installed, e.g. libssl-dev (deb) or openssl-devel (rpm)."
+# Use backticks to be bourne compliant
+PKGCONFIG=`command -v pkg-config`
+
+# Try pkg-config first if available
+if [ "$PKGCONFIG" ]; then
+  PKG_CFLAGS=`pkg-config --cflags libssl`
+  PKG_LIBS=`pkg-config --libs libssl`
+fi
+
+# If pkg-config failed:
+if [ "$PKG_CFLAGS" ]; then
+  echo "Using pkg-config cflags and libs"
+elif [ -r "/opt/csw/include/openssl/rand.h" ]; then
+  PKG_CFLAGS="-I/opt/csw/include"
+  PKG_LIBS="-L/opt/csw/lib -lssl -lcrypto"
+elif [ -r "/usr/include/openssl/rand.h" ]; then
+  PKG_CFLAGS="-I/usr/include"
+elif [ -r "/usr/local/include/openssl/rand.h" ]; then
+  PKG_CFLAGS="-I/usr/local/include"
+fi
+
+if [ "$PKG_CFLAGS" ]; then
+  echo "PKG_CPPFLAGS= $PKG_CFLAGS" > src/Makevars
+  echo "Found openssl in $PKG_CFLAGS"
+else
+  echo "Could not find openssl. Please install libssl-dev (deb) or openssl-devel (rpm)."
   exit 1
 fi
+
+if [ "$PKG_LIBS" ]; then
+  echo "PKG_LIBS= $PKG_LIBS" >> src/Makevars
+else
+  echo "PKG_LIBS= -lssl -lcrypto" >> src/Makevars
+fi
+
+exit 0

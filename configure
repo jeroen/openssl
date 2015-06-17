@@ -14,8 +14,8 @@ if [ "$PKGCONFIG" ]; then
   PKG_LIBS=`pkg-config --libs libssl`
 fi
 
-# If pkg-config failed:
-if [ "$PKG_CFLAGS" ]; then
+# See if pkg-config succeeded. PKG_CFLAGS might be empty.
+if [ "$PKG_CFLAGS" ] || [ "$PKG_LIBS" ]; then
   echo "Using pkg-config cflags and libs"
 elif [ -r "/opt/csw/include/openssl/rand.h" ]; then
   PKG_CFLAGS="-I/opt/csw/include"

@@ -1,4 +1,5 @@
 *.o
 *.so
+src/Makevars
 .Rproj.user
 .Rhistory

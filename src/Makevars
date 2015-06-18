@@ -1,9 +1,0 @@
-# The version of OpenSSL included with OSX is old and deprecated.
-# To links against the 'brew install openssl' version, use:
-# PKG_CPPFLAGS = -I/usr/local/Cellar/openssl/1.0.1i/include
-# PKG_LIBS = -L/usr/local/Cellar/openssl/1.0.1i/lib -lssl -lcrypto
-
-PKG_LIBS= -lssl -lcrypto
-
-# Disable on CRAN:
-# PKG_CFLAGS= -Wall -pedantic

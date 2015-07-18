@@ -2,6 +2,7 @@
 #include <Rinternals.h>
 #include "apple.h"
 #include <openssl/evp.h>
+#include <openssl/err.h>
 
 /*
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_EncryptInit.html
@@ -40,13 +41,15 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   int tmp;
   if(!EVP_CipherUpdate(&ctx, cur, &tmp, RAW(x), LENGTH(x))) {
     EVP_CIPHER_CTX_cleanup(&ctx);
-    errorcall(R_NilValue, "failed to calculate cipher");
+    free(buf);
+    errorcall(R_NilValue, ERR_error_string(ERR_get_error(), NULL));
   }
   cur += tmp;
 
   if(!EVP_CipherFinal_ex(&ctx, cur, &tmp)) {
     EVP_CIPHER_CTX_cleanup(&ctx);
-    errorcall(R_NilValue, "failed to finalize cipher");
+    free(buf);
+    errorcall(R_NilValue, ERR_error_string(ERR_get_error(), NULL));
   }
   cur += tmp;
 

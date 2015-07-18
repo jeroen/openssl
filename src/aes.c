@@ -20,13 +20,18 @@ const EVP_CIPHER* get_cipher(int length){
   error("Invalid key length: %d", length);
 }
 
+void raise_error(){
+  unsigned long err = ERR_get_error();
+  Rf_error("%s had '%s' error", ERR_func_error_string(err), ERR_reason_error_string(err));
+}
+
 SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   int strength = LENGTH(key);
   if(strength != 16 && strength != 24 && strength != 32)
-    errorcall(R_NilValue, "key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
+    error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
 
   if(LENGTH(iv) != 16)
-    errorcall(R_NilValue, "aes requires an iv of length 16");
+    error("aes requires an iv of length 16");
 
   EVP_CIPHER_CTX ctx;
   EVP_CIPHER_CTX_init(&ctx);
@@ -42,14 +47,14 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   if(!EVP_CipherUpdate(&ctx, cur, &tmp, RAW(x), LENGTH(x))) {
     EVP_CIPHER_CTX_cleanup(&ctx);
     free(buf);
-    errorcall(R_NilValue, ERR_error_string(ERR_get_error(), NULL));
+    raise_error();
   }
   cur += tmp;
 
   if(!EVP_CipherFinal_ex(&ctx, cur, &tmp)) {
     EVP_CIPHER_CTX_cleanup(&ctx);
     free(buf);
-    errorcall(R_NilValue, ERR_error_string(ERR_get_error(), NULL));
+    raise_error();
   }
   cur += tmp;
 

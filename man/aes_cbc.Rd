@@ -22,10 +22,14 @@ Encrypt and decrypt data with a symmetric key using the AES block
 cipher in CBC mode.
 }
 \examples{
+# aes-256 requires 32 byte key
 password <- charToRaw("supersecret")
+key <- sha256(password)
+
+# symmetric encryption uses same key for decryption
 x <- serialize(iris, NULL)
-y <- aes_cbc_encrypt(x, key = sha256(password))
-x2 <- aes_cbc_decrypt(y, key = sha256(password))
+y <- aes_cbc_encrypt(x, key = key)
+x2 <- aes_cbc_decrypt(y, key = key)
 identical(x, x2)
 }
 

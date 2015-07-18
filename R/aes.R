@@ -10,10 +10,14 @@
 #' @param x raw vector with data to encrypt/decrypt
 #' @param key raw vector of length 16, 24 or 32, e.g. a password hash
 #' @param iv raw initialization vector of length 16 (aes block size)
-#' @examples password <- charToRaw("supersecret")
+#' @examples # aes-256 requires 32 byte key
+#' password <- charToRaw("supersecret")
+#' key <- sha256(password)
+#'
+#' # symmetric encryption uses same key for decryption
 #' x <- serialize(iris, NULL)
-#' y <- aes_cbc_encrypt(x, key = sha256(password))
-#' x2 <- aes_cbc_decrypt(y, key = sha256(password))
+#' y <- aes_cbc_encrypt(x, key = key)
+#' x2 <- aes_cbc_decrypt(y, key = key)
 #' identical(x, x2)
 aes_cbc_encrypt <- function(x, key, iv = rand_bytes(16)){
   stopifnot(is.raw(x))

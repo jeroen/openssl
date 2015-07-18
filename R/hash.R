@@ -31,7 +31,7 @@
 #' @export
 #' @rdname hash
 #' @name crypto digest
-#' @useDynLib openssl R_digest_raw R_digest R_openssl_init R_openssl_cleanup
+#' @useDynLib openssl R_digest_raw R_digest
 #' @examples # Support both strings and binary
 #' md5("foo")
 #' md5(charToRaw("foo"))

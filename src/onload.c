@@ -1,16 +1,14 @@
-#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
 #include "apple.h"
 #include <openssl/evp.h>
 #include <openssl/err.h>
 
-SEXP R_openssl_init(){
+void R_init_openssl(DllInfo *info) {
   OpenSSL_add_all_digests();
   ERR_load_crypto_strings();
-  return R_NilValue;
 }
 
-SEXP R_openssl_cleanup(){
+void R_unload_curl(DllInfo *info) {
   ERR_free_strings();
   EVP_cleanup();
-  return R_NilValue;
 }

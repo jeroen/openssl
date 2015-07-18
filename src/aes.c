@@ -1,11 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <openssl/aes.h>
-#include <openssl/rand.h>
 #include <openssl/evp.h>
 
 /*

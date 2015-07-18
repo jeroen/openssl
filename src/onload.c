@@ -1,5 +1,5 @@
-#include <R_ext/Rdynload.h>
 #include "apple.h"
+#include <R_ext/Rdynload.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
 

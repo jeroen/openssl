@@ -1,11 +1,8 @@
+#include "apple.h"
 #include <R.h>
 #include <Rinternals.h>
-#include "apple.h"
-
-#include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
-#include <string.h>
 
 SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   //setup encoder
@@ -35,9 +32,8 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
 }
 
 SEXP R_base64_decode(SEXP text){
-  char *msg = (char*) translateCharUTF8(asChar(text));
-  int len = strlen(msg);
-  BIO *bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new_mem_buf(msg, len));
+  int len = LENGTH(STRING_ELT(text, 0));
+  BIO *bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new_mem_buf((void*) CHAR(STRING_ELT(text, 0)), len));
 
   //Assume on linebreaks
   BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);

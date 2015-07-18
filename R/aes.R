@@ -6,7 +6,6 @@
 #' @export
 #' @rdname aes_cbc
 #' @name aes_cbc
-#' @useDynLib openssl R_aes_cbc
 #' @param x raw vector with data to encrypt/decrypt
 #' @param key raw vector of length 16, 24 or 32, e.g. a password hash
 #' @param iv raw initialization vector of length 16 (aes block size)
@@ -20,19 +19,21 @@
 #' x2 <- aes_cbc_decrypt(y, key = key)
 #' identical(x, x2)
 aes_cbc_encrypt <- function(x, key, iv = rand_bytes(16)){
-  stopifnot(is.raw(x))
-  stopifnot(is.raw(key))
-  stopifnot(is.raw(iv))
-  out <- .Call(R_aes_cbc, x, key, iv, TRUE)
+  out <- aes_cbc(x, key, iv, TRUE)
   structure(out, iv = iv)
 }
 
 #' @export
-#' @useDynLib openssl R_aes_cbc
 #' @rdname aes_cbc
 aes_cbc_decrypt <- function(x, key, iv = attr(x, "iv")){
+  aes_cbc(x, key, iv, FALSE);
+}
+
+#' @useDynLib openssl R_aes_cbc
+aes_cbc <- function(x, key, iv, encrypt){
   stopifnot(is.raw(x))
   stopifnot(is.raw(key))
   stopifnot(is.raw(iv))
-  .Call(R_aes_cbc, x, key, iv, FALSE);
+  stopifnot(is.logical(encrypt))
+  .Call(R_aes_cbc, x, key, iv, encrypt)
 }

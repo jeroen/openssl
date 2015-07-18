@@ -9,7 +9,7 @@
 #' @useDynLib openssl R_aes_cbc
 #' @param x raw vector with data to encrypt/decrypt
 #' @param key raw vector of length 16, 24 or 32, e.g. a password hash
-#' @param iv a random initialization vector of length 16
+#' @param iv raw initialization vector of length 16 (aes block size)
 #' @examples password <- charToRaw("supersecret")
 #' x <- serialize(iris, NULL)
 #' y <- aes_cbc_encrypt(x, key = sha256(password))

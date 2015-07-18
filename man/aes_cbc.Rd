@@ -15,7 +15,7 @@ aes_cbc_decrypt(x, key, iv = attr(x, "iv"))
 
 \item{key}{raw vector of length 16, 24 or 32, e.g. a password hash}
 
-\item{iv}{a random initialization vector of length 16}
+\item{iv}{raw initialization vector of length 16 (aes block size)}
 }
 \description{
 Encrypt and decrypt data with a symmetric key using the AES block

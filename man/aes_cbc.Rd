@@ -11,11 +11,11 @@ aes_cbc_encrypt(x, key, iv = rand_bytes(16))
 aes_cbc_decrypt(x, key, iv = attr(x, "iv"))
 }
 \arguments{
-\item{x}{raw vector with data to encrypt/decrypt}
+\item{x}{raw vector with data to encrypt or decrypt}
 
-\item{key}{raw vector of length 16, 24 or 32, e.g. a password hash}
+\item{key}{secret key. Must be raw vector of length 16, 24 or 32; typically a hash of a secret}
 
-\item{iv}{raw initialization vector of length 16 (aes block size)}
+\item{iv}{initialization vector. Must be raw vector of length 16 (aes block size) or NULL}
 }
 \description{
 Encrypt and decrypt data with a symmetric key using the AES block

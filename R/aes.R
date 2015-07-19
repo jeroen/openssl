@@ -6,9 +6,9 @@
 #' @export
 #' @rdname aes_cbc
 #' @name aes_cbc
-#' @param x raw vector with data to encrypt/decrypt
-#' @param key raw vector of length 16, 24 or 32, e.g. a password hash
-#' @param iv raw initialization vector of length 16 (aes block size)
+#' @param x raw vector with data to encrypt or decrypt
+#' @param key secret key. Must be raw vector of length 16, 24 or 32; typically a hash of a secret
+#' @param iv initialization vector. Must be raw vector of length 16 (aes block size) or NULL
 #' @examples # aes-256 requires 32 byte key
 #' password <- charToRaw("supersecret")
 #' key <- sha256(password)
@@ -30,7 +30,10 @@ aes_cbc_decrypt <- function(x, key, iv = attr(x, "iv")){
 }
 
 #' @useDynLib openssl R_aes_cbc
-aes_cbc <- function(x, key, iv, encrypt){
+aes_cbc <- function(x, key, iv = NULL, encrypt){
+  if(is.null(iv)){
+    iv <- as.raw(rep(0, 16))
+  }
   stopifnot(is.raw(x))
   stopifnot(is.raw(key))
   stopifnot(is.raw(iv))

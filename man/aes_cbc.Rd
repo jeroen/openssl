@@ -6,30 +6,37 @@
 \alias{aes_cbc_encrypt}
 \title{AES encryption}
 \usage{
-aes_cbc_encrypt(x, key, iv = rand_bytes(16))
+aes_cbc_encrypt(msg, key, iv = rand_bytes(16))
 
-aes_cbc_decrypt(x, key, iv = attr(x, "iv"))
+aes_cbc_decrypt(ciphertext, key, iv = attr(ciphertext, "iv"))
 }
 \arguments{
-\item{x}{raw vector with data to encrypt or decrypt}
+\item{msg}{raw vector or path to file with data to encrypt}
 
-\item{key}{secret key. Must be raw vector of length 16, 24 or 32; typically a hash of a secret}
+\item{key}{secret key. Must be raw vector of length 16, 24 or 32, e.g.
+the sha256 hash of a secret passphrase}
 
-\item{iv}{initialization vector. Must be raw vector of length 16 (aes block size) or NULL}
+\item{iv}{initialization vector. Must be raw vector of length 16 (aes
+block size) or NULL. This part is not secret but should be random.}
+
+\item{ciphertext}{raw vector containing the encrypted message}
 }
 \description{
-Encrypt and decrypt data with a symmetric key using the AES block
-cipher in CBC mode.
+Symmetric encryption/decryption using the AES block cipher in CBC mode.
+When a existing shared secret is available, the key can be a cryptographic
+hash of the secret. When no shared secret is available, a random temporary
+key can be used which is exchanged via an asymettric protocol such as RSA.
+See \code{\link{rsa_encrypt}} for a worked example.
 }
 \examples{
 # aes-256 requires 32 byte key
-password <- charToRaw("supersecret")
-key <- sha256(password)
+passphrase <- charToRaw("This is super secret")
+key <- sha256(passphrase)
 
 # symmetric encryption uses same key for decryption
 x <- serialize(iris, NULL)
 y <- aes_cbc_encrypt(x, key = key)
 x2 <- aes_cbc_decrypt(y, key = key)
-identical(x, x2)
+stopifnot(identical(x, x2))
 }
 

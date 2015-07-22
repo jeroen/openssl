@@ -9,7 +9,9 @@ void bail(int out);
 SEXP R_write_pkcs8(RSA *rsa){
   int len = i2d_RSA_PUBKEY(rsa, NULL);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  setAttrib(res, R_ClassSymbol, mkString("rsa.pubkey"));
+  UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   bail(i2d_RSA_PUBKEY(rsa, &(ptr)));
   return res;
@@ -19,7 +21,9 @@ SEXP R_write_rsa_private(RSA *rsa){
   //Rprintf("Private key: d: %d, e: %d, n:%d, p:%p, q:%d\n", rsa->d, rsa->e, rsa->n, rsa->p, rsa->q);
   int len = i2d_RSAPrivateKey(rsa, NULL);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  setAttrib(res, R_ClassSymbol, mkString("rsa.private"));
+  UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   bail(i2d_RSAPrivateKey(rsa, &(ptr)));
   return res;
@@ -54,4 +58,28 @@ SEXP R_parse_rsa_private(SEXP input){
   bail(!!PEM_read_bio_PrivateKey(mem, &key, NULL, NULL));
   RSA *rsa = EVP_PKEY_get1_RSA(key);
   return R_write_rsa_private(rsa);
+}
+
+SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
+  static unsigned char* buf[8192];
+  RSA *rsa = RSA_new();
+  const unsigned char *ptr = RAW(keydata);
+  bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(keydata)));
+  int len = RSA_public_encrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
+  bail(len >= 0);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  return res;
+}
+
+SEXP R_rsa_decrypt(SEXP data, SEXP keydata){
+  static unsigned char* buf[8192];
+  RSA *rsa = RSA_new();
+  const unsigned char *ptr = RAW(keydata);
+  bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(keydata)));
+  int len = RSA_private_decrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
+  bail(len >= 0);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  return res;
 }

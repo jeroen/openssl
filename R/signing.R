@@ -9,6 +9,9 @@
 #' @param key file path or raw/character vector with RSA private key
 #' @param pubkey file path or raw/character vector with RSA public key
 #' @param sig raw vector with signature data
+#' @param password only needed if key is protected with a passphrase. Can
+#' either be a string (hardcoded password) or a callback function. Default
+#' is a callback to \code{\link{readline}}.
 #' @useDynLib openssl R_rsa_sign
 #' @examples hash <- sha256(system.file("DESCRIPTION"))
 #' sig <- rsa_sign(hash)
@@ -21,12 +24,12 @@
 #' hash <- md5("i like cookies")
 #' sig <- rsa_sign(hash)
 #' rsa_verify(hash, sig)
-rsa_sign <- function(hash, key = "~/.ssh/id_rsa") {
+rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = NULL) {
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
   if(!is.raw(hash) || !(length(hash) %in% c(16, 20, 32)))
     stop("Hash must be raw vector or string with md5, sha1 or sha256 value")
-  key <- read_rsa(key)
+  key <- read_rsa(key, password)
   if(!inherits(key, "rsa.private"))
     stop("key must be rsa private key")
   .Call(R_rsa_sign, hash, hash_type(hash), key)

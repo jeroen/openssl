@@ -8,7 +8,7 @@
 \usage{
 rsa_encrypt(msg, pubkey = "~/.ssh/id_rsa.pub")
 
-rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa")
+rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa", password = NULL)
 }
 \arguments{
 \item{msg}{raw vector of max 245 bytes with data to encrypt}
@@ -18,6 +18,10 @@ rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa")
 \item{ciphertext}{raw vector with encrypted message}
 
 \item{key}{file path or raw/character vector with RSA private key}
+
+\item{password}{only needed if key is protected with a passphrase. Can
+either be a string (hardcoded password) or a callback function. Default
+is a callback to \code{\link{readline}}.}
 }
 \description{
 Asymmetric encryption/decryption and signature verification using RSA.

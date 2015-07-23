@@ -9,6 +9,9 @@
 #' @param ciphertext raw vector with encrypted message
 #' @param key file path or raw/character vector with RSA private key
 #' @param pubkey file path or raw/character vector with RSA public key
+#' @param password only needed if key is protected with a passphrase. Can
+#' either be a string (hardcoded password) or a callback function. Default
+#' is a callback to \code{\link{readline}}.
 #' @rdname rsa
 #' @useDynLib openssl R_rsa_encrypt
 #' @export
@@ -40,8 +43,8 @@ rsa_encrypt <- function(msg, pubkey = "~/.ssh/id_rsa.pub"){
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
 #' @rdname rsa
-rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa"){
-  key <- read_rsa(key)
+rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa", password = NULL){
+  key <- read_rsa(key, password)
   if(!inherits(key, "rsa.private"))
     stop("key must be rsa private key")
   if(!is.raw(ciphertext))
@@ -49,15 +52,14 @@ rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa"){
   .Call(R_rsa_decrypt, ciphertext, key)
 }
 
-read_rsa <- function(text, password = readlines("Enter password")){
-  password <- substitute(password)
+read_rsa <- function(text, password){
   stopifnot(is.character(text) || inherits(text, "connection"))
   if(inherits(text, "connection") || (length(text) == 1 && file.exists(text))){
     text <- readLines(text, warn = FALSE)
   }
   text <- paste(text, collapse = "\n")
   if(grepl("-BEGIN (RSA )?PRIVATE KEY-", text)){
-    parse_rsa_private(text)
+    parse_rsa_private(text, password)
   } else if(grepl("-BEGIN RSA PUBLIC KEY-", text, fixed = TRUE)){
     parse_pkcs1(text)
   } else if(grepl("-BEGIN PUBLIC KEY-", text, fixed = TRUE)){
@@ -82,8 +84,16 @@ parse_pkcs8 <- function(text){
 }
 
 #' @useDynLib openssl R_parse_rsa_private
-parse_rsa_private <- function(text){
-  .Call(R_parse_rsa_private, charToRaw(text))
+parse_rsa_private <- function(text, password = NULL){
+  if(is.null(password)){
+    password <- function(){
+      readline("Enter key passphrase: ")
+    }
+  }
+  if(!is.character(password) && !is.function(password)){
+    stop("Password must be a string or callback function")
+  }
+  .Call(R_parse_rsa_private, charToRaw(text), password)
 }
 
 #' @useDynLib openssl R_priv2pub

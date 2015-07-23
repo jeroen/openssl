@@ -4,12 +4,40 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 void raise_error();
 void bail(int out);
 
-int password_cb(char *str, int x, int y, void *ctx){
-  error("Passsword callback not implemented");
-  return 0;
+int password_cb(char *buf, int max_size, int rwflag, void *ctx){
+  SEXP cb = (SEXP) ctx;
+  int len;
+
+  /* case where password is a hardcoded string */
+  if(isString(cb)){
+    len = LENGTH(STRING_ELT(cb, 0));
+    len = MIN(len, max_size);
+    memcpy(buf, CHAR(STRING_ELT(cb, 0)), len);
+    return len;
+  }
+
+  /* case where password is an R function */
+  if(isFunction(cb)){
+    int err;
+    SEXP call = PROTECT(LCONS(cb, R_NilValue));
+    SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
+    if(err || !isString(res)){
+      UNPROTECT(2);
+      error("Password callback did not return a string value");
+    }
+    len = LENGTH(STRING_ELT(res, 0));
+    len = MIN(len, max_size);
+    memcpy(buf, CHAR(STRING_ELT(res, 0)), len);
+    UNPROTECT(2);
+    return len;
+  }
+  error("Callback must be string or function");
 }
 
 SEXP R_write_pkcs8(RSA *rsa){
@@ -59,10 +87,10 @@ SEXP R_parse_pkcs8(SEXP input){
   return R_write_pkcs8(rsa);
 }
 
-SEXP R_parse_rsa_private(SEXP input){
+SEXP R_parse_rsa_private(SEXP input, SEXP password){
   EVP_PKEY *key = EVP_PKEY_new();
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  bail(!!PEM_read_bio_PrivateKey(mem, &key, password_cb, NULL));
+  bail(!!PEM_read_bio_PrivateKey(mem, &key, password_cb, password));
   RSA *rsa = EVP_PKEY_get1_RSA(key);
   return R_write_rsa_private(rsa);
 }

@@ -6,7 +6,7 @@
 \alias{signing}
 \title{Sign and verify}
 \usage{
-rsa_sign(hash, key = "~/.ssh/id_rsa")
+rsa_sign(hash, key = "~/.ssh/id_rsa", password = NULL)
 
 rsa_verify(hash, sig, pubkey = "~/.ssh/id_rsa.pub")
 }
@@ -14,6 +14,10 @@ rsa_verify(hash, sig, pubkey = "~/.ssh/id_rsa.pub")
 \item{hash}{string or raw vector with md5, sha1 or sha256 hash}
 
 \item{key}{file path or raw/character vector with RSA private key}
+
+\item{password}{only needed if key is protected with a passphrase. Can
+either be a string (hardcoded password) or a callback function. Default
+is a callback to \code{\link{readline}}.}
 
 \item{sig}{raw vector with signature data}
 

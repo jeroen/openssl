@@ -57,7 +57,7 @@ read_rsa <- function(text, password){
     text <- readLines(text, warn = FALSE)
   }
   text <- paste(text, collapse = "\n")
-  if(grepl("-BEGIN (RSA )?PRIVATE KEY-", text)){
+  if(grepl("-BEGIN (RSA |ENCRYPTED )?PRIVATE KEY-", text)){
     parse_rsa_private(text, password)
   } else if(grepl("-BEGIN RSA PUBLIC KEY-", text, fixed = TRUE)){
     parse_pkcs1(text)

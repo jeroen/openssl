@@ -1,4 +1,3 @@
-#' @useDynLib openssl R_rsa_build
 parse_ssh2 <- function(text){
   # extract the ssh2 pubkey text block
   text <- paste(text, collapse = "\n")
@@ -13,8 +12,21 @@ parse_ssh2 <- function(text){
   text <- sub("([-]+ END SSH2 PUBLIC KEY [-]+)[\\s]*", "", text)
   text <- sub("Comment(.*?)\\n", "", text)
 
-  # parse binary format
-  keydata <- base64_decode(text)
+  # construct the actual key
+  rsa_build(text)
+}
+
+parse_openssh <- function(text){
+  text <- paste(text, collapse = "")
+  text <- sub("^ssh-rsa\\s+", "", text)
+  text <- sub("\\s+.*$", "", text)
+  rsa_build(text)
+}
+
+#' @useDynLib openssl R_rsa_build
+rsa_build <- function(b64_text){
+  # parse ssh binary format
+  keydata <- base64_decode(b64_text)
   con <- rawConnection(keydata, open = "rb")
   on.exit(close(con))
 

@@ -64,6 +64,8 @@ read_rsa <- function(text, password = readlines("Enter password")){
     parse_pkcs8(text)
   } else if(grepl("-- BEGIN SSH2 PUBLIC KEY --", text, fixed = TRUE)){
     parse_ssh2(text)
+  } else if(grepl("^ssh-rsa ", text[1])) {
+    parse_openssh(text)
   } else {
     stop("Unsupported key format")
   }

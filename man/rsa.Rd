@@ -8,7 +8,7 @@
 \usage{
 rsa_encrypt(msg, pubkey = "~/.ssh/id_rsa.pub")
 
-rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa", password = NULL)
+rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa", password = readline)
 }
 \arguments{
 \item{msg}{raw vector of max 245 bytes with data to encrypt}

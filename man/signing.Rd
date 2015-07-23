@@ -6,7 +6,7 @@
 \alias{signing}
 \title{Sign and verify}
 \usage{
-rsa_sign(hash, key = "~/.ssh/id_rsa", password = NULL)
+rsa_sign(hash, key = "~/.ssh/id_rsa", password = readline)
 
 rsa_verify(hash, sig, pubkey = "~/.ssh/id_rsa.pub")
 }

@@ -43,7 +43,7 @@ rsa_encrypt <- function(msg, pubkey = "~/.ssh/id_rsa.pub"){
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
 #' @rdname rsa
-rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa", password = NULL){
+rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa", password = readline){
   key <- read_rsa(key, password)
   if(!inherits(key, "rsa.private"))
     stop("key must be rsa private key")
@@ -85,11 +85,6 @@ parse_pkcs8 <- function(text){
 
 #' @useDynLib openssl R_parse_rsa_private
 parse_rsa_private <- function(text, password = NULL){
-  if(is.null(password)){
-    password <- function(){
-      readline("Enter key passphrase: ")
-    }
-  }
   if(!is.character(password) && !is.function(password)){
     stop("Password must be a string or callback function")
   }

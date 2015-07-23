@@ -24,7 +24,7 @@
 #' hash <- md5("i like cookies")
 #' sig <- rsa_sign(hash)
 #' rsa_verify(hash, sig)
-rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = NULL) {
+rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = readline) {
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
   if(!is.raw(hash) || !(length(hash) %in% c(16, 20, 32)))

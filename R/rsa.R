@@ -7,7 +7,8 @@
 #' @export
 #' @param msg raw vector of max 245 bytes with data to encrypt
 #' @param ciphertext raw vector with encrypted message
-#' @param key path the file or raw/character vector with the RSA key
+#' @param key file path or raw/character vector with RSA private key
+#' @param pubkey file path or raw/character vector with RSA public key
 #' @rdname rsa
 #' @useDynLib openssl R_rsa_encrypt
 #' @export
@@ -27,8 +28,8 @@
 #' message <- aes_cbc_decrypt(blob, tempkey, iv)
 #' cat(rawToChar(message))
 #' }
-rsa_encrypt <- function(msg, key = "~/.ssh/id_rsa.pub"){
-  key <- read_rsa(key)
+rsa_encrypt <- function(msg, pubkey = "~/.ssh/id_rsa.pub"){
+  key <- read_rsa(pubkey)
   if(inherits(key, "rsa.private"))
     key <- priv2pub(key)
   if(!is.raw(msg))

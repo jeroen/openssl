@@ -108,6 +108,7 @@ rawhash <- function(x, algo, salt = raw()){
   .Call(R_digest_raw, x, as.character(algo))
 }
 
+#' @useDynLib openssl R_digest
 stringhash <- function(x, algo, salt = ""){
   # Must be character vector
   stopifnot(is.character(x))
@@ -119,24 +120,23 @@ stringhash <- function(x, algo, salt = ""){
 
 connectionhash <- function(con, algo, salt){
   md <- md_init(algo);
-  open(con, "rb")
-  on.exit(close(con))
+  if(!isOpen(con)){
+    open(con, "rb")
+    on.exit(close(con))
+  }
   if(is.character(salt)){
     salt <- charToRaw(salt);
   }
   stopifnot(is.raw(salt))
   md_feed(md, salt)
-  cat("Hashing...")
   while(length(data <- readBin(con, raw(), 512*1024))){
     md_feed(md, data)
-    cat(".")
   }
-  cat("\n")
   md_final(md)
 }
 
 rawstringhash <- function(x, algo, salt){
-  if(is(x, "connection")){
+  hash <- if(is(x, "connection")){
     connectionhash(x, algo, salt)
   } else if(is.raw(x)){
     rawhash(x, algo, salt)
@@ -145,4 +145,36 @@ rawstringhash <- function(x, algo, salt){
   } else {
     stop("Argument 'x' must be raw or character vector.")
   }
+  structure(hash, class = c("hash", algo))
+}
+
+hash_type <- function(hash){
+  if(!is.raw(hash))
+    stop("hash must be raw vector or hex string")
+  if(inherits(hash, "md5") || length(hash) == 16){
+    "md5"
+  } else if(inherits(hash, "sha1") || length(hash) == 20){
+    "sha1"
+  } else if(inherits(hash, "sha256") || length(hash) == 32){
+    "sha256"
+  } else{
+    stop("Hash of length ", length(hash), " not supported")
+  }
+}
+
+is_hexraw <- function(str){
+  is.character(str) &&
+  (length(str) == 1) &&
+  (nchar(str) %in% c(32, 40, 64)) &&
+  grepl("^[a-f0-9]{32,64}$", tolower(str))
+}
+
+hex_to_raw <- function(str){
+  stopifnot(length(str) == 1)
+  len <- nchar(str)/2
+  out <- raw(len)
+  for(i in 1:len){
+    out[i] <- as.raw(as.hexmode(substr(str, 2*i-1, 2*i)))
+  }
+  out
 }

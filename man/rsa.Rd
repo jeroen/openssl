@@ -6,16 +6,18 @@
 \alias{rsa_encrypt}
 \title{RSA encryption and signing}
 \usage{
-rsa_encrypt(msg, key = "~/.ssh/id_rsa.pub")
+rsa_encrypt(msg, pubkey = "~/.ssh/id_rsa.pub")
 
 rsa_decrypt(ciphertext, key = "~/.ssh/id_rsa")
 }
 \arguments{
 \item{msg}{raw vector of max 245 bytes with data to encrypt}
 
-\item{key}{path the file or raw/character vector with the RSA key}
+\item{pubkey}{file path or raw/character vector with RSA public key}
 
 \item{ciphertext}{raw vector with encrypted message}
+
+\item{key}{file path or raw/character vector with RSA private key}
 }
 \description{
 Asymmetric encryption/decryption and signature verification using RSA.

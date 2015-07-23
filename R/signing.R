@@ -1,0 +1,46 @@
+#' Sign and verify
+#'
+#' Create and verify RSA signatures.
+#'
+#' @export
+#' @rdname signing
+#' @name signing
+#' @param hash string or raw vector with md5, sha1 or sha256 hash
+#' @param key file path or raw/character vector with RSA private key
+#' @param pubkey file path or raw/character vector with RSA public key
+#' @param sig raw vector with signature data
+#' @useDynLib openssl R_rsa_sign
+#' @examples hash <- sha256(system.file("DESCRIPTION"))
+#' sig <- rsa_sign(hash)
+#' rsa_verify(hash, sig)
+#'
+#' hash <- sha1(file(system.file("DESCRIPTION")))
+#' sig <- rsa_sign(hash)
+#' rsa_verify(hash, sig)
+#'
+#' hash <- md5(file(system.file("DESCRIPTION")))
+#' sig <- rsa_sign(hash)
+#' rsa_verify(hash, sig)
+rsa_sign <- function(hash, key = "~/.ssh/id_rsa") {
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash))
+    stop("Hash must be raw vector or string as returned by md5(), sha1() or sha256()")
+  key <- read_rsa(key)
+  if(!inherits(key, "rsa.private"))
+    stop("key must be rsa private key")
+  .Call(R_rsa_sign, hash, hash_type(hash), key)
+}
+
+#' @export
+#' @rdname signing
+#' @useDynLib openssl R_rsa_verify
+rsa_verify <- function(hash, sig, pubkey = "~/.ssh/id_rsa.pub"){
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  stopifnot(is.raw(sig))
+  key <- read_rsa(pubkey)
+  if(inherits(key, "rsa.private"))
+    key <- priv2pub(key)
+  .Call(R_rsa_verify, hash, sig, hash_type(hash), key)
+}

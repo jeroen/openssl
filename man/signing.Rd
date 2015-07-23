@@ -15,9 +15,8 @@ rsa_verify(hash, sig, pubkey = "~/.ssh/id_rsa.pub")
 
 \item{key}{file path or raw/character vector with RSA private key}
 
-\item{password}{only needed if key is protected with a passphrase. Can
-either be a string (hardcoded password) or a callback function. Default
-is a callback to \code{\link{readline}}.}
+\item{password}{either a hardcoded string or a callback function that
+returns a string. Only required if key is protected with a passphrase.}
 
 \item{sig}{raw vector with signature data}
 

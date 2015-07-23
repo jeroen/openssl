@@ -9,9 +9,8 @@
 #' @param ciphertext raw vector with encrypted message
 #' @param key file path or raw/character vector with RSA private key
 #' @param pubkey file path or raw/character vector with RSA public key
-#' @param password only needed if key is protected with a passphrase. Can
-#' either be a string (hardcoded password) or a callback function. Default
-#' is a callback to \code{\link{readline}}.
+#' @param password either a hardcoded string or a callback function that
+#' returns a string. Only required if key is protected with a passphrase.
 #' @rdname rsa
 #' @useDynLib openssl R_rsa_encrypt
 #' @export

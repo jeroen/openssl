@@ -27,11 +27,11 @@ hash <- sha256(system.file("DESCRIPTION"))
 sig <- rsa_sign(hash)
 rsa_verify(hash, sig)
 
-hash <- sha1(file(system.file("DESCRIPTION")))
+hash <- sha1(serialize(iris, NULL))
 sig <- rsa_sign(hash)
 rsa_verify(hash, sig)
 
-hash <- md5(file(system.file("DESCRIPTION")))
+hash <- md5("i like cookies")
 sig <- rsa_sign(hash)
 rsa_verify(hash, sig)
 }

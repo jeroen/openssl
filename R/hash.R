@@ -159,8 +159,7 @@ hash_type <- function(hash){
 is_hexraw <- function(str){
   is.character(str) &&
   (length(str) == 1) &&
-  (nchar(str) %in% c(32, 40, 64)) &&
-  grepl("^[a-f0-9]{32,64}$", tolower(str))
+  grepl("^[a-f0-9]+$", tolower(str))
 }
 
 hex_to_raw <- function(str){

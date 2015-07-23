@@ -5,10 +5,9 @@ Version: 0.4.9000
 Authors@R: c(
     person("Jeroen", "Ooms", , "jeroen.ooms@stat.ucla.edu", role = c("cre", "aut")),
     person("Oliver", "Keyes", role = "ctb"))
-Maintainer: Jeroen Ooms <jeroen.ooms@stat.ucla.edu>
 Description: Interfaces to the OpenSSL libcrypto library. Currently
     implements bindings to the OpenSSL secure random number generator,
-    base64 encoder and hashing functions.
+    base64 encoder, hashing functions, encryption and signature verifaction.
 License: MIT + file LICENSE
 URL: https://github.com/jeroenooms/openssl
 BugReports: https://github.com/jeroenooms/openssl/issues

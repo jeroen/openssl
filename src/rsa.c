@@ -2,11 +2,13 @@
 #include <Rinternals.h>
 #include "apple.h"
 #include <openssl/pem.h>
+#include <openssl/bn.h>
 
 void raise_error();
 void bail(int out);
 
 SEXP R_write_pkcs8(RSA *rsa){
+  //Rprintf("Public key: d: %d, e: %d, n:%d, p:%p, q:%d\n", rsa->d, rsa->e, rsa->n, rsa->p, rsa->q);
   int len = i2d_RSA_PUBKEY(rsa, NULL);
   bail(len);
   SEXP res = PROTECT(allocVector(RAWSXP, len));
@@ -58,6 +60,15 @@ SEXP R_parse_rsa_private(SEXP input){
   bail(!!PEM_read_bio_PrivateKey(mem, &key, NULL, NULL));
   RSA *rsa = EVP_PKEY_get1_RSA(key);
   return R_write_rsa_private(rsa);
+}
+
+SEXP R_rsa_build(SEXP expdata, SEXP moddata){
+  RSA *rsa = RSA_new();
+  rsa->e = BN_new();
+  rsa->n = BN_new();
+  bail(!!BN_bin2bn(RAW(expdata), LENGTH(expdata), rsa->e));
+  bail(!!BN_bin2bn(RAW(moddata), LENGTH(moddata), rsa->n));
+  return R_write_pkcs8(rsa);
 }
 
 SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {

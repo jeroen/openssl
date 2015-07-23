@@ -83,11 +83,6 @@ parse_rsa_private <- function(text){
   .Call(R_parse_rsa_private, charToRaw(text))
 }
 
-#' @useDynLib openssl R_parse_rsa_private
-parse_ssh2 <- function(text){
-  stop("ssh2 format not yet implemented.")
-}
-
 #' @useDynLib openssl R_priv2pub
 priv2pub <- function(bin){
   stopifnot(is.raw(bin))

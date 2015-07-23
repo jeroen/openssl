@@ -1,20 +1,14 @@
 #' Vectorized hashing functions
 #'
-#' Bindings to cryptographic hashing functions available in OpenSSL's libcrypto. Both
-#' binary and string inputs are supported and the output type will match the input type.
-#' Functions are fully vectorized for the case of character vectors: a vector with
-#' \code{n} strings will return \code{n} hashes.
+#' Bindings to hash functions in OpenSSL. Supported inputs are binary (raw vector),
+#' strings (character vector) or a connection object. Functions are vectorized for
+#' the case of character vectors: a vector with \code{n} strings returns \code{n}
+#' hashes. When passing a connection object, the contents will be stream-hashed which
+#' minimizes the amount of required memory.
 #'
-#' The family of hashing functions implement bindings to OpenSSL's crypto module, which
-#' allow for cryptographically hashing strings and raw (binary) vectors. When passing
-#' a connection object, they will stream-hash binary contents. To hash other types of
-#' objects, use a suitable mapping function such as \code{\link{serialize}} or
-#' \code{\link{as.character}}.
-#'
-#' The full range of OpenSSL-supported cryptographic functions are available. The "sha256"
-#' or "sha512" algorithm is generally recommended for sensitive information. While md5 and
-#' weaker members of the sha family are probably sufficient for collision-resistant identifiers,
-#' cryptographic weaknesses have been directly or indirectly identified in their output.
+#' The "sha256" algorithm is generally recommended for sensitive information. While md5
+#' and weaker members of the sha family are usually sufficient for collision-resistant
+#' identifiers, they are no longer considered secure for cryptographic purposes.
 #'
 #' In applications where hashes should be irreversible (such as names or passwords) it is
 #' often recommended to add a random, fixed \emph{salt} to each input before hashing. This
@@ -30,7 +24,7 @@
 #' Digest types: \url{https://www.openssl.org/docs/apps/dgst.html}
 #' @export
 #' @rdname hash
-#' @name crypto digest
+#' @name hashing
 #' @useDynLib openssl R_digest_raw R_digest
 #' @examples # Support both strings and binary
 #' md5("foo")

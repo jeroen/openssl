@@ -2,7 +2,7 @@ Bindings to OpenSSL
 -------------------
 
 [![Build Status](https://travis-ci.org/jeroenooms/openssl.svg?branch=master)](https://travis-ci.org/jeroenooms/openssl)
-![downloads](http://cranlogs.r-pkg.org/badges/grand-total/urltools)
+![downloads](http://cranlogs.r-pkg.org/badges/grand-total/openssl)
 
 OpenSSL bindings for R. Includes support for cryptographic hashing, secure RNG, encryption and
 creating/verifying signatures. For more information, see the vignettes:

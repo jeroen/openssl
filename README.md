@@ -7,8 +7,8 @@ Bindings to OpenSSL
 OpenSSL bindings for R. Includes support for cryptographic hashing, secure RNG, encryption and
 creating/verifying signatures. For more information, see the vignettes:
 
- - [random number generation](https://github.com/jeroenooms/openssl/blob/master/vignettes/secure_rng.Rmd) 
- - [hashing](https://github.com/jeroenooms/openssl/blob/master/vignettes/crypto_hashing.Rmd)
+ - [Generating Secure Random Numbers in R](https://cran.r-project.org/web/packages/openssl/vignettes/secure_rng.html) 
+ - [Cryptographic Hashing in R](https://cran.r-project.org/web/packages/openssl/vignettes/crypto_hashing.html)
 
 ## Installation
 

@@ -5,6 +5,8 @@
 
 void R_init_openssl(DllInfo *info) {
   OpenSSL_add_all_digests();
+  OpenSSL_add_all_algorithms();
+  OpenSSL_add_all_ciphers();
   ERR_load_crypto_strings();
 }
 

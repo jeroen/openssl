@@ -7,6 +7,11 @@
 void raise_error();
 void bail(int out);
 
+int password_cb(char *str, int x, int y, void *ctx){
+  error("Passsword callback not implemented");
+  return 0;
+}
+
 SEXP R_write_pkcs8(RSA *rsa){
   //Rprintf("Public key: d: %d, e: %d, n:%d, p:%p, q:%d\n", rsa->d, rsa->e, rsa->n, rsa->p, rsa->q);
   int len = i2d_RSA_PUBKEY(rsa, NULL);
@@ -41,7 +46,7 @@ SEXP R_priv2pub(SEXP bin){
 SEXP R_parse_pkcs1(SEXP input, SEXP type){
   RSA *rsa = RSA_new();
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  bail(!!PEM_read_bio_RSAPublicKey(mem, &rsa, NULL, NULL));
+  bail(!!PEM_read_bio_RSAPublicKey(mem, &rsa, password_cb, NULL));
   bail(EVP_PKEY_assign_RSA(EVP_PKEY_new(), rsa));
   return R_write_pkcs8(rsa);
 }
@@ -49,7 +54,7 @@ SEXP R_parse_pkcs1(SEXP input, SEXP type){
 SEXP R_parse_pkcs8(SEXP input){
   RSA *rsa = RSA_new();
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  bail(!!PEM_read_bio_RSA_PUBKEY(mem, &rsa, NULL, NULL));
+  bail(!!PEM_read_bio_RSA_PUBKEY(mem, &rsa, password_cb, NULL));
   bail(EVP_PKEY_assign_RSA(EVP_PKEY_new(), rsa));
   return R_write_pkcs8(rsa);
 }
@@ -57,7 +62,7 @@ SEXP R_parse_pkcs8(SEXP input){
 SEXP R_parse_rsa_private(SEXP input){
   EVP_PKEY *key = EVP_PKEY_new();
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  bail(!!PEM_read_bio_PrivateKey(mem, &key, NULL, NULL));
+  bail(!!PEM_read_bio_PrivateKey(mem, &key, password_cb, NULL));
   RSA *rsa = EVP_PKEY_get1_RSA(key);
   return R_write_rsa_private(rsa);
 }

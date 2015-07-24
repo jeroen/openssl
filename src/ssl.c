@@ -1,9 +1,16 @@
 #include <Rinternals.h>
 #include "apple.h"
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <sys/socket.h>
 #include <resolv.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#endif
+
 #include <openssl/ssl.h>
 
 void raise_error();

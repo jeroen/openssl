@@ -201,7 +201,8 @@ SEXP R_certinfo(SEXP bin){
   bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
 
   //out list
-  char buf[8192];
+  int bufsize = 8192;
+  char buf[bufsize];
   int len;
   X509_NAME *name;
   BIO *b;
@@ -209,13 +210,13 @@ SEXP R_certinfo(SEXP bin){
 
   //subject name
   name = X509_get_subject_name(cert);
-  X509_NAME_oneline(name, buf, 8192);
+  X509_NAME_oneline(name, buf, bufsize);
   SET_VECTOR_ELT(out, 0, mkString(buf));
   X509_NAME_free(name);
 
   //issuer name name
   name = X509_get_issuer_name(cert);
-  X509_NAME_oneline(name, buf, 8192);
+  X509_NAME_oneline(name, buf, bufsize);
   SET_VECTOR_ELT(out, 1, mkString(buf));
   X509_NAME_free(name);
 
@@ -226,7 +227,7 @@ SEXP R_certinfo(SEXP bin){
   //start date
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notBefore));
-  len = BIO_read(b, buf, 8192);
+  len = BIO_read(b, buf, bufsize);
   bail(len);
   buf[len] = '\0';
   SET_VECTOR_ELT(out, 3, mkString(buf));
@@ -235,7 +236,7 @@ SEXP R_certinfo(SEXP bin){
   //expiration date
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notAfter));
-  len = BIO_read(b, buf, 8192);
+  len = BIO_read(b, buf, bufsize);
   bail(len);
   buf[len] = '\0';
   SET_VECTOR_ELT(out, 4, mkString(buf));

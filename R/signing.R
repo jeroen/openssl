@@ -12,7 +12,8 @@
 #' @param password either a hardcoded string or a callback function that
 #' returns a string. Only required if key is protected with a passphrase.
 #' @useDynLib openssl R_rsa_sign
-#' @examples hash <- sha256(system.file("DESCRIPTION"))
+#' @examples \dontrun{
+#' hash <- sha256(system.file("DESCRIPTION"))
 #' sig <- rsa_sign(hash)
 #' rsa_verify(hash, sig)
 #'
@@ -23,6 +24,7 @@
 #' hash <- md5("i like cookies")
 #' sig <- rsa_sign(hash)
 #' rsa_verify(hash, sig)
+#' }
 rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = readline) {
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)

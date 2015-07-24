@@ -26,6 +26,7 @@ returns a string. Only required if key is protected with a passphrase.}
 Create and verify RSA signatures.
 }
 \examples{
+\dontrun{
 hash <- sha256(system.file("DESCRIPTION"))
 sig <- rsa_sign(hash)
 rsa_verify(hash, sig)
@@ -37,5 +38,6 @@ rsa_verify(hash, sig)
 hash <- md5("i like cookies")
 sig <- rsa_sign(hash)
 rsa_verify(hash, sig)
+}
 }
 

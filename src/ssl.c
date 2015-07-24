@@ -34,6 +34,8 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   bail(!!ctx);
   SSL *ssl = SSL_new(ctx);
   bail(!!ssl);
+
+  /* Required for SNI (e.g. cloudflare) */
   bail(SSL_set_tlsext_host_name(ssl, CHAR(STRING_ELT(hostname, 0))));
 
   /* Retrieve cert */

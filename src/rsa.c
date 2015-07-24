@@ -11,6 +11,9 @@ void raise_error();
 void bail(int out);
 
 int password_cb(char *buf, int max_size, int rwflag, void *ctx){
+  if(!ctx)
+    error("No password callback supplied.");
+
   SEXP cb = (SEXP) ctx;
   int len;
 
@@ -104,13 +107,15 @@ SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   return R_write_pkcs8(rsa);
 }
 
+/* encryption */
+
 SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
   static unsigned char* buf[8192];
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(keydata);
   bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(keydata)));
   int len = RSA_public_encrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
-  bail(len >= 0);
+  bail(len > 0);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   return res;
@@ -122,11 +127,13 @@ SEXP R_rsa_decrypt(SEXP data, SEXP keydata){
   const unsigned char *ptr = RAW(keydata);
   bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(keydata)));
   int len = RSA_private_decrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
-  bail(len >= 0);
+  bail(len > 0);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   return res;
 }
+
+/* sign and verify signatures */
 
 int gettype(const char *str){
   if (!strcmp(str, "md5")) {
@@ -159,4 +166,82 @@ SEXP R_rsa_verify(SEXP hashdata, SEXP sigdata, SEXP type, SEXP keydata){
   int hashtype = gettype(CHAR(STRING_ELT(type, 0)));
   bail(!!RSA_verify(hashtype, RAW(hashdata), LENGTH(hashdata), RAW(sigdata), LENGTH(sigdata), rsa));
   return ScalarLogical(1);
+}
+
+/* certificate stuff */
+SEXP R_parse_x509(SEXP input){
+  X509 *cert = X509_new();
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  bail(!!PEM_read_bio_X509(mem, &cert, password_cb, NULL));
+  unsigned char *buf = NULL;
+  int len = i2d_X509(cert, &buf);
+  bail(len > 0);
+  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  setAttrib(res, R_ClassSymbol, mkString("x509.cert"));
+  memcpy(RAW(res), buf, len);
+  UNPROTECT(1);
+  free(buf);
+  return res;
+}
+
+SEXP R_cert2pub(SEXP bin){
+  X509 *cert = X509_new();
+  const unsigned char *ptr = RAW(bin);
+  bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
+  EVP_PKEY *key = X509_get_pubkey(cert);
+  if (EVP_PKEY_type(key->type) != EVP_PKEY_RSA)
+    error("Key is not RSA key");
+  RSA *rsa = EVP_PKEY_get1_RSA(key);
+  return R_write_pkcs8(rsa);
+}
+
+SEXP R_certinfo(SEXP bin){
+  X509 *cert = X509_new();
+  const unsigned char *ptr = RAW(bin);
+  bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
+
+  //out list
+  char buf[8192];
+  int len;
+  X509_NAME *name;
+  BIO *b;
+  SEXP out = PROTECT(allocVector(VECSXP, 5));
+
+  //subject name
+  name = X509_get_subject_name(cert);
+  X509_NAME_oneline(name, buf, 8192);
+  SET_VECTOR_ELT(out, 0, mkString(buf));
+  X509_NAME_free(name);
+
+  //issuer name name
+  name = X509_get_issuer_name(cert);
+  X509_NAME_oneline(name, buf, 8192);
+  SET_VECTOR_ELT(out, 1, mkString(buf));
+  X509_NAME_free(name);
+
+  //sign algorithm
+  OBJ_obj2txt(buf, sizeof(buf), cert->sig_alg->algorithm, 0);
+  SET_VECTOR_ELT(out, 2, mkString(buf));
+
+  //start date
+  b = BIO_new(BIO_s_mem());
+  bail(ASN1_TIME_print(b, cert->cert_info->validity->notBefore));
+  len = BIO_read(b, buf, 8192);
+  bail(len);
+  buf[len] = '\0';
+  SET_VECTOR_ELT(out, 3, mkString(buf));
+  BIO_free(b);
+
+  //expiration date
+  b = BIO_new(BIO_s_mem());
+  bail(ASN1_TIME_print(b, cert->cert_info->validity->notAfter));
+  len = BIO_read(b, buf, 8192);
+  bail(len);
+  buf[len] = '\0';
+  SET_VECTOR_ELT(out, 4, mkString(buf));
+  BIO_free(b);
+
+  //return
+  UNPROTECT(1);
+  return out;
 }

@@ -13,8 +13,8 @@ creating/verifying signatures. For more information, see the vignettes:
 ### OSX users
 
 Special note for Mac: the version of OpenSSL included with OSX is a bit old (0.9.8). 
-This version usually suffices but might not support the latest generation of ciphers
-and algorithms. To install the most recent version of OpenSSL:
+Among other things, this version does not support TLS 1.1 and 1.2. To install the 
+most recent version of OpenSSL:
 
 ```
 brew update

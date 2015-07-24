@@ -28,6 +28,8 @@ Check which version you are running (run in a fresh clean terminal):
 openssl version -a
 ```
 
+You need to reinstall the R package from source to link it to the new version of OpenSSL.
+
 ### Installation
 
 Install from stable version from [CRAN](http://cran.r-project.org/web/packages/openssl/index.html):

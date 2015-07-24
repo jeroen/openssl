@@ -3,3 +3,4 @@
 src/Makevars
 .Rproj.user
 .Rhistory
+src/openssl.dll

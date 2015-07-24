@@ -10,3 +10,4 @@ README.md
 tools/benchmark.R
 ^vignettes/figure
 ^src/Makevars$
+^src/openssl.dll$

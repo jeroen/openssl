@@ -10,7 +10,7 @@ creating/verifying signatures. For more information, see the vignettes:
  - [Generating Secure Random Numbers in R](https://cran.r-project.org/web/packages/openssl/vignettes/secure_rng.html) 
  - [Cryptographic Hashing in R](https://cran.r-project.org/web/packages/openssl/vignettes/crypto_hashing.html)
 
-## OSX users
+### OSX users
 
 Special note for Mac: the version of OpenSSL included with OSX is a bit old (0.9.8). 
 This version usually suffices but might not support the latest generation of ciphers
@@ -22,13 +22,13 @@ brew install openssl
 brew link --force openssl
 ```
 
-Check which version you are running (run in a new clean terminal):
+Check which version you are running (run in a fresh clean terminal):
 
 ```
 openssl version -a
 ```
 
-## Installation
+### Installation
 
 Install from stable version from [CRAN](http://cran.r-project.org/web/packages/openssl/index.html):
 

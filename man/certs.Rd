@@ -8,12 +8,12 @@
 \usage{
 certinfo(cert)
 
-verify_cert(cert, ca)
+verify_cert(cert, root = system.file("cacert.pem", package = "openssl"))
 }
 \arguments{
 \item{cert}{a certificate}
 
-\item{ca}{a CA bundle}
+\item{root}{a root certificate or path to CA bundle}
 }
 \description{
 Stuff for certificates

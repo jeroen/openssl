@@ -69,12 +69,6 @@ cert2pub <- function(bin){
   .Call(R_cert2pub, bin)
 }
 
-#' @useDynLib openssl R_certinfo
-certinfo <- function(bin){
-  stopifnot(is.raw(bin))
-  .Call(R_certinfo, bin)
-}
-
 # Check if input is a file
 path_or_data <- function(x){
   if(is.character(x)){

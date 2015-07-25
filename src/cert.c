@@ -74,7 +74,7 @@ SEXP R_verify_cert(SEXP certdata, SEXP cadata) {
   X509_STORE_add_cert(store, ca);
 
   if(X509_verify_cert(ctx) < 1)
-    error("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
+    stop("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
 
   X509_STORE_CTX_free(ctx);
   X509_STORE_free(store);

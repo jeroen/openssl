@@ -1,6 +1,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/evp.h>
 
 /*

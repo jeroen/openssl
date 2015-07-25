@@ -1,9 +1,8 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/pem.h>
-
-void bail(int out);
 
 int gettype(const char *str){
   if (!strcmp(str, "md5")) {

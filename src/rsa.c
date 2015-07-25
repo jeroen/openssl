@@ -1,9 +1,8 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/pem.h>
-
-void bail(int out);
 
 SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
   static unsigned char* buf[8192];

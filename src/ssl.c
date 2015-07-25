@@ -1,5 +1,6 @@
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -12,9 +13,6 @@
 #endif
 
 #include <openssl/ssl.h>
-
-void raise_error();
-void bail(int out);
 
 SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* grab inputs */

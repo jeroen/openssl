@@ -1,10 +1,9 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
-
-void bail(int out);
 
 SEXP R_certinfo(SEXP bin){
   X509 *cert = X509_new();

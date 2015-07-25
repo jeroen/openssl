@@ -1,8 +1,8 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/evp.h>
-#include <openssl/err.h>
 
 /*
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_EncryptInit.html
@@ -18,16 +18,6 @@ const EVP_CIPHER* get_cipher(int length){
     return EVP_aes_256_cbc();
   }
   error("Invalid key length: %d", length);
-}
-
-void raise_error(){
-  unsigned long err = ERR_get_error();
-  Rf_errorcall(R_NilValue, "OpenSSL error in %s: %s", ERR_func_error_string(err), ERR_reason_error_string(err));
-}
-
-void bail(int success){
-  if(!success)
-    raise_error();
 }
 
 SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {

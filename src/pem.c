@@ -1,14 +1,9 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "apple.h"
+#include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
-
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
-void raise_error();
-void bail(int out);
 
 int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   if(!ctx)

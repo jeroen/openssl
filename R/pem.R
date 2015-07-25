@@ -68,16 +68,3 @@ cert2pub <- function(bin){
   stopifnot(is.raw(bin))
   .Call(R_cert2pub, bin)
 }
-
-# Check if input is a file
-path_or_data <- function(x){
-  if(is.character(x)){
-    if(length(x) == 1 && file.exists(x)){
-      readBin(x, raw(), file.info(x)$size)
-    } else {
-      charToRaw(paste(x, collapse = "\n"))
-    }
-  } else {
-    x
-  }
-}

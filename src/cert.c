@@ -74,13 +74,12 @@ SEXP R_verify_cert(SEXP certdata, SEXP cadata) {
   X509_STORE_CTX_init(ctx, store, cert, NULL);
   X509_STORE_add_cert(store, ca);
 
-  int rv = X509_verify_cert(ctx);
-  if(rv < 1)
+  if(X509_verify_cert(ctx) < 1)
     error("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
 
   X509_STORE_CTX_free(ctx);
   X509_STORE_free(store);
   X509_free(cert);
   X509_free(ca);
-  return ScalarLogical(rv == 1);
+  return ScalarLogical(1);
 }

@@ -4,10 +4,10 @@
 \alias{read_pem}
 \title{Read PEM files}
 \usage{
-read_pem(text, password = readline)
+read_pem(file, password = readline)
 }
 \arguments{
-\item{text}{a character vector or connection to a text file}
+\item{file}{a connection, file path or character vector with PEM data}
 
 \item{password}{a string or callback function}
 }

@@ -8,15 +8,27 @@
 #' This function parses and validates the PEM file and returns the binary DER
 #' representation.
 #'
-#' @param text a character vector or connection to a text file
+#' @param file a connection, file path or character vector with literal data
 #' @param password a string or callback function
 #' @export
-read_pem <- function(text, password = readline){
-  stopifnot(is.character(text) || inherits(text, "connection"))
-  if(inherits(text, "connection") || (length(text) == 1 && file.exists(text))){
-    text <- readLines(text, warn = FALSE)
+read_pem <- function(file, password = readline){
+
+  # file can be path, connection or literal data
+  stopifnot(is.character(file) || inherits(file, "connection"))
+  if(is.character(file)){
+    # Test for file path
+    file <- if(length(file) == 1 && !grepl("^ssh-rsa ", file) && !grepl("\n", file)) {
+      stopifnot(file.exists(file))
+      file(file)
+    } else {
+      textConnection(file)
+    }
   }
-  text <- paste(text, collapse = "\n")
+
+  # read data
+  text <- paste(readLines(file, warn = FALSE), collapse = "\n")
+
+  # parse based on header
   if(grepl("-BEGIN (RSA |ENCRYPTED )?PRIVATE KEY-", text)){
     parse_rsa_private(text, password)
   } else if(grepl("-BEGIN RSA PUBLIC KEY-", text, fixed = TRUE)){

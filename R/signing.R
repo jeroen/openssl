@@ -30,9 +30,11 @@ rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = readline) {
     hash <- hex_to_raw(hash)
   if(!is.raw(hash) || !(length(hash) %in% c(16, 20, 32)))
     stop("Hash must be raw vector or string with md5, sha1 or sha256 value")
-  key <- read_pem(key, password)
-  if(!inherits(key, "rsa.private"))
-    stop("key must be rsa private key")
+  if(!is.raw(key)){
+    key <- read_pem(key, password)
+    if(!inherits(key, "rsa.private"))
+      stop("key must be rsa private key")
+  }
   .Call(R_rsa_sign, hash, hash_type(hash), key)
 }
 
@@ -48,8 +50,9 @@ rsa_verify <- function(hash, sig, pubkey = "~/.ssh/id_rsa.pub"){
     sig <- hex_to_raw(sig)
   if(!is.raw(sig))
     stop("Sig must be raw vector or hex string with signature data")
-  key <- read_pem(pubkey)
-  if(inherits(key, "rsa.private"))
-    key <- priv2pub(key)
-  .Call(R_rsa_verify, hash, sig, hash_type(hash), key)
+  if(!is.raw(pubkey))
+    pubkey <- read_pem(pubkey)
+  if(inherits(pubkey, "rsa.private"))
+    pubkey <- priv2pub(pubkey)
+  .Call(R_rsa_verify, hash, sig, hash_type(hash), pubkey)
 }

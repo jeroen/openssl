@@ -31,21 +31,24 @@
 #' cat(rawToChar(message))
 #' }
 rsa_encrypt <- function(msg, pubkey = "~/.ssh/id_rsa.pub"){
-  key <- read_pem(pubkey)
-  if(inherits(key, "rsa.private"))
-    key <- priv2pub(key)
+  if(!is.raw(pubkey))
+    pubkey <- read_pem(pubkey)
+  if(inherits(pubkey, "rsa.private"))
+    pubkey <- priv2pub(pubkey)
   if(!is.raw(msg))
     stop("message must be raw vector")
-  .Call(R_rsa_encrypt, msg, key)
+  .Call(R_rsa_encrypt, msg, pubkey)
 }
 
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
 #' @rdname rsa
 rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa", password = readline){
-  key <- read_pem(key, password)
-  if(!inherits(key, "rsa.private"))
-    stop("key must be rsa private key")
+  if(!is.raw(key)){
+    key <- read_pem(key, password)
+    if(!inherits(key, "rsa.private"))
+      stop("key must be rsa private key")
+  }
   if(!is.raw(ciphertext))
     stop("ciphertext must raw vector")
   .Call(R_rsa_decrypt, ciphertext, key)

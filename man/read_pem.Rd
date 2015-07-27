@@ -7,7 +7,7 @@
 read_pem(file, password = readline)
 }
 \arguments{
-\item{file}{a connection, file path or character vector with PEM data}
+\item{file}{a connection, file path or character vector with literal data}
 
 \item{password}{a string or callback function}
 }

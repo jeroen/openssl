@@ -113,20 +113,6 @@ parse_rsa_private <- function(text, password = NULL){
   structure(bin, class = c("rsa", "key"))
 }
 
-#' @useDynLib openssl R_priv2pub
-priv2pub <- function(bin){
-  stopifnot(is.raw(bin))
-  out <- .Call(R_priv2pub, bin)
-  structure(out, class = c("rsa", "pubkey"))
-}
-
-#' @useDynLib openssl R_cert2pub
-cert2pub <- function(bin){
-  stopifnot(is.raw(bin))
-  out <- .Call(R_cert2pub, bin)
-  structure(out, class = c("rsa", "pubkey"))
-}
-
 #' @useDynLib openssl R_guess_type
 guess_type <- function(bin){
   stopifnot(is.raw(bin))

@@ -53,3 +53,18 @@ rsa_decrypt <- function(ciphertext, key = "~/.ssh/id_rsa", password = readline){
     stop("ciphertext must raw vector")
   .Call(R_rsa_decrypt, ciphertext, key)
 }
+
+
+#' @useDynLib openssl R_priv2pub
+priv2pub <- function(bin){
+  stopifnot(is.raw(bin))
+  out <- .Call(R_priv2pub, bin)
+  structure(out, class = c("rsa", "pubkey"))
+}
+
+#' @useDynLib openssl R_cert2pub
+cert2pub <- function(bin){
+  stopifnot(is.raw(bin))
+  out <- .Call(R_cert2pub, bin)
+  structure(out, class = c("rsa", "pubkey"))
+}

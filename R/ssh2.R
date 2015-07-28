@@ -48,3 +48,20 @@ rsa_build <- function(b64_text){
   bin <- .Call(R_rsa_build, expdata, moddata)
   structure(bin, class = c("rsa", "pubkey"))
 }
+
+# inverse of rsa_build
+#' @useDynLib openssl R_rsa_decompose
+rsa_decompose <- function(key){
+  stopifnot(is.raw(key))
+  out <- .Call(R_rsa_decompose, key)
+  structure(out, names = c("exp", "mod"))
+}
+
+#' @export
+rsa_fingerprint <- function(pubkey){
+  input <- c(list(charToRaw("ssh-rsa")), rsa_decompose(pubkey))
+  out <- lapply(input, function(x){
+    c(writeBin(length(x), raw(), endian = "big"), x)
+  })
+  md5(unlist(unname(out)))
+}

@@ -9,10 +9,11 @@
 #' representation.
 #'
 #' @param file a connection, file path or character vector with literal data
+#' @param read multiple PEM keys or certificates from a single file
 #' @param password a string or callback function
 #' @export
-read_pem <- function(file, password = readline){
-
+#' @rdname pem
+read_pem <- function(file, multiple = FALSE, password = readline){
   # file can be path, connection or literal data
   stopifnot(is.character(file) || inherits(file, "connection"))
   if(is.character(file)){
@@ -27,7 +28,20 @@ read_pem <- function(file, password = readline){
 
   # read data
   text <- paste(readLines(file, warn = FALSE), collapse = "\n")
+  if(multiple){
+    lapply(extract_pems(text), parse_pem, password = password)
+  } else {
+    parse_pem(text, password = password)
+  }
+}
 
+extract_pems <- function(text){
+  pattern <- "(-+BEGIN)(.+?)(-+END)(.+?)(-+)"
+  m <- gregexpr(pattern, text)
+  regmatches(text, m)[[1]]
+}
+
+parse_pem <- function(text, password){
   # parse based on header
   if(grepl("-BEGIN (RSA |ENCRYPTED )?PRIVATE KEY-", text)){
     parse_rsa_private(text, password)
@@ -79,4 +93,24 @@ priv2pub <- function(bin){
 cert2pub <- function(bin){
   stopifnot(is.raw(bin))
   .Call(R_cert2pub, bin)
+}
+
+#' @export
+#' @rdname pem
+write_pem <- function(key){
+  stopifnot(is.raw(key))
+  type <- if(inherits(key, "rsa.private")){
+    "RSA PRIVATE KEY"
+  } else if(inherits(key, "rsa.pubkey")){
+    "PUBLIC KEY"
+  } else if(inherits(key, "x509.cert")){
+    "CERTIFICATE"
+  } else {
+    stop("Unknown type.")
+  }
+  paste0(
+    "-----BEGIN ", type ,"-----\n",
+    base64_encode(key, linebreaks = TRUE),
+    "-----END ", type, "-----\n"
+  )
 }

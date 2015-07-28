@@ -2,14 +2,19 @@
 % Please edit documentation in R/pem.R
 \name{read_pem}
 \alias{read_pem}
+\alias{write_pem}
 \title{Read PEM files}
 \usage{
-read_pem(file, password = readline)
+read_pem(file, multiple = FALSE, password = readline)
+
+write_pem(key)
 }
 \arguments{
 \item{file}{a connection, file path or character vector with literal data}
 
 \item{password}{a string or callback function}
+
+\item{read}{multiple PEM keys or certificates from a single file}
 }
 \description{
 The PEM format is simply base64 encoded data surrounded by header lines.

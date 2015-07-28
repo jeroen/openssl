@@ -9,8 +9,9 @@
 #' representation.
 #'
 #' @param file a connection, file path or character vector with literal data
-#' @param read multiple PEM keys or certificates from a single file
+#' @param multiple read multiple PEM keys or certificates from a single file
 #' @param password a string or callback function
+#' @param bin binary DER representation of a key or cert
 #' @export
 #' @rdname pem
 read_pem <- function(file, multiple = FALSE, password = readline){
@@ -97,20 +98,20 @@ cert2pub <- function(bin){
 
 #' @export
 #' @rdname pem
-write_pem <- function(key){
-  stopifnot(is.raw(key))
-  type <- if(inherits(key, "rsa.private")){
+write_pem <- function(bin){
+  stopifnot(is.raw(bin))
+  type <- if(inherits(bin, "rsa.private")){
     "RSA PRIVATE KEY"
-  } else if(inherits(key, "rsa.pubkey")){
+  } else if(inherits(bin, "rsa.pubkey")){
     "PUBLIC KEY"
-  } else if(inherits(key, "x509.cert")){
+  } else if(inherits(bin, "x509.cert")){
     "CERTIFICATE"
   } else {
     stop("Unknown type.")
   }
   paste0(
     "-----BEGIN ", type ,"-----\n",
-    base64_encode(key, linebreaks = TRUE),
+    base64_encode(bin, linebreaks = TRUE),
     "-----END ", type, "-----\n"
   )
 }

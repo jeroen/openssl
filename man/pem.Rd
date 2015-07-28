@@ -7,14 +7,16 @@
 \usage{
 read_pem(file, multiple = FALSE, password = readline)
 
-write_pem(key)
+write_pem(bin)
 }
 \arguments{
 \item{file}{a connection, file path or character vector with literal data}
 
+\item{multiple}{read multiple PEM keys or certificates from a single file}
+
 \item{password}{a string or callback function}
 
-\item{read}{multiple PEM keys or certificates from a single file}
+\item{bin}{binary DER representation of a key or cert}
 }
 \description{
 The PEM format is simply base64 encoded data surrounded by header lines.

@@ -45,5 +45,6 @@ rsa_build <- function(b64_text){
   moddata <- readBin(con, raw(), len)
 
   # build RSA key
-  .Call(R_rsa_build, expdata, moddata)
+  bin <- .Call(R_rsa_build, expdata, moddata)
+  structure(bin, class = c("rsa", "pubkey"))
 }

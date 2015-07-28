@@ -1,17 +1,42 @@
-#' Read PEM files
+#' Read PEM/DER files
 #'
-#' The PEM format is simply base64 encoded data surrounded by header lines.
-#' It is the most commonly used format to store RSA keys and X509 certificates.
-#' It is easily recognized from the \code{-- BEGIN --} and \code{-- END --}
-#' lines.
+#' DER is a binary format used for storing certificate and key data in SSL.
+#' The PEM format is base64 encoded DER data surrounded by header lines and
+#' possibly password protected. It is the most commonly used format to exchange
+#' RSA keys and X509 certificates. It is easily recognized from the
+#' \code{-- BEGIN --} and \code{-- END --} lines.
 #'
-#' This function parses and validates the PEM file and returns the binary DER
-#' representation.
+#' A PEM file can contain multiple values, for example to store a certificate
+#' chain. These functions parse and validates the PEM or DER input and return
+#' a raw vector which holds the DER data.
 #'
-#' @param file a connection, file path or character vector with literal data
+#' @param file a connection, file path or vector with literal data
 #' @param multiple read multiple PEM keys or certificates from a single file
 #' @param password a string or callback function
 #' @param bin binary DER representation of a key or cert
+#' @export
+#' @rdname pem
+#' @export
+#' @rdname pem
+read_der <- function(file, type = c("guess", "cert", "key", "pubkey")){
+  bindata <- if(is.raw(file)){
+    file
+  } else if(inherits(file, "connection")){
+    readBin(file, raw(), file.info(file)$size)
+  } else if(is.character(file) && length(file) == 1 && !grepl("\n", file)){
+    stopifnot(file.exists(file))
+    readBin(file, raw(), file.info(file)$size)
+  } else {
+    stop("file must be connection, raw vector or file path")
+  }
+  type <- match.arg(type)
+  if(type == "guess"){
+    type <- guess_type(bindata)
+  }
+  class(bindata) <- c("rsa", type)
+  read_pem(write_pem(bindata))
+}
+
 #' @export
 #' @rdname pem
 read_pem <- function(file, multiple = FALSE, password = readline){
@@ -63,17 +88,20 @@ parse_pem <- function(text, password){
 
 #' @useDynLib openssl R_parse_pkcs1
 parse_pkcs1 <- function(text){
-  .Call(R_parse_pkcs1, charToRaw(text))
+  bin <- .Call(R_parse_pkcs1, charToRaw(text))
+  structure(bin, class = c("rsa", "pubkey"))
 }
 
 #' @useDynLib openssl R_parse_pkcs8
 parse_pkcs8 <- function(text){
-  .Call(R_parse_pkcs8, charToRaw(text))
+  bin <- .Call(R_parse_pkcs8, charToRaw(text))
+  structure(bin, class = c("rsa", "pubkey"))
 }
 
 #' @useDynLib openssl R_parse_x509
 parse_x509 <- function(text){
-  .Call(R_parse_x509, charToRaw(text))
+  bin <- .Call(R_parse_x509, charToRaw(text))
+  structure(bin, class = c("rsa", "cert"))
 }
 
 #' @useDynLib openssl R_parse_rsa_private
@@ -81,30 +109,39 @@ parse_rsa_private <- function(text, password = NULL){
   if(!is.character(password) && !is.function(password)){
     stop("Password must be a string or callback function")
   }
-  .Call(R_parse_rsa_private, charToRaw(text), password)
+  bin <- .Call(R_parse_rsa_private, charToRaw(text), password)
+  structure(bin, class = c("rsa", "key"))
 }
 
 #' @useDynLib openssl R_priv2pub
 priv2pub <- function(bin){
   stopifnot(is.raw(bin))
-  .Call(R_priv2pub, bin)
+  out <- .Call(R_priv2pub, bin)
+  structure(out, class = c("rsa", "pubkey"))
 }
 
 #' @useDynLib openssl R_cert2pub
 cert2pub <- function(bin){
   stopifnot(is.raw(bin))
-  .Call(R_cert2pub, bin)
+  out <- .Call(R_cert2pub, bin)
+  structure(out, class = c("rsa", "pubkey"))
+}
+
+#' @useDynLib openssl R_guess_type
+guess_type <- function(bin){
+  stopifnot(is.raw(bin))
+  .Call(R_guess_type, bin)
 }
 
 #' @export
 #' @rdname pem
 write_pem <- function(bin){
   stopifnot(is.raw(bin))
-  type <- if(inherits(bin, "rsa.private")){
+  type <- if(inherits(bin, "rsa") && inherits(bin, "key")){
     "RSA PRIVATE KEY"
-  } else if(inherits(bin, "rsa.pubkey")){
+  } else if(inherits(bin, "rsa") && inherits(bin, "pubkey")){
     "PUBLIC KEY"
-  } else if(inherits(bin, "x509.cert")){
+  } else if(inherits(bin, "cert")){
     "CERTIFICATE"
   } else {
     stop("Unknown type.")

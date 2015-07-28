@@ -43,7 +43,6 @@ SEXP R_write_pkcs8(RSA *rsa){
   int len = i2d_RSA_PUBKEY(rsa, NULL);
   bail(len);
   SEXP res = PROTECT(allocVector(RAWSXP, len));
-  setAttrib(res, R_ClassSymbol, mkString("rsa.pubkey"));
   UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   bail(i2d_RSA_PUBKEY(rsa, &(ptr)));
@@ -55,7 +54,6 @@ SEXP R_write_rsa_private(RSA *rsa){
   int len = i2d_RSAPrivateKey(rsa, NULL);
   bail(len);
   SEXP res = PROTECT(allocVector(RAWSXP, len));
-  setAttrib(res, R_ClassSymbol, mkString("rsa.private"));
   UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   bail(i2d_RSAPrivateKey(rsa, &(ptr)));
@@ -110,7 +108,6 @@ SEXP R_parse_x509(SEXP input){
   int len = i2d_X509(cert, &buf);
   bail(len > 0);
   SEXP res = PROTECT(allocVector(RAWSXP, len));
-  setAttrib(res, R_ClassSymbol, mkString("x509.cert"));
   memcpy(RAW(res), buf, len);
   UNPROTECT(1);
   free(buf);
@@ -128,3 +125,16 @@ SEXP R_cert2pub(SEXP bin){
   return R_write_pkcs8(rsa);
 }
 
+SEXP R_guess_type(SEXP bin){
+  RSA *rsa = RSA_new();
+  X509 *cert = X509_new();
+  const unsigned char *ptr = RAW(bin);
+  if(d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(bin))) {
+    return mkString("key");
+  } else if(d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin))) {
+    return mkString("pubkey");
+  } else if(d2i_X509(&cert, &ptr, LENGTH(bin))) {
+    return mkString("cert");
+  }
+  return R_NilValue;
+}

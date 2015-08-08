@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Custom include path for compatibility
 if [ "$OPENSSL_INCLUDES" ]; then
   echo "PKG_CPPFLAGS= -I$OPENSSL_INCLUDES" > src/Makevars
@@ -6,12 +8,12 @@ if [ "$OPENSSL_INCLUDES" ]; then
 fi
 
 # Use backticks to be bourne compliant
-PKGCONFIG=`command -v pkg-config`
+PKGCONFIG=$(command -v pkg-config)
 
 # Try pkg-config first if available
 if [ "$PKGCONFIG" ]; then
-  PKG_CFLAGS=`pkg-config --cflags libssl`
-  PKG_LIBS=`pkg-config --libs libssl`
+  PKG_CFLAGS=$(pkg-config --cflags libssl)
+  PKG_LIBS=$(pkg-config --libs libssl)
 fi
 
 # See if pkg-config succeeded. PKG_CFLAGS can be empty

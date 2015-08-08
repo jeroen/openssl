@@ -30,7 +30,7 @@ bignum <- function(x, hex = FALSE){
   stopifnot(is.raw(x) || is.character(x) || is.numeric(x))
   if(is.numeric(x)){
     if(is_positive_integer(x)){
-      x <- formatC(as.integer(x))
+      x <- formatC(x, format = "fg")
     } else {
       stop("Cannot convert to bignum: x must be positive integer, character or raw", call. = FALSE)
     }
@@ -145,7 +145,7 @@ is_positive_integer <- function(x)  {
   if(is.integer(x))
     return(TRUE)
   tol <- sqrt(.Machine$double.eps)
-  if(x <= .Machine$integer.max && abs(x - round(x)) < tol)
+  if(x < 2^53 && abs(x - round(x)) < tol)
     return(TRUE)
   return(FALSE)
 }

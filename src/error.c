@@ -1,4 +1,5 @@
 #include <Rinternals.h>
+#include "apple.h"
 #include <openssl/err.h>
 #include "utils.h"
 

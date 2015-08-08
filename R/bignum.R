@@ -32,7 +32,7 @@ bignum <- function(x, hex = FALSE){
     if(is_positive_integer(x)){
       x <- formatC(as.integer(x))
     } else {
-      stop("Cannot convert to bignum: x must be positive integer, character or raw")
+      stop("Cannot convert to bignum: x must be positive integer, character or raw", call. = FALSE)
     }
   }
   if(is.character(x)){

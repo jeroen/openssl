@@ -91,13 +91,13 @@ as.character.bignum <- function(x, hex = FALSE, ...){
 
 #' @export
 #' @useDynLib openssl R_bignum_devide
-`%%.bignum` <- function(x, y){
+`%/%.bignum` <- function(x, y){
   .Call(R_bignum_devide, bn(x), bn(y))
 }
 
 #' @export
 #' @useDynLib openssl R_bignum_mod
-`%/%.bignum` <- function(x, y){
+`%%.bignum` <- function(x, y){
   .Call(R_bignum_mod, bn(x), bn(y))
 }
 
@@ -136,7 +136,7 @@ as.character.bignum <- function(x, hex = FALSE, ...){
 
 #' @export
 `/.bignum` <- function(x, y){
-  stop("Use integer division %% and modulo %/% for dividing bignum objects", call. = FALSE)
+  stop("Use integer division %/% and modulo %% for dividing bignum objects", call. = FALSE)
 }
 
 is_positive_integer <- function(x)  {

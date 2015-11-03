@@ -8,18 +8,18 @@
 \usage{
 read_der(file, type = c("guess", "cert", "key", "pubkey"))
 
-read_pem(file, multiple = FALSE, password = readline)
+read_pem(file)
 
 write_pem(bin)
 }
 \arguments{
 \item{file}{a connection, file path or vector with literal data}
 
+\item{bin}{binary DER representation of a key or cert}
+
 \item{multiple}{read multiple PEM keys or certificates from a single file}
 
 \item{password}{a string or callback function}
-
-\item{bin}{binary DER representation of a key or cert}
 }
 \description{
 DER is a binary format used for storing certificate and key data in SSL.

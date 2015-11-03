@@ -86,22 +86,10 @@ parse_pem <- function(text, password){
   }
 }
 
-#' @useDynLib openssl R_parse_pkcs1
-parse_pkcs1 <- function(text){
-  bin <- .Call(R_parse_pkcs1, charToRaw(text))
-  structure(bin, class = c("rsa", "pubkey"))
-}
-
 #' @useDynLib openssl R_parse_pkcs8
 parse_pkcs8 <- function(text){
   bin <- .Call(R_parse_pkcs8, charToRaw(text))
   structure(bin, class = c("rsa", "pubkey"))
-}
-
-#' @useDynLib openssl R_parse_x509
-parse_x509 <- function(text){
-  bin <- .Call(R_parse_x509, charToRaw(text))
-  structure(bin, class = c("rsa", "cert"))
 }
 
 #' @useDynLib openssl R_parse_rsa_private

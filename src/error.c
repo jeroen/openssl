@@ -12,3 +12,4 @@ void bail(int success){
   if(!success)
     raise_error();
 }
+

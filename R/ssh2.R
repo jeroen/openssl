@@ -60,10 +60,10 @@ rsa_build <- function(keydata){
 
 #' @useDynLib openssl R_dsa_build
 dsa_build <- function(keydata){
-  p <- structure(keydata[[2]], class = "bignum")
-  q <- structure(keydata[[3]], class = "bignum")
-  g <- structure(keydata[[4]], class = "bignum")
-  y <- structure(keydata[[5]], class = "bignum")
+  p <- keydata[[2]]
+  q <- keydata[[3]]
+  g <- keydata[[4]]
+  y <- keydata[[5]]
   bin <- .Call(R_dsa_build, p, q, g, y)
   structure(bin, class = c("dsa", "pubkey"))
 }
@@ -78,8 +78,8 @@ ecdsa_build <- function(keydata){
     stop("Invalid ecdsa format (not uncompressed?)")
   ec_point <- ec_point[-1];
   curve_size <- length(ec_point)/2
-  x <- structure(utils::head(ec_point, curve_size), class = "bignum")
-  y <- structure(utils::tail(ec_point, curve_size), class = "bignum")
+  x <- utils::head(ec_point, curve_size)
+  y <- utils::tail(ec_point, curve_size)
   bin <- .Call(R_ecdsa_build, x, y, curve_size);
   structure(bin, class = c("ecdsa", "pubkey"))
 }

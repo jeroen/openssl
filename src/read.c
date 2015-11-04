@@ -65,12 +65,9 @@ SEXP R_parse_pem_key(SEXP input, SEXP password){
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  setAttrib(res, R_ClassSymbol, mkString("key"));
-  setAttrib(res, install("type"), ScalarInteger(EVP_PKEY_type(pkey->type)));
   free(buf);
-  UNPROTECT(1);
   return res;
 }
 
@@ -82,12 +79,9 @@ SEXP R_parse_pem_pubkey(SEXP input){
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
   bail(len);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  setAttrib(res, R_ClassSymbol, mkString("pubkey"));
-  setAttrib(res, install("type"), ScalarInteger(EVP_PKEY_type(pkey->type)));
   free(buf);
-  UNPROTECT(1);
   return res;
 }
 
@@ -97,10 +91,8 @@ SEXP R_parse_pem_cert(SEXP input){
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
   bail(len);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  setAttrib(res, R_ClassSymbol, mkString("x509"));
-  UNPROTECT(1);
   free(buf);
   return res;
 }
@@ -126,12 +118,9 @@ SEXP R_parse_der_pubkey(SEXP input){
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
   bail(len);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  setAttrib(res, R_ClassSymbol, mkString("pubkey"));
-  setAttrib(res, install("type"), ScalarInteger(EVP_PKEY_type(pkey->type)));
   free(buf);
-  UNPROTECT(1);
   return res;
 }
 
@@ -143,12 +132,9 @@ SEXP R_parse_der_key(SEXP input){
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  setAttrib(res, R_ClassSymbol, mkString("key"));
-  setAttrib(res, install("type"), ScalarInteger(EVP_PKEY_type(pkey->type)));
   free(buf);
-  UNPROTECT(1);
   return res;
 }
 

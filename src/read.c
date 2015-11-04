@@ -57,9 +57,9 @@ SEXP R_parse_pem(SEXP input){
   return res;
 }
 
-SEXP R_parse_pem_key(SEXP input){
+SEXP R_parse_pem_key(SEXP input, SEXP password){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  EVP_PKEY *pkey = PEM_read_bio_PrivateKey(mem, NULL, password_cb, NULL);
+  EVP_PKEY *pkey = PEM_read_bio_PrivateKey(mem, NULL, password_cb, password);
   BIO_free(mem);
   bail(!!pkey);
   unsigned char *buf = NULL;

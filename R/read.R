@@ -5,6 +5,14 @@
 #' and \code{---END} header), and automatically convert where necessary. The functions assume
 #' a single key per file; prepare with \code{split_pem} for parsing bundles.
 #'
+#' Most versions of OpenSSL support at least RSA, DSA and ECDSA keys.
+#'
+#' The \code{password} argument is needed when reading keys that are protected with a
+#' passphrase. It can either be a string containing the passphrase, or a custom calback
+#' function that will be called by OpenSSL to read the passphrase. The function should
+#' take one argument (a string with a message) and return a string. The default is to
+#' use \code{readline} which will prompt the user in an interactive R session.
+#'
 #' @export
 #' @param file Either a path to a file, a connection, or literal data (a string for
 #' pem/ssh format, or a raw vector in der format)
@@ -13,6 +21,10 @@
 #' @return An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
 #' in binary DER format and can be decomposed using \code{as.list}.
 #' @rdname read_key
+#' @examples \dontrun{
+#' key <- read_key("~/.ssh/id_rsa")
+#' pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
+#' }
 read_key <- function(file, password = readline, der = is.raw(file)){
   buf <- read_input(file)
   if(isTRUE(der)){
@@ -107,7 +119,7 @@ parse_pem <- function(input){
 
 #' @useDynLib openssl R_parse_pem_key
 parse_pem_key <- function(buf, password){
-  .Call(R_parse_pem_key, buf)
+  .Call(R_parse_pem_key, buf, password)
 }
 
 #' @useDynLib openssl R_parse_der_key

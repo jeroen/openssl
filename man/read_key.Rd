@@ -33,4 +33,19 @@ support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{
 and \code{---END} header), and automatically convert where necessary. The functions assume
 a single key per file; prepare with \code{split_pem} for parsing bundles.
 }
+\details{
+Most versions of OpenSSL support at least RSA, DSA and ECDSA keys.
+
+The \code{password} argument is needed when reading keys that are protected with a
+passphrase. It can either be a string containing the passphrase, or a custom calback
+function that will be called by OpenSSL to read the passphrase. The function should
+take one argument (a string with a message) and return a string. The default is to
+use \code{readline} which will prompt the user in an interactive R session.
+}
+\examples{
+\dontrun{
+key <- read_key("~/.ssh/id_rsa")
+pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
+}
+}
 

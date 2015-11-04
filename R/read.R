@@ -71,8 +71,7 @@ read_pubkey <- function(file, der = is.raw(file)){
     } else if(grepl("PRIVATE", name)){
       derive_pubkey(parse_pem_key(buf))
     } else if(grepl("CERTIFICATE", name)){
-      # Extract pubkey from cert
-      stop("Cert placeholder")
+      cert_pubkey(parse_pem_cert(buf))
     } else {
       stop("Invalid PEM type: ", name)
     }
@@ -152,8 +151,12 @@ parse_der_cert <- function(buf){
 
 #' @useDynLib openssl R_derive_pubkey
 derive_pubkey <- function(key){
-  stopifnot(inherits(key, "key"))
   .Call(R_derive_pubkey, key)
+}
+
+#' @useDynLib openssl R_cert_pubkey
+cert_pubkey <- function(cert){
+  .Call(R_cert_pubkey, cert)
 }
 
 # Detect openssh2 public key strings

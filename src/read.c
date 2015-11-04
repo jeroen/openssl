@@ -180,7 +180,23 @@ SEXP R_derive_pubkey(SEXP input){
   return res;
 }
 
-/* Manuall compose public keys from values */
+/* Convert cert to public key */
+SEXP R_cert_pubkey(SEXP input){
+  const unsigned char *ptr = RAW(input);
+  X509 *cert = d2i_X509(NULL, &ptr, LENGTH(input));
+  bail(!!cert);
+  EVP_PKEY *key = X509_get_pubkey(cert);
+  bail(!!key);
+  unsigned char *buf = NULL;
+  int len = i2d_PUBKEY(key, &buf);
+  bail(len);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+}
+
+/* Manuall compose public keys from bignum values */
 SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
   rsa->e = BN_new();
@@ -196,8 +212,7 @@ SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
-// https://tools.ietf.org/html/rfc4253
-// ... the "ssh-des" key format has the following ...
+// See https://tools.ietf.org/html/rfc4253: ... the "ssh-des" key format has ...
 SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA *dsa = DSA_new();
   dsa->p = BN_new();
@@ -230,4 +245,3 @@ SEXP R_ecdsa_build(SEXP x, SEXP y){
   free(buf);
   return res;
 }
-

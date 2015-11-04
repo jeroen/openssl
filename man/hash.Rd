@@ -4,6 +4,7 @@
 \alias{hashing}
 \alias{md4}
 \alias{md5}
+\alias{print.hash}
 \alias{ripemd160}
 \alias{sha1}
 \alias{sha256}
@@ -21,6 +22,8 @@ md4(x, salt = "")
 md5(x, salt = "")
 
 ripemd160(x, salt = "")
+
+\method{print}{hash}(x, ...)
 }
 \arguments{
 \item{x}{a character, raw vector or connection object.}

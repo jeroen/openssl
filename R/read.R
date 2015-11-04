@@ -27,8 +27,8 @@
 #' }
 read_key <- function(file, password = readline, der = is.raw(file)){
   buf <- read_input(file)
-  if(isTRUE(der)){
-    key <- parse_der_key(buf)
+  key <- if(isTRUE(der)){
+    parse_der_key(buf)
   } else if(length(grepRaw("BEGIN OPENSSH PRIVATE KEY", buf, fixed = TRUE))){
     stop("OpenSSL does not support them fancy OPENSSH bcrypt/ed25519 keys")
   } else if(is_pubkey_str(buf)){
@@ -44,9 +44,9 @@ read_key <- function(file, password = readline, der = is.raw(file)){
       stop("Input is a certificate. Use read_cert() to read.")
     if(!grepl("PRIVATE", name))
       stop("Invalid input: ", name)
-    key <- parse_pem_key(buf, password)
+    parse_pem_key(buf, password)
   }
-  structure(key, class = "key")
+  structure(key, class = c("key", pubkey_type(derive_pubkey(key))))
 }
 
 #' @export
@@ -76,7 +76,9 @@ read_pubkey <- function(file, der = is.raw(file)){
       stop("Invalid PEM type: ", name)
     }
   }
-  structure(key, class = "pubkey")
+  if(is.null(attr(key, "class")))
+    class(key) <- c("pubkey", pubkey_type(key))
+  key
 }
 
 #' @export
@@ -174,4 +176,21 @@ split_pem <- function(file) {
   pattern <- "(-+BEGIN)(.+?)(-+END)(.+?)(-+)"
   m <- gregexpr(pattern, text)
   regmatches(text, m)[[1]]
+}
+
+#' @export
+#' @rdname read_key
+print.key <- function(x, ...){
+  pk <- derive_pubkey(x)
+  class(pk)[2] = class(x)[2]
+  fp <- fingerprint(pk)
+  cat(sprintf("[%s private key]", pubkey_type(pk)), paste(fp, collapse = ":"), "\n")
+}
+
+#' @export
+#' @rdname read_key
+print.pubkey <- function(x, ...){
+  fp <- fingerprint(x)
+  type <- class(x)[2]
+  cat(sprintf("[%s public key]", type), paste(fp, collapse = ":"), "\n")
 }

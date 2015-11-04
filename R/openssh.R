@@ -1,4 +1,8 @@
-rsa_fingerprint <- function(pubkey){
+fingerprint <- function(x, ...){
+  UseMethod("fingerprint")
+}
+
+fingerprint.rsa <- function(pubkey){
   input <- c(list(charToRaw("ssh-rsa")), rsa_decompose(pubkey))
   out <- lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
@@ -6,7 +10,7 @@ rsa_fingerprint <- function(pubkey){
   md5(unlist(unname(out)))
 }
 
-dsa_fingerprint <- function(pubkey){
+fingerprint.dsa <- function(pubkey){
   input <- c(list(charToRaw("ssh-dss")), dsa_decompose(pubkey))
   out <- lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
@@ -14,7 +18,7 @@ dsa_fingerprint <- function(pubkey){
   md5(unlist(unname(out)))
 }
 
-ecdsa_fingerprint <- function(pubkey){
+fingerprint.ecdsa <- function(pubkey){
   bn <- ecdsa_decompose(pubkey)
   keydata <- c(as.raw(4), bn[[1]], bn[[2]])
   input <- c(list(charToRaw("ecdsa-sha2-nistp256")), list(charToRaw("nistp256")), list(keydata))
@@ -24,7 +28,7 @@ ecdsa_fingerprint <- function(pubkey){
   md5(unlist(unname(out)))
 }
 
-ed25519_fingerprint <- function(pubkey){
+fingerprint.ed25519 <- function(pubkey){
   input <- c(list(charToRaw("ssh-ed25519")), list(pubkey))
   out <- lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)

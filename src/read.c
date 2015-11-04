@@ -186,7 +186,8 @@ SEXP R_pubkey_type(SEXP input){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
   EVP_PKEY *pkey = d2i_PUBKEY_bio(mem, NULL);
   BIO_free(mem);
-  bail(!!pkey);
+  if(!pkey)
+    return R_NilValue;
   char *keytype;
   switch(EVP_PKEY_type(pkey->type)){
   case EVP_PKEY_RSA:

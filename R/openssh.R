@@ -14,8 +14,8 @@ dsa_fingerprint <- function(pubkey){
   md5(unlist(unname(out)))
 }
 
-ec_fingerprint <- function(pubkey){
-  bn <- ec_decompose(pubkey)
+ecdsa_fingerprint <- function(pubkey){
+  bn <- ecdsa_decompose(pubkey)
   keydata <- c(as.raw(4), bn[[1]], bn[[2]])
   input <- c(list(charToRaw("ecdsa-sha2-nistp256")), list(charToRaw("nistp256")), list(keydata))
   out <- lapply(input, function(x){
@@ -47,7 +47,7 @@ dsa_decompose <- function(key){
   .Call(R_dsa_decompose, key)
 }
 
-#' @useDynLib openssl R_ec_decompose
-ec_decompose <- function(key){
-  .Call(R_ec_decompose, key)
+#' @useDynLib openssl R_ecdsa_decompose
+ecdsa_decompose <- function(key){
+  .Call(R_ecdsa_decompose, key)
 }

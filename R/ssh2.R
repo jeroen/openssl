@@ -1,6 +1,6 @@
-parse_ssh2 <- function(text){
+parse_ssh_pem <- function(buf){
   # extract the ssh2 pubkey text block
-  text <- paste(text, collapse = "\n")
+  text <- rawToChar(buf)
   regex <- "([-]+ BEGIN SSH2 PUBLIC KEY [-]+)(.*?)([-]+ END SSH2 PUBLIC KEY [-]+)"
   m <- regexpr(regex, text)
   if(m < 0)
@@ -13,55 +13,78 @@ parse_ssh2 <- function(text){
   text <- sub("Comment(.*?)\\n", "", text)
 
   # construct the actual key
-  rsa_build(text)
+  ssh_build(text)
 }
 
-parse_openssh <- function(text){
-  text <- paste(text, collapse = "")
-  text <- sub("^ssh-rsa\\s+", "", text)
-  text <- sub("\\s+.*$", "", text)
-  rsa_build(text)
+parse_openssh <- function(buf){
+  text <- rawToChar(buf)
+  if(!grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256)\\s+", text))
+    stop("Unsupported ssh key id format: ", substring(text, 15))
+
+  # Extract the base64 part
+  text <- sub("^\\S+\\s+", "", text)
+  text <- regmatches(text, regexpr("^\\S*", text))
+  ssh_build(text)
+}
+
+# parse ssh binary format
+ssh_build <- function(b64text){
+  con <- rawConnection(base64_decode(b64text), open = "rb")
+  on.exit(close(con))
+  out <- list();
+  while(length(size <- readBin(con, 1L, endian = "big"))){
+    if(size == 0) break
+    buf <- readBin(con, raw(), size)
+    stopifnot(length(buf) == size)
+    out <- c(out, list(buf))
+  }
+
+  # extract key format
+  header <- rawToChar(out[[1]])
+  switch(header,
+    "ssh-dss" = dsa_build(out),
+    "ssh-rsa" = rsa_build(out),
+    "ssh-ed25519" = ed25519_build(out),
+    "ecdsa-sha2-nistp256" = ecdsa_build(out),
+    stop("Unsupported keytype: ", header)
+  )
 }
 
 #' @useDynLib openssl R_rsa_build
-rsa_build <- function(b64_text){
-  # parse ssh binary format
-  keydata <- base64_decode(b64_text)
-  con <- rawConnection(keydata, open = "rb")
-  on.exit(close(con))
-
-  # read rsa header value
-  len <- readBin(con, 1L, endian = "big")
-  header <- rawToChar(readBin(con, raw(), len))
-  if (!identical(header, "ssh-rsa"))
-    stop("Unsupported SSH2 public key - expected 'ssh-rsa', found: ", header)
-
-  # read exponent value
-  len <- readBin(con, 1L, endian = "big")
-  expdata <- readBin(con, raw(), len)
-
-  # read modulo value
-  len <- readBin(con, 1L, endian = "big")
-  moddata <- readBin(con, raw(), len)
-
-  # build RSA key
-  bin <- .Call(R_rsa_build, expdata, moddata)
+rsa_build <- function(keydata){
+  exp <- keydata[[2]]
+  mod <- keydata[[3]]
+  bin <- .Call(R_rsa_build, exp, mod)
   structure(bin, class = c("rsa", "pubkey"))
 }
 
-# inverse of rsa_build
-#' @useDynLib openssl R_rsa_decompose
-rsa_decompose <- function(key){
-  stopifnot(is.raw(key))
-  out <- .Call(R_rsa_decompose, key)
-  structure(out, names = c("exp", "mod"))
+#' @useDynLib openssl R_dsa_build
+dsa_build <- function(keydata){
+  p <- structure(keydata[[2]], class = "bignum")
+  q <- structure(keydata[[3]], class = "bignum")
+  g <- structure(keydata[[4]], class = "bignum")
+  y <- structure(keydata[[5]], class = "bignum")
+  bin <- .Call(R_dsa_build, p, q, g, y)
+  structure(bin, class = c("dsa", "pubkey"))
 }
 
-#' @export
-rsa_fingerprint <- function(pubkey){
-  input <- c(list(charToRaw("ssh-rsa")), rsa_decompose(pubkey))
-  out <- lapply(input, function(x){
-    c(writeBin(length(x), raw(), endian = "big"), x)
-  })
-  md5(unlist(unname(out)))
+#' @useDynLib openssl R_ecdsa_build
+ecdsa_build <- function(keydata){
+  curve_name <- rawToChar(keydata[[2]])
+  if(curve_name != "nistp256")
+    warning("Unsupported curve: ", curve_name)
+  ec_point <- keydata[[3]]
+  if(ec_point[1] != 0x04)
+    stop("Invalid ecdsa format (not uncompressed?)")
+  ec_point <- ec_point[-1];
+  curve_size <- length(ec_point)/2
+  x <- structure(utils::head(ec_point, curve_size), class = "bignum")
+  y <- structure(utils::tail(ec_point, curve_size), class = "bignum")
+  bin <- .Call(R_ecdsa_build, x, y, curve_size);
+  structure(bin, class = c("ecdsa", "pubkey"))
+}
+
+ed25519_build <- function(keydata){
+  key <- keydata[[2]]
+  structure(key, class = c("ed25519", "pubkey"))
 }

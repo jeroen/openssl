@@ -52,15 +52,6 @@ SEXP R_parse_rsa_private(SEXP input, SEXP password){
   return R_write_rsa_private(rsa);
 }
 
-SEXP R_rsa_build(SEXP expdata, SEXP moddata){
-  RSA *rsa = RSA_new();
-  rsa->e = BN_new();
-  rsa->n = BN_new();
-  bail(!!BN_bin2bn(RAW(expdata), LENGTH(expdata), rsa->e));
-  bail(!!BN_bin2bn(RAW(moddata), LENGTH(moddata), rsa->n));
-  return R_write_pkcs8(rsa);
-}
-
 SEXP R_rsa_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);

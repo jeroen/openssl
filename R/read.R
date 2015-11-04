@@ -1,41 +1,85 @@
-#' Read keys and certificates
+#' Parsing keys and certificates
 #'
-#' Read from a file or buffer in DER or PEM format.
-#'
-#'
+#' The \code{read_key} function (private keys) and \code{read_pubkey} (public keys)
+#' support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{--BEGIN}
+#' and \code{---END} header), and automatically convert where necessary. The functions assume
+#' a single key per file; prepare with \code{split_pem} for parsing bundles.
 #'
 #' @export
+#' @param file Either a path to a file, a connection, or literal data (a string for
+#' pem/ssh format, or a raw vector in der format)
+#' @param password A string with passphrase or callback function to read protected keys
+#' @param der set to \code{TRUE} if \code{file} is in binary DER format
+#' @return An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
+#' in binary DER format and can be decomposed using \code{as.list}.
 #' @rdname read_key
-read_key <- function(file, password = readline, format = c("pem", "der")){
+read_key <- function(file, password = readline, der = is.raw(file)){
   buf <- read_input(file)
-  format <- match.arg(format)
-  key <- switch(format,
-    "pem" = parse_pem_key(buf, password),
-    "der" = parse_der_key(buf))
+  if(isTRUE(der)){
+    key <- parse_der_key(buf)
+  } else if(length(grepRaw("BEGIN OPENSSH PRIVATE KEY", buf, fixed = TRUE))){
+    stop("OpenSSL does not support them fancy OPENSSH bcrypt/ed25519 keys")
+  } else if(is_pubkey_str(buf)){
+    stop("Input is a public key. Use read_pubkey() to read")
+  } else {
+    info <- parse_pem(buf)
+    name <- info$name
+    if(!length(name) || !nchar(name))
+      stop("Failed to parse private key: unknown format")
+    if(grepl("PUBLIC", name))
+      stop("Input is a public key. Use read_pubkey() to read")
+    if(grepl("CERTIFICATE", name))
+      stop("Input is a certificate. Use read_cert() to read.")
+    if(!grepl("PRIVATE", name))
+      stop("Invalid input: ", name)
+    key <- parse_pem_key(buf, password)
+  }
   structure(key, class = "key")
 }
 
 #' @export
 #' @rdname read_key
-read_pubkey <- function(file, password = readline, format = c("pem", "der", "ssh")){
+read_pubkey <- function(file, der = is.raw(file)){
   buf <- read_input(file)
-  format <- match.arg(format)
-  key <- switch(format,
-    "pem" = parse_pem_pubkey(buf, password),
-    "der" = parse_der_pubkey(buf),
-    "ssh" = parse_ssh_pubkey(buf))
+  key <- if(isTRUE(der)){
+    parse_der_pubkey(buf)
+  } else if(length(grepRaw("BEGIN SSH2 PUBLIC KEY", buf, fixed = TRUE))){
+    parse_ssh_pem(buf)
+  } else if(is_pubkey_str(buf)){
+    parse_openssh(buf)
+  } else {
+    info <- parse_pem(buf)
+    name <- info$name
+    if(!length(name) || !nchar(name)){
+      stop("Failed to parse public key: unknown format")
+    } else if(grepl("RSA PUBLIC KEY", name)){
+      parse_legacy_pubkey(buf)
+    } else if(grepl("PUBLIC", name)){
+      parse_pem_pubkey(buf)
+    } else if(grepl("PRIVATE", name)){
+      privkey <- parse_pem_key(buf)
+      as.list(privkey)$pubkey
+      stop("Privkey placeholder")
+    } else if(grepl("CERTIFICATE", name)){
+      # Extract pubkey from cert
+      stop("Cert placeholder")
+    } else {
+      stop("Invalid PEM type: ", name)
+    }
+  }
   structure(key, class = "pubkey")
 }
 
 #' @export
 #' @rdname read_key
-read_cert <- function(file, format = c("pem", "der")){
+read_cert <- function(file, der = is.raw(file)){
   buf <- read_input(file)
-  format <- match.arg(format)
-  key <- switch(format,
-    "pem" = parse_pem_cert(buf, password),
-    "der" = parse_der_cert(buf))
-  structure(key, class = "cert")
+  cert <- if(der){
+    parse_der_cert(buf)
+  } else {
+    parse_pem_cert(buf)
+  }
+  structure(cert, class = "cert")
 }
 
 read_input <- function(x){
@@ -43,7 +87,7 @@ read_input <- function(x){
     x
   } else if(inherits(x, "connection")){
     readBin(x, raw(), file.info(x)$size)
-  } else if(is.character(x) && length(x) == 1 && !grepl("\n", x)){
+  } else if(is.character(x) && length(x) == 1 && !grepl("\n", x) && !is_pubkey_str(x)){
     stopifnot(file.exists(x))
     readBin(x, raw(), file.info(x)$size)
   } else if(is.character(x)) {
@@ -53,35 +97,12 @@ read_input <- function(x){
   }
 }
 
-#' @useDynLib openssl R_parse_pem_name
-read_pem <- function(file){
-  buf <- read_input(file)
-  .Call(R_parse_pem_name, buf)
-}
-
-
-split_pem <- function(text) {
-  pattern <- "(-+BEGIN)(.+?)(-+END)(.+?)(-+)"
-  m <- gregexpr(pattern, text)
-  regmatches(text, m)[[1]]
-}
-
-guess_pem_type <- function(text){
-  if(grepl("-BEGIN (RSA |ENCRYPTED )?PRIVATE KEY-", text)){
-    "private"
-  } else if(grepl("-BEGIN RSA PUBLIC KEY-", text, fixed = TRUE)){
-    "pkcs1"
-  } else if(grepl("-BEGIN PUBLIC KEY-", text, fixed = TRUE)){
-    "pkcs8"
-  } else if(grepl("-- BEGIN SSH2 PUBLIC KEY --", text, fixed = TRUE)){
-    "ssh2"
-  } else if(grepl("-BEGIN CERTIFICATE-", text, fixed = TRUE)){
-    "cert"
-  } else if(grepl("^ssh-rsa ", text[1])) {
-    "openssh"
-  } else {
-    NULL
-  }
+#' @useDynLib openssl R_parse_pem
+parse_pem <- function(input){
+  stopifnot(is.raw(input))
+  out <- .Call(R_parse_pem, input)
+  if(is.null(out)) return(out)
+  structure(out, names = c("name", "header", "data"))
 }
 
 #' @useDynLib openssl R_parse_pem_key
@@ -94,27 +115,19 @@ parse_der_key <- function(buf){
   .Call(R_parse_der_key, buf)
 }
 
-#' @useDynLib openssl R_parse_pem_pubkey R_parse_pem_pkcs1
-parse_pem_pubkey <- function(buf, password){
-  type <- guess_pem_type(rawToChar(buf))
-  switch(type,
-    "pkcs1" = .Call(R_parse_pem_pkcs1, buf),
-    "ssh2" = parse_ssh_pem(buf),
-    .Call(R_parse_pem_pubkey, buf)
-  )
+#' @useDynLib openssl R_parse_pem_pubkey
+parse_pem_pubkey <- function(buf){
+  .Call(R_parse_pem_pubkey, buf)
+}
+
+#' @useDynLib openssl R_parse_pem_pkcs1
+parse_legacy_pubkey <- function(buf){
+  .Call(R_parse_pem_pkcs1, buf)
 }
 
 #' @useDynLib openssl R_parse_der_pubkey
 parse_der_pubkey <- function(buf){
   .Call(R_parse_der_pubkey, buf)
-}
-
-parse_ssh_pubkey <- function(buf){
-
-}
-
-parse_ssh_pem <- function(buf){
-
 }
 
 #' @useDynLib openssl R_parse_pem_cert
@@ -125,4 +138,21 @@ parse_pem_cert <- function(buf, password){
 #' @useDynLib openssl R_parse_der_cert
 parse_der_cert <- function(buf){
   .Call(R_parse_der_cert, buf)
+}
+
+# Detect openssh2 public key strings
+is_pubkey_str <- function(str){
+  if(is.character(str))
+    str <- charToRaw(paste(str, collapse = "\n"))
+  as.logical(length(grepRaw("^(ssh|ecdsa)-[a-z0-9-]+\\s+", str, ignore.case = TRUE)))
+}
+
+# Split a pem file with multiple keys/certs
+#' @export
+#' @rdname read_key
+split_pem <- function(file) {
+  text <- rawToChar(read_input(file))
+  pattern <- "(-+BEGIN)(.+?)(-+END)(.+?)(-+)"
+  m <- gregexpr(pattern, text)
+  regmatches(text, m)[[1]]
 }

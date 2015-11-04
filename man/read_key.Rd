@@ -4,15 +4,33 @@
 \alias{read_cert}
 \alias{read_key}
 \alias{read_pubkey}
-\title{Read keys and certificates}
+\alias{split_pem}
+\title{Parsing keys and certificates}
 \usage{
-read_key(file, password = readline, format = c("pem", "der"))
+read_key(file, password = readline, der = is.raw(file))
 
-read_pubkey(file, password = readline, format = c("pem", "der", "ssh"))
+read_pubkey(file, der = is.raw(file))
 
-read_cert(file, format = c("pem", "der"))
+read_cert(file, der = is.raw(file))
+
+split_pem(file)
+}
+\arguments{
+\item{file}{Either a path to a file, a connection, or literal data (a string for
+pem/ssh format, or a raw vector in der format)}
+
+\item{password}{A string with passphrase or callback function to read protected keys}
+
+\item{der}{set to \code{TRUE} if \code{file} is in binary DER format}
+}
+\value{
+An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
+in binary DER format and can be decomposed using \code{as.list}.
 }
 \description{
-Read from a file or buffer in DER or PEM format.
+The \code{read_key} function (private keys) and \code{read_pubkey} (public keys)
+support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{--BEGIN}
+and \code{---END} header), and automatically convert where necessary. The functions assume
+a single key per file; prepare with \code{split_pem} for parsing bundles.
 }
 

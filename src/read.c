@@ -165,6 +165,21 @@ SEXP R_parse_der_cert(SEXP input){
   return res;
 }
 
+/* Convert private to public key */
+SEXP R_derive_pubkey(SEXP input){
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
+  BIO_free(mem);
+  bail(!!pkey);
+  unsigned char *buf = NULL;
+  int len = i2d_PUBKEY(pkey, &buf);
+  bail(len);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+}
+
 /* Manuall compose public keys from values */
 SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
@@ -204,12 +219,15 @@ SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
 
 SEXP R_ecdsa_build(SEXP x, SEXP y){
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+  EC_KEY_set_asn1_flag(pubkey, OPENSSL_EC_NAMED_CURVE);
   if(!EC_KEY_set_public_key_affine_coordinates(pubkey, BN_bin2bn(RAW(x), LENGTH(x), NULL), BN_bin2bn(RAW(y), LENGTH(y), NULL)))
     error("Failed to construct EC key. Perhaps invalid point or curve.");
-  int len = i2d_EC_PUBKEY(pubkey, NULL);
+  unsigned char *buf = NULL;
+  int len = i2d_EC_PUBKEY(pubkey, &buf);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
-  unsigned char *ptr = RAW(res);
-  bail(!!i2d_EC_PUBKEY(pubkey, &(ptr)));
+  memcpy(RAW(res), buf, len);
+  free(buf);
   return res;
 }
+

@@ -69,9 +69,7 @@ read_pubkey <- function(file, der = is.raw(file)){
     } else if(grepl("PUBLIC", name)){
       parse_pem_pubkey(buf)
     } else if(grepl("PRIVATE", name)){
-      privkey <- parse_pem_key(buf)
-      as.list(privkey)$pubkey
-      stop("Privkey placeholder")
+      derive_pubkey(parse_pem_key(buf))
     } else if(grepl("CERTIFICATE", name)){
       # Extract pubkey from cert
       stop("Cert placeholder")
@@ -118,7 +116,7 @@ parse_pem <- function(input){
 }
 
 #' @useDynLib openssl R_parse_pem_key
-parse_pem_key <- function(buf, password){
+parse_pem_key <- function(buf, password = readline){
   .Call(R_parse_pem_key, buf, password)
 }
 
@@ -150,6 +148,12 @@ parse_pem_cert <- function(buf, password){
 #' @useDynLib openssl R_parse_der_cert
 parse_der_cert <- function(buf){
   .Call(R_parse_der_cert, buf)
+}
+
+#' @useDynLib openssl R_derive_pubkey
+derive_pubkey <- function(key){
+  stopifnot(inherits(key, "key"))
+  .Call(R_derive_pubkey, key)
 }
 
 # Detect openssh2 public key strings

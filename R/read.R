@@ -153,7 +153,8 @@ parse_der_cert <- function(buf){
 
 #' @useDynLib openssl R_derive_pubkey
 derive_pubkey <- function(key){
-  .Call(R_derive_pubkey, key)
+  pk <- .Call(R_derive_pubkey, key)
+  structure(pk, class = c("pubkey", class(key)[2]))
 }
 
 #' @useDynLib openssl R_cert_pubkey
@@ -182,9 +183,8 @@ split_pem <- function(file) {
 #' @rdname read_key
 print.key <- function(x, ...){
   pk <- derive_pubkey(x)
-  class(pk)[2] = class(x)[2]
   fp <- fingerprint(pk)
-  cat(sprintf("[%s private key]", pubkey_type(pk)), paste(fp, collapse = ":"), "\n")
+  cat(sprintf("[%s private key] %s\n", pubkey_type(pk), paste(fp, collapse = ":")))
 }
 
 #' @export
@@ -192,5 +192,5 @@ print.key <- function(x, ...){
 print.pubkey <- function(x, ...){
   fp <- fingerprint(x)
   type <- class(x)[2]
-  cat(sprintf("[%s public key]", type), paste(fp, collapse = ":"), "\n")
+  cat(sprintf("[%s public key] %s\n", type, paste(fp, collapse = ":")))
 }

@@ -16,7 +16,7 @@
 #' @export
 #' @param file Either a path to a file, a connection, or literal data (a string for
 #' pem/ssh format, or a raw vector in der format)
-#' @param password A string with passphrase or callback function to read protected keys
+#' @param password A string or callback function to read protected keys
 #' @param der set to \code{TRUE} if \code{file} is in binary DER format
 #' @return An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
 #' in binary DER format and can be decomposed using \code{as.list}.

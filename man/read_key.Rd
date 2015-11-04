@@ -19,7 +19,7 @@ split_pem(file)
 \item{file}{Either a path to a file, a connection, or literal data (a string for
 pem/ssh format, or a raw vector in der format)}
 
-\item{password}{A string with passphrase or callback function to read protected keys}
+\item{password}{A string or callback function to read protected keys}
 
 \item{der}{set to \code{TRUE} if \code{file} is in binary DER format}
 }

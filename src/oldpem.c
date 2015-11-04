@@ -52,22 +52,6 @@ SEXP R_parse_rsa_private(SEXP input, SEXP password){
   return R_write_rsa_private(rsa);
 }
 
-SEXP R_rsa_decompose(SEXP bin){
-  RSA *rsa = RSA_new();
-  const unsigned char *ptr = RAW(bin);
-  bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin)));
-  SEXP res = PROTECT(allocVector(VECSXP, 2));
-  SEXP exp = PROTECT(allocVector(RAWSXP, BN_num_bytes(rsa->e)));
-  SEXP mod = PROTECT(allocVector(RAWSXP, BN_num_bytes(rsa->n) + 1));
-  RAW(mod)[0] = '\0';
-  bail(BN_bn2bin(rsa->e, RAW(exp)));
-  bail(BN_bn2bin(rsa->n, RAW(mod) + 1));
-  SET_VECTOR_ELT(res, 0, exp);
-  SET_VECTOR_ELT(res, 1, mod);
-  UNPROTECT(3);
-  return res;
-}
-
 SEXP R_cert2pub(SEXP bin){
   X509 *cert = X509_new();
   const unsigned char *ptr = RAW(bin);

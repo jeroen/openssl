@@ -198,7 +198,7 @@ SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
-// See https://tools.ietf.org/html/rfc4253: ... the "ssh-des" key format has ...
+// See https://tools.ietf.org/html/rfc4253: ... the "ssh-dss" key format has ...
 SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA *dsa = DSA_new();
   dsa->p = BN_new();

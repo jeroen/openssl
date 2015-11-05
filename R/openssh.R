@@ -1,36 +1,35 @@
 fingerprint <- function(x, hashfun = md5, ...){
-  hashdata <- decompose(x)
+  hashdata <- fpdata(x)
   hashfun(unlist(unname(hashdata)))
 }
 
-decompose <- function(x, ...){
-  UseMethod("decompose")
+fpdata <- function(x, ...){
+  UseMethod("fpdata")
 }
 
-decompose.rsa <- function(pubkey){
-  input <- c(list(charToRaw("ssh-rsa")), rsa_decompose(pubkey))
+fpdata.rsa <- function(pubkey){
+  input <- c(list(charToRaw("ssh-rsa")), decompose(pubkey))
   lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
   })
 }
 
-decompose.dsa <- function(pubkey){
-  input <- c(list(charToRaw("ssh-dss")), dsa_decompose(pubkey))
+fpdata.dsa <- function(pubkey){
+  input <- c(list(charToRaw("ssh-dss")), decompose(pubkey))
   lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
   })
 }
 
-decompose.ecdsa <- function(pubkey){
-  bindata <- ecdsa_decompose(pubkey)
+fpdata.ecdsa <- function(pubkey){
+  bindata <- decompose(pubkey)
   nist_name <- bindata[[1]]
-  key_bits <- switch(nist_name,
-    "P-256" = 256,
-    "P-384" = 384,
-    "P-521" = 521,
+  ssh_name <- switch(nist_name,
+    "P-256" = "nistp256",
+    "P-384" = "nistp384",
+    "P-521" = "nistp521",
     stop("Unknown curve type: ", nist_name)
   )
-  ssh_name <- paste0("nistp", key_bits)
   keydata <- c(as.raw(4), bindata[[2]], bindata[[3]])
   input <- c(list(charToRaw(paste0("ecdsa-sha2-", ssh_name))), list(charToRaw(ssh_name)), list(keydata))
   lapply(input, function(x){
@@ -38,7 +37,7 @@ decompose.ecdsa <- function(pubkey){
   })
 }
 
-decompose.ed25519 <- function(pubkey){
+fpdata.ed25519 <- function(pubkey){
   input <- c(list(charToRaw("ssh-ed25519")), list(pubkey))
   lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
@@ -50,17 +49,21 @@ pubkey_type <- function(key){
   .Call(R_pubkey_type, key)
 }
 
+decompose <- function(x, ...){
+  UseMethod("decompose")
+}
+
 #' @useDynLib openssl R_rsa_decompose
-rsa_decompose <- function(key){
+decompose.rsa <- function(key){
   .Call(R_rsa_decompose, key)
 }
 
 #' @useDynLib openssl R_dsa_decompose
-dsa_decompose <- function(key){
+decompose.dsa <- function(key){
   .Call(R_dsa_decompose, key)
 }
 
 #' @useDynLib openssl R_ecdsa_decompose
-ecdsa_decompose <- function(key){
+decompose.ecdsa <- function(key){
   .Call(R_ecdsa_decompose, key)
 }

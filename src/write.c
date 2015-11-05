@@ -1,11 +1,7 @@
 #include <Rinternals.h>
-#include <string.h>
 #include "apple.h"
 #include "utils.h"
 #include <openssl/pem.h>
-#include <openssl/bn.h>
-
-int password_cb(char *buf, int max_size, int rwflag, void *ctx);
 
 SEXP R_pem_write_key(SEXP input, SEXP password){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));

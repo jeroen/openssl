@@ -5,6 +5,20 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 
+/* BN_num_bytes() drops leading zeros which can alter openssh fingerprint */
+SEXP bignum_to_r(BIGNUM *bn){
+  int bits = BN_num_bits(bn);
+  int bytes = (bits/8) + 1;
+  int numbytes = BN_num_bytes(bn);
+  int diff = bytes - numbytes;
+  SEXP res = allocVector(RAWSXP, bytes);
+  unsigned char *ptr = RAW(res);
+  memset(ptr, 0, diff);
+  ptr += diff;
+  BN_bn2bin(bn, ptr);
+  return res;
+}
+
 /* Manuall compose public keys from bignum values */
 SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
@@ -26,14 +40,9 @@ SEXP R_rsa_decompose(SEXP bin){
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin)));
   SEXP res = PROTECT(allocVector(VECSXP, 2));
-  SEXP exp = PROTECT(allocVector(RAWSXP, BN_num_bytes(rsa->e)));
-  SEXP mod = PROTECT(allocVector(RAWSXP, BN_num_bytes(rsa->n) + 1));
-  RAW(mod)[0] = '\0';
-  bail(BN_bn2bin(rsa->e, RAW(exp)));
-  bail(BN_bn2bin(rsa->n, RAW(mod) + 1));
-  SET_VECTOR_ELT(res, 0, exp);
-  SET_VECTOR_ELT(res, 1, mod);
-  UNPROTECT(3);
+  SET_VECTOR_ELT(res, 0, bignum_to_r(rsa->e));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(rsa->n));
+  UNPROTECT(1);
   return res;
 }
 
@@ -62,17 +71,10 @@ SEXP R_dsa_decompose(SEXP bin){
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_DSA_PUBKEY(&dsa, &ptr, LENGTH(bin)));
   SEXP res = PROTECT(allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, BN_num_bytes(dsa->p) + 1));
-  SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, BN_num_bytes(dsa->q) + 1));
-  SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, BN_num_bytes(dsa->g) + 1));
-  SET_VECTOR_ELT(res, 3, allocVector(RAWSXP, BN_num_bytes(dsa->pub_key)));
-  RAW(VECTOR_ELT(res, 0))[0] = '\0';
-  RAW(VECTOR_ELT(res, 1))[0] = '\0';
-  RAW(VECTOR_ELT(res, 2))[0] = '\0';
-  bail(BN_bn2bin(dsa->p, RAW(VECTOR_ELT(res, 0)) + 1));
-  bail(BN_bn2bin(dsa->q, RAW(VECTOR_ELT(res, 1)) + 1));
-  bail(BN_bn2bin(dsa->g, RAW(VECTOR_ELT(res, 2)) + 1));
-  bail(BN_bn2bin(dsa->pub_key, RAW(VECTOR_ELT(res, 3))));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(dsa->p));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(dsa->q));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(dsa->g));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(dsa->pub_key));
   UNPROTECT(1);
   return res;
 }

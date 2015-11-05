@@ -129,6 +129,7 @@ SEXP R_ecdsa_decompose(SEXP input){
   BIGNUM *y = BN_new();
   BN_CTX *ctx = BN_CTX_new();
   bail(EC_POINT_get_affine_coordinates_GFp(group, pubkey, x, y, ctx));
+  BN_CTX_free(ctx);
   SEXP res = PROTECT(allocVector(VECSXP, 3));
   SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
   SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, BN_num_bytes(x)));

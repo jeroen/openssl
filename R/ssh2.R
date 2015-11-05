@@ -19,7 +19,7 @@ parse_ssh_pem <- function(buf){
 parse_openssh <- function(buf){
   text <- rawToChar(buf)
   if(!grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+", text))
-    stop("Unsupported ssh key id format: ", substring(text, 15))
+    stop("Unsupported ssh key id format: ", substring(text, 1, 15))
 
   # Extract the base64 part
   text <- sub("^\\S+\\s+", "", text)

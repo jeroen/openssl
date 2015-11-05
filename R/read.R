@@ -69,7 +69,7 @@ read_pubkey <- function(file, der = is.raw(file)){
     } else if(grepl("PUBLIC", name)){
       parse_pem_pubkey(buf)
     } else if(grepl("PRIVATE", name)){
-      derive_pubkey(parse_pem_key(buf))
+      derive_pubkey(read_key(buf, der = FALSE))
     } else if(grepl("CERTIFICATE", name)){
       cert_pubkey(parse_pem_cert(buf))
     } else {

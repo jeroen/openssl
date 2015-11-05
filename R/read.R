@@ -180,7 +180,6 @@ split_pem <- function(file) {
 }
 
 #' @export
-#' @rdname read_key
 print.key <- function(x, ...){
   pk <- derive_pubkey(x)
   fp <- fingerprint(pk)
@@ -188,7 +187,6 @@ print.key <- function(x, ...){
 }
 
 #' @export
-#' @rdname read_key
 print.pubkey <- function(x, ...){
   fp <- fingerprint(x)
   type <- class(x)[2]

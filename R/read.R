@@ -183,12 +183,21 @@ split_pem <- function(file) {
 print.key <- function(x, ...){
   pk <- derive_pubkey(x)
   fp <- fingerprint(pk)
-  cat(sprintf("[%s private key] %s\n", pubkey_type(pk), paste(fp, collapse = ":")))
+  cat(sprintf("[%s private key]\n", pubkey_type(pk)))
+  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
 }
 
 #' @export
 print.pubkey <- function(x, ...){
   fp <- fingerprint(x)
   type <- class(x)[2]
-  cat(sprintf("[%s public key] %s\n", type, paste(fp, collapse = ":")))
+  cat(sprintf("[%s public key]\n", type))
+  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
+}
+
+#' @export
+print.cert <- function(x, ...){
+  cat("[x509 certificate]\n")
+  cat(sprintf("md5: %s\n", paste(md5(x), collapse = ":")))
+  cat(sprintf("sha1: %s\n", paste(sha1(x), collapse = ":")))
 }

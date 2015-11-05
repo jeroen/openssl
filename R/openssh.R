@@ -27,9 +27,8 @@ fingerprint.ecdsa <- function(pubkey){
     "P-521" = 521,
     stop("Unknown curve type: ", nist_name)
   )
-  key_size <- ceiling(key_bits/8)
   ssh_name <- paste0("nistp", key_bits)
-  keydata <- c(as.raw(4), pad(bindata[[2]], key_size), pad(bindata[[3]], key_size))
+  keydata <- c(as.raw(4), bindata[[2]], bindata[[3]])
   input <- c(list(charToRaw(paste0("ecdsa-sha2-", ssh_name))), list(charToRaw(ssh_name)), list(keydata))
   out <- lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
@@ -43,12 +42,6 @@ fingerprint.ed25519 <- function(pubkey){
     c(writeBin(length(x), raw(), endian = "big"), x)
   })
   md5(unlist(unname(out)))
-}
-
-# SSH integer blogs need fixed size but openssl drops leading zero's
-pad <- function(x, size){
-  dif <- size - length(x)
-  c(raw(dif), x)
 }
 
 #' @useDynLib openssl R_pubkey_type

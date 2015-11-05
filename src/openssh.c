@@ -6,9 +6,10 @@
 #include <openssl/bn.h>
 
 /* BN_num_bytes() drops leading zeros which can alter openssh fingerprint */
-SEXP bignum_to_r(BIGNUM *bn){
+SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
   int bits = BN_num_bits(bn);
-  int bytes = (bits/8) + 1;
+  if(bytes == 0)
+    bytes = (bits/8) + 1;
   int numbytes = BN_num_bytes(bn);
   int diff = bytes - numbytes;
   SEXP res = allocVector(RAWSXP, bytes);
@@ -17,6 +18,10 @@ SEXP bignum_to_r(BIGNUM *bn){
   ptr += diff;
   BN_bn2bin(bn, ptr);
   return res;
+}
+
+SEXP bignum_to_r(BIGNUM *bn){
+  return bignum_to_r_size(bn, 0);
 }
 
 /* Manuall compose public keys from bignum values */
@@ -103,6 +108,18 @@ const char *my_nid2nist(int nid){
   return "";
 }
 
+int nid_keysize(int nid){
+  switch(nid){
+  case NID_X9_62_prime256v1:
+    return 32;
+  case NID_secp384r1:
+    return 48;
+  case NID_secp521r1:
+    return 66;
+  }
+  return 0;
+}
+
 SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
   int nid = my_nist2nid(CHAR(STRING_ELT(nist, 0)));
   bail(nid);
@@ -127,6 +144,7 @@ SEXP R_ecdsa_decompose(SEXP input){
   const EC_POINT *pubkey = EC_KEY_get0_public_key(ec);
   const EC_GROUP *group = EC_KEY_get0_group(ec);
   int nid = EC_GROUP_get_curve_name(group);
+  int keysize = nid_keysize(nid);
   BIGNUM *x = BN_new();
   BIGNUM *y = BN_new();
   BN_CTX *ctx = BN_CTX_new();
@@ -134,10 +152,8 @@ SEXP R_ecdsa_decompose(SEXP input){
   BN_CTX_free(ctx);
   SEXP res = PROTECT(allocVector(VECSXP, 3));
   SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
-  SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, BN_num_bytes(x)));
-  SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, BN_num_bytes(y)));
-  bail(BN_bn2bin(x, RAW(VECTOR_ELT(res, 1))));
-  bail(BN_bn2bin(y, RAW(VECTOR_ELT(res, 2))));
+  SET_VECTOR_ELT(res, 1, bignum_to_r_size(x, keysize));
+  SET_VECTOR_ELT(res, 2, bignum_to_r_size(y, keysize));
   BN_free(x);
   BN_free(y);
   UNPROTECT(1);

@@ -19,9 +19,16 @@ fingerprint.dsa <- function(pubkey){
 }
 
 fingerprint.ecdsa <- function(pubkey){
-  bn <- ecdsa_decompose(pubkey)
-  keydata <- c(as.raw(4), bn[[1]], bn[[2]])
-  input <- c(list(charToRaw("ecdsa-sha2-nistp256")), list(charToRaw("nistp256")), list(keydata))
+  bindata <- ecdsa_decompose(pubkey)
+  nist_name <- bindata[[1]]
+  ssh_name <- switch(nist_name,
+    "P-256" = "nistp256",
+    "P-384" = "nistp384",
+    "P-521" = "nistp521",
+    stop("Unknown curve type: ", nist_name)
+  )
+  keydata <- c(as.raw(4), bindata[[2]], bindata[[3]])
+  input <- c(list(charToRaw(paste0("ecdsa-sha2-", ssh_name))), list(charToRaw(ssh_name)), list(keydata))
   out <- lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
   })

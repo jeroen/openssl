@@ -77,8 +77,32 @@ SEXP R_dsa_decompose(SEXP bin){
   return res;
 }
 
+// EC_curve_nist2nid only available in recent openssl versions
+int my_nist2nid(const char *name){
+  if (!strcmp(name, "P-256")){
+    return NID_X9_62_prime256v1;
+  } else if (!strcmp(name, "P-384")){
+    return NID_secp384r1;
+  } else if (!strcmp(name, "P-521")){
+    return NID_secp521r1;
+  }
+  return 0;
+}
+
+const char *my_nid2nist(int nid){
+  switch(nid){
+    case NID_X9_62_prime256v1:
+      return "P-256";
+    case NID_secp384r1:
+      return "P-384";
+    case NID_secp521r1:
+      return "P-521";
+  }
+  return "";
+}
+
 SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
-  int nid = EC_curve_nist2nid(CHAR(STRING_ELT(nist, 0)));
+  int nid = my_nist2nid(CHAR(STRING_ELT(nist, 0)));
   bail(nid);
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
   EC_KEY_set_asn1_flag(pubkey, OPENSSL_EC_NAMED_CURVE);
@@ -93,21 +117,24 @@ SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
   return res;
 }
 
-SEXP R_ecdsa_decompose(SEXP bin){
-  EC_KEY *ec = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-  const unsigned char *ptr = RAW(bin);
-  bail(!!d2i_EC_PUBKEY(&ec, &ptr, LENGTH(bin)));
+SEXP R_ecdsa_decompose(SEXP input){
+  const unsigned char *ptr = RAW(input);
+  EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(input));
+  bail(!!pkey);
+  EC_KEY *ec = EVP_PKEY_get1_EC_KEY(pkey);
   const EC_POINT *pubkey = EC_KEY_get0_public_key(ec);
   const EC_GROUP *group = EC_KEY_get0_group(ec);
+  int nid = EC_GROUP_get_curve_name(group);
   BIGNUM *x = BN_new();
   BIGNUM *y = BN_new();
   BN_CTX *ctx = BN_CTX_new();
   bail(EC_POINT_get_affine_coordinates_GFp(group, pubkey, x, y, ctx));
-  SEXP res = PROTECT(allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, BN_num_bytes(x)));
-  SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, BN_num_bytes(y)));
-  bail(BN_bn2bin(x, RAW(VECTOR_ELT(res, 0))));
-  bail(BN_bn2bin(y, RAW(VECTOR_ELT(res, 1))));
+  SEXP res = PROTECT(allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
+  SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, BN_num_bytes(x)));
+  SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, BN_num_bytes(y)));
+  bail(BN_bn2bin(x, RAW(VECTOR_ELT(res, 1))));
+  bail(BN_bn2bin(y, RAW(VECTOR_ELT(res, 2))));
   BN_free(x);
   BN_free(y);
   UNPROTECT(1);

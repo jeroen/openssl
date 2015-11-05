@@ -18,7 +18,7 @@ parse_ssh_pem <- function(buf){
 
 parse_openssh <- function(buf){
   text <- rawToChar(buf)
-  if(!grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp256)\\s+", text))
+  if(!grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+", text))
     stop("Unsupported ssh key id format: ", substring(text, 15))
 
   # Extract the base64 part
@@ -46,6 +46,8 @@ ssh_build <- function(b64text){
     "ssh-rsa" = rsa_build(out),
     "ssh-ed25519" = ed25519_build(out),
     "ecdsa-sha2-nistp256" = ecdsa_build(out),
+    "ecdsa-sha2-nistp384" = ecdsa_build(out),
+    "ecdsa-sha2-nistp521" = ecdsa_build(out),
     stop("Unsupported keytype: ", header)
   )
 }

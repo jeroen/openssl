@@ -69,8 +69,12 @@ dsa_build <- function(keydata){
 #' @useDynLib openssl R_ecdsa_build
 ecdsa_build <- function(keydata){
   curve_name <- rawToChar(keydata[[2]])
-  if(curve_name != "nistp256")
-    warning("Unsupported curve: ", curve_name)
+  nist_name <- switch(curve_name,
+    "nistp256" = "P-256",
+    "nistp384" = "P-384",
+    "nistp521" = "P-521",
+    stop("Unsupported curve type: ", curve_name)
+  );
   ec_point <- keydata[[3]]
   if(ec_point[1] != 0x04)
     stop("Invalid ecdsa format (not uncompressed?)")
@@ -78,7 +82,7 @@ ecdsa_build <- function(keydata){
   curve_size <- length(ec_point)/2
   x <- utils::head(ec_point, curve_size)
   y <- utils::tail(ec_point, curve_size)
-  .Call(R_ecdsa_build, x, y, curve_size);
+  .Call(R_ecdsa_build, x, y, nist_name);
 }
 
 ed25519_build <- function(keydata){

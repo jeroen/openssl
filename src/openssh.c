@@ -77,8 +77,10 @@ SEXP R_dsa_decompose(SEXP bin){
   return res;
 }
 
-SEXP R_ecdsa_build(SEXP x, SEXP y){
-  EC_KEY *pubkey = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
+  int nid = EC_curve_nist2nid(CHAR(STRING_ELT(nist, 0)));
+  bail(nid);
+  EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
   EC_KEY_set_asn1_flag(pubkey, OPENSSL_EC_NAMED_CURVE);
   if(!EC_KEY_set_public_key_affine_coordinates(pubkey, BN_bin2bn(RAW(x), LENGTH(x), NULL), BN_bin2bn(RAW(y), LENGTH(y), NULL)))
     error("Failed to construct EC key. Perhaps invalid point or curve.");

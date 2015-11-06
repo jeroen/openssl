@@ -24,16 +24,21 @@ SEXP bignum_to_r(BIGNUM *bn){
   return bignum_to_r_size(bn, 0);
 }
 
+BIGNUM* new_bignum_from_r(SEXP input){
+  BIGNUM *bn = BN_bin2bn(RAW(input), LENGTH(input), NULL);
+  bail(!!bn);
+  return bn;
+}
+
 /* Manuall compose public keys from bignum values */
 SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
-  rsa->e = BN_new();
-  rsa->n = BN_new();
-  bail(!!BN_bin2bn(RAW(expdata), LENGTH(expdata), rsa->e));
-  bail(!!BN_bin2bn(RAW(moddata), LENGTH(moddata), rsa->n));
+  rsa->e = new_bignum_from_r(expdata);
+  rsa->n = new_bignum_from_r(moddata);
   unsigned char *buf = NULL;
   int len = i2d_RSA_PUBKEY(rsa, &buf);
   bail(len);
+  RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);
@@ -54,17 +59,14 @@ SEXP R_rsa_decompose(SEXP bin){
 // See https://tools.ietf.org/html/rfc4253: ... the "ssh-dss" key format has ...
 SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA *dsa = DSA_new();
-  dsa->p = BN_new();
-  dsa->q = BN_new();
-  dsa->g = BN_new();
-  dsa->pub_key = BN_new();
-  bail(!!BN_bin2bn(RAW(p), LENGTH(p), dsa->p));
-  bail(!!BN_bin2bn(RAW(q), LENGTH(q), dsa->q));
-  bail(!!BN_bin2bn(RAW(g), LENGTH(g), dsa->g));
-  bail(!!BN_bin2bn(RAW(y), LENGTH(y), dsa->pub_key));
+  dsa->p = new_bignum_from_r(p);
+  dsa->q = new_bignum_from_r(q);
+  dsa->g = new_bignum_from_r(g);
+  dsa->pub_key = new_bignum_from_r(y);
   unsigned char *buf = NULL;
   int len = i2d_DSA_PUBKEY(dsa, &buf);
   bail(len);
+  DSA_free(dsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);
@@ -125,11 +127,12 @@ SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
   bail(nid);
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
   EC_KEY_set_asn1_flag(pubkey, OPENSSL_EC_NAMED_CURVE);
-  if(!EC_KEY_set_public_key_affine_coordinates(pubkey, BN_bin2bn(RAW(x), LENGTH(x), NULL), BN_bin2bn(RAW(y), LENGTH(y), NULL)))
+  if(!EC_KEY_set_public_key_affine_coordinates(pubkey, new_bignum_from_r(x), new_bignum_from_r(y)))
     error("Failed to construct EC key. Perhaps invalid point or curve.");
   unsigned char *buf = NULL;
   int len = i2d_EC_PUBKEY(pubkey, &buf);
   bail(len);
+  EC_KEY_free(pubkey);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);

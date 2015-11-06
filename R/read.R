@@ -159,7 +159,9 @@ derive_pubkey <- function(key){
 
 #' @useDynLib openssl R_cert_pubkey
 cert_pubkey <- function(cert){
-  .Call(R_cert_pubkey, cert)
+  pubkey <- .Call(R_cert_pubkey, cert)
+  type <- pubkey_type(pubkey)
+  structure(pubkey, class = c("pubkey", type))
 }
 
 # Detect openssh2 public key strings

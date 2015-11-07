@@ -4,8 +4,8 @@ as.list.key <- function(key, ...){
   pk <- as.list(pubkey)
   list(
     type = pk$type,
-    fingerprint = pk$fingerprint,
-    pubkey = pubkey
+    pubkey = pubkey,
+    data = decompose(key)
   )
 }
 

@@ -53,24 +53,51 @@ decompose <- function(x, ...){
   UseMethod("decompose")
 }
 
-#' @useDynLib openssl R_rsa_decompose
-decompose.rsa <- function(key){
-  out <- .Call(R_rsa_decompose, key)
+decompose.pubkey <- function(x, ...){
+  UseMethod("pubkey_decompose")
+}
+
+decompose.key <- function(x, ...){
+  UseMethod("priv_decompose")
+}
+
+#' @useDynLib openssl R_rsa_pubkey_decompose
+pubkey_decompose.rsa <- function(key){
+  out <- .Call(R_rsa_pubkey_decompose, key)
   structure(out, names = c("e", "n"))
 }
 
-#' @useDynLib openssl R_dsa_decompose
-decompose.dsa <- function(key){
-  out <- .Call(R_dsa_decompose, key)
-  structure(out, names = c("p", "q", "g", "h"))
+#' @useDynLib openssl R_rsa_priv_decompose
+priv_decompose.rsa <- function(key){
+  out <- .Call(R_rsa_priv_decompose, key)
+  structure(out, names = c("e", "n", "p", "q", "d"))
 }
 
-#' @useDynLib openssl R_ecdsa_decompose
-decompose.ecdsa <- function(key){
-  out <- .Call(R_ecdsa_decompose, key)
+#' @useDynLib openssl R_dsa_pubkey_decompose
+pubkey_decompose.dsa <- function(key){
+  out <- .Call(R_dsa_pubkey_decompose, key)
+  structure(out, names = c("p", "q", "g", "y"))
+}
+
+#' @useDynLib openssl R_dsa_priv_decompose
+priv_decompose.dsa <- function(key){
+  out <- .Call(R_dsa_priv_decompose, key)
+  structure(out, names = c("p", "q", "g", "y", "x"))
+}
+
+#' @useDynLib openssl R_ecdsa_pubkey_decompose
+pubkey_decompose.ecdsa <- function(key){
+  out <- .Call(R_ecdsa_pubkey_decompose, key)
   structure(out, names = c("curve", "x", "y"))
 }
 
-decompose.ed25519 <- function(key){
+#' @useDynLib openssl R_ecdsa_priv_decompose
+priv_decompose.ecdsa <- function(key){
+  out <- .Call(R_ecdsa_priv_decompose, key)
+  structure(out, names = c("curve", "x", "y", "secret"))
+}
+
+
+pubkey_decompose.ed25519 <- function(key){
   unclass(key)
 }

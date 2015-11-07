@@ -5,7 +5,7 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 
-/* BN_num_bytes() drops leading zeros which can alter openssh fingerprint */
+/* BN_bn2bin() drops leading zeros which can alter openssh fingerprint */
 SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
   int bits = BN_num_bits(bn);
   if(bytes == 0)
@@ -33,7 +33,7 @@ BIGNUM* new_bignum_from_r(SEXP input){
 }
 
 /* Manuall compose public keys from bignum values */
-SEXP R_rsa_build(SEXP expdata, SEXP moddata){
+SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
   rsa->e = new_bignum_from_r(expdata);
   rsa->n = new_bignum_from_r(moddata);
@@ -47,7 +47,7 @@ SEXP R_rsa_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
-SEXP R_rsa_decompose(SEXP bin){
+SEXP R_rsa_pubkey_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin)));
@@ -58,8 +58,22 @@ SEXP R_rsa_decompose(SEXP bin){
   return res;
 }
 
+SEXP R_rsa_priv_decompose(SEXP bin){
+  RSA *rsa = RSA_new();
+  const unsigned char *ptr = RAW(bin);
+  bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(bin)));
+  SEXP res = PROTECT(allocVector(VECSXP, 5));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(rsa->e));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(rsa->n));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(rsa->p));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(rsa->q));
+  SET_VECTOR_ELT(res, 4, bignum_to_r(rsa->d));
+  UNPROTECT(1);
+  return res;
+}
+
 // See https://tools.ietf.org/html/rfc4253: ... the "ssh-dss" key format has ...
-SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
+SEXP R_dsa_pubkey_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA *dsa = DSA_new();
   dsa->p = new_bignum_from_r(p);
   dsa->q = new_bignum_from_r(q);
@@ -75,7 +89,7 @@ SEXP R_dsa_build(SEXP p, SEXP q, SEXP g, SEXP y){
   return res;
 }
 
-SEXP R_dsa_decompose(SEXP bin){
+SEXP R_dsa_pubkey_decompose(SEXP bin){
   DSA *dsa = DSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_DSA_PUBKEY(&dsa, &ptr, LENGTH(bin)));
@@ -84,6 +98,20 @@ SEXP R_dsa_decompose(SEXP bin){
   SET_VECTOR_ELT(res, 1, bignum_to_r(dsa->q));
   SET_VECTOR_ELT(res, 2, bignum_to_r(dsa->g));
   SET_VECTOR_ELT(res, 3, bignum_to_r(dsa->pub_key));
+  UNPROTECT(1);
+  return res;
+}
+
+SEXP R_dsa_priv_decompose(SEXP bin){
+  DSA *dsa = DSA_new();
+  const unsigned char *ptr = RAW(bin);
+  bail(!!d2i_DSAPrivateKey(&dsa, &ptr, LENGTH(bin)));
+  SEXP res = PROTECT(allocVector(VECSXP, 5));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(dsa->p));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(dsa->q));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(dsa->g));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(dsa->pub_key));
+  SET_VECTOR_ELT(res, 4, bignum_to_r(dsa->priv_key));
   UNPROTECT(1);
   return res;
 }
@@ -124,7 +152,7 @@ int nid_keysize(int nid){
   return 0;
 }
 
-SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
+SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
   int nid = my_nist2nid(CHAR(STRING_ELT(nist, 0)));
   bail(nid);
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
@@ -141,7 +169,7 @@ SEXP R_ecdsa_build(SEXP x, SEXP y, SEXP nist){
   return res;
 }
 
-SEXP R_ecdsa_decompose(SEXP input){
+SEXP R_ecdsa_pubkey_decompose(SEXP input){
   const unsigned char *ptr = RAW(input);
   EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(input));
   bail(!!pkey);
@@ -161,6 +189,35 @@ SEXP R_ecdsa_decompose(SEXP input){
   SET_VECTOR_ELT(res, 2, bignum_to_r_size(y, keysize));
   BN_free(x);
   BN_free(y);
+  EVP_PKEY_free(pkey);
+  UNPROTECT(1);
+  return res;
+}
+
+SEXP R_ecdsa_priv_decompose(SEXP input){
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
+  BIO_free(mem);
+  bail(!!pkey);
+  EC_KEY *ec = EVP_PKEY_get1_EC_KEY(pkey);
+  const EC_POINT *pubkey = EC_KEY_get0_public_key(ec);
+  const EC_GROUP *group = EC_KEY_get0_group(ec);
+  int nid = EC_GROUP_get_curve_name(group);
+  int keysize = nid_keysize(nid);
+  BIGNUM *x = BN_new();
+  BIGNUM *y = BN_new();
+  BIGNUM *z = (BIGNUM*) EC_KEY_get0_private_key(ec);
+  BN_CTX *ctx = BN_CTX_new();
+  bail(EC_POINT_get_affine_coordinates_GFp(group, pubkey, x, y, ctx));
+  BN_CTX_free(ctx);
+  SEXP res = PROTECT(allocVector(VECSXP, 4));
+  SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
+  SET_VECTOR_ELT(res, 1, bignum_to_r_size(x, keysize));
+  SET_VECTOR_ELT(res, 2, bignum_to_r_size(y, keysize));
+  SET_VECTOR_ELT(res, 3, bignum_to_r_size(z, keysize));
+  BN_free(x);
+  BN_free(y);
+  EVP_PKEY_free(pkey);
   UNPROTECT(1);
   return res;
 }

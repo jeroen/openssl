@@ -2,6 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read_key}
 \alias{read_cert}
+\alias{read_cert_bundle}
 \alias{read_key}
 \alias{read_pubkey}
 \title{Parsing keys and certificates}
@@ -10,7 +11,9 @@ read_key(file, password = readline, der = is.raw(file))
 
 read_pubkey(file, der = is.raw(file))
 
-read_cert(file, der = is.raw(file), multi = FALSE)
+read_cert(file, der = is.raw(file))
+
+read_cert_bundle(file)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data (a string for
@@ -19,8 +22,6 @@ pem/ssh format, or a raw vector in der format)}
 \item{password}{A string or callback function to read protected keys}
 
 \item{der}{set to \code{TRUE} if \code{file} is in binary DER format}
-
-\item{multi}{read a single PEM file with multiple certificates, e.g. a chain or bundle.}
 }
 \value{
 An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
@@ -30,7 +31,8 @@ in binary DER format and can be decomposed using \code{as.list}.
 The \code{read_key} function (private keys) and \code{read_pubkey} (public keys)
 support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{--BEGIN}
 and \code{---END} header), and automatically convert where necessary. The functions assume
-a single key per file; prepare with \code{split_pem} for parsing bundles.
+a single key per file except for \code{read_cert_bundle} which supports PEM files
+with multiple certificates.
 }
 \details{
 Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must
@@ -43,13 +45,18 @@ take one argument (a string with a message) and return a string. The default is 
 use \code{readline} which will prompt the user in an interactive R session.
 }
 \examples{
-\dontrun{
+\dontrun{# Read private key
 key <- read_key("~/.ssh/id_rsa")
 as.list(key)
 
+# Read public key
 pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
 as.list(pubkey)
 
+# Read certificates
+txt <- readLines("http://curl.haxx.se/ca/cacert.pem")
+bundle <- read_cert_bundle(txt)
+print(bundle)
 }
 }
 

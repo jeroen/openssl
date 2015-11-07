@@ -3,7 +3,8 @@
 #' The \code{read_key} function (private keys) and \code{read_pubkey} (public keys)
 #' support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{--BEGIN}
 #' and \code{---END} header), and automatically convert where necessary. The functions assume
-#' a single key per file; prepare with \code{split_pem} for parsing bundles.
+#' a single key per file except for \code{read_cert_bundle} which supports PEM files
+#' with multiple certificates.
 #'
 #' Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must
 #' conform to the X509 standard.
@@ -22,13 +23,18 @@
 #' @return An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
 #' in binary DER format and can be decomposed using \code{as.list}.
 #' @rdname read_key
-#' @examples \dontrun{
+#' @examples \dontrun{# Read private key
 #' key <- read_key("~/.ssh/id_rsa")
 #' as.list(key)
 #'
+#' # Read public key
 #' pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
 #' as.list(pubkey)
 #'
+#' # Read certificates
+#' txt <- readLines("http://curl.haxx.se/ca/cacert.pem")
+#' bundle <- read_cert_bundle(txt)
+#' print(bundle)
 #' }
 read_key <- function(file, password = readline, der = is.raw(file)){
   buf <- read_input(file)
@@ -88,17 +94,21 @@ read_pubkey <- function(file, der = is.raw(file)){
 
 #' @export
 #' @rdname read_key
-#' @param multi read a single PEM file with multiple certificates, e.g. a chain or bundle.
-read_cert <- function(file, der = is.raw(file), multi = FALSE){
+read_cert <- function(file, der = is.raw(file)){
   buf <- read_input(file)
   cert <- if(der){
     parse_der_cert(buf)
-  } else if(isTRUE(multi)){
-    return(lapply(split_pem(buf), read_cert, multi = FALSE))
   } else {
     parse_pem_cert(buf)
   }
   structure(cert, class = "cert")
+}
+
+#' @export
+#' @rdname read_key
+read_cert_bundle <- function(file){
+  buf <- read_input(file)
+  lapply(split_pem(buf), read_cert)
 }
 
 read_input <- function(x){

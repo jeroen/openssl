@@ -55,15 +55,22 @@ decompose <- function(x, ...){
 
 #' @useDynLib openssl R_rsa_decompose
 decompose.rsa <- function(key){
-  .Call(R_rsa_decompose, key)
+  out <- .Call(R_rsa_decompose, key)
+  structure(out, names = c("e", "n"))
 }
 
 #' @useDynLib openssl R_dsa_decompose
 decompose.dsa <- function(key){
-  .Call(R_dsa_decompose, key)
+  out <- .Call(R_dsa_decompose, key)
+  structure(out, names = c("p", "q", "g", "h"))
 }
 
 #' @useDynLib openssl R_ecdsa_decompose
 decompose.ecdsa <- function(key){
-  .Call(R_ecdsa_decompose, key)
+  out <- .Call(R_ecdsa_decompose, key)
+  structure(out, names = c("curve", "x", "y"))
+}
+
+decompose.ed25519 <- function(key){
+  unclass(key)
 }

@@ -12,17 +12,18 @@ as.list.key <- function(key, ...){
 #' @export
 as.list.pubkey <- function(pubkey, ...){
   ssh <- unlist(unname(fpdata(pubkey)))
+  type <- ifelse(inherits(pubkey, "ed25519"), "ed25519", pubkey_type(pubkey))
   list(
-    type = pubkey_type(pubkey),
+    type = type,
     fingerprint = md5(ssh),
-    ssh = ssh
+    data = decompose(pubkey)
   )
 }
 
 #' @export
 as.list.cert <- function(cert, ...){
   pubkey <- cert_pubkey(cert)
-  list(
+  list (
     pubkey = pubkey
   )
 }

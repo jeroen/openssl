@@ -53,7 +53,7 @@ bn <- bignum
 
 #' @export
 print.bignum <- function(x, hex = FALSE, ...){
-  cat("BN:", as.character.bignum(x, hex = hex))
+  cat("[b]", as.character.bignum(x, hex = hex))
 }
 
 #' @export

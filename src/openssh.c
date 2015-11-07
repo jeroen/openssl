@@ -12,7 +12,9 @@ SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
     bytes = (bits/8) + 1;
   int numbytes = BN_num_bytes(bn);
   int diff = bytes - numbytes;
-  SEXP res = allocVector(RAWSXP, bytes);
+  SEXP res = PROTECT(allocVector(RAWSXP, bytes));
+  setAttrib(res, R_ClassSymbol, mkString("bignum"));
+  UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   memset(ptr, 0, diff);
   ptr += diff;

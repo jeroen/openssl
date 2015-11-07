@@ -5,7 +5,7 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 
-SEXP R_certinfo(SEXP bin){
+SEXP R_cert_info(SEXP bin){
   X509 *cert = X509_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
@@ -16,7 +16,7 @@ SEXP R_certinfo(SEXP bin){
   int len;
   X509_NAME *name;
   BIO *b;
-  SEXP out = PROTECT(allocVector(VECSXP, 4));
+  SEXP out = PROTECT(allocVector(VECSXP, 5));
 
   //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
 
@@ -44,20 +44,24 @@ SEXP R_certinfo(SEXP bin){
   OBJ_obj2txt(buf, sizeof(buf), cert->sig_alg->algorithm, 0);
   SET_VECTOR_ELT(out, 2, mkString(buf));
 
+  //signature
+  SET_VECTOR_ELT(out, 3, allocVector(RAWSXP, cert->signature->length));
+  memcpy(RAW(VECTOR_ELT(out, 3)), cert->signature->data, cert->signature->length);
+
   //start date
-  SET_VECTOR_ELT(out, 3, allocVector(STRSXP, 2));
+  SET_VECTOR_ELT(out, 4, allocVector(STRSXP, 2));
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notBefore));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_STRING_ELT(VECTOR_ELT(out, 3), 0, mkCharLen(buf, len));
+  SET_STRING_ELT(VECTOR_ELT(out, 4), 0, mkCharLen(buf, len));
 
   //expiration date
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notAfter));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_STRING_ELT(VECTOR_ELT(out, 3), 1, mkCharLen(buf, len));
+  SET_STRING_ELT(VECTOR_ELT(out, 4), 1, mkCharLen(buf, len));
 
   //return
   UNPROTECT(1);

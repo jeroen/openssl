@@ -117,7 +117,7 @@ read_input <- function(x){
   } else if(inherits(x, "connection")){
     readBin(x, raw(), file.info(x)$size)
   } else if(is.character(x) && length(x) == 1 && !grepl("\n", x) && !is_pubkey_str(x)){
-    stopifnot(file.exists(x))
+    x <- normalizePath(path.expand(x), mustWork = TRUE)
     readBin(x, raw(), file.info(x)$size)
   } else if(is.character(x)) {
     charToRaw(paste(x, collapse = "\n"))
@@ -216,7 +216,7 @@ print.pubkey <- function(x, ...){
 
 #' @export
 print.cert <- function(x, ...){
-  subject <- certinfo(x)$subject
+  subject <- cert_info(x)$subject
   cname <- substring(regmatches(subject, regexpr("CN ?=[^,]*", subject)), 5)
   cat(sprintf("[x509 certificate]%s\n", cname))
   cat(sprintf("md5: %s\n", paste(md5(x), collapse = ":")))

@@ -68,33 +68,39 @@ SEXP R_cert_info(SEXP bin){
   return out;
 }
 
-SEXP R_verify_cert(SEXP certdata, SEXP cadata) {
+SEXP R_cert_verify(SEXP cert, SEXP chain, SEXP bundle) {
   /* load cert */
-  const unsigned char *ptr = RAW(certdata);
-  X509 *cert = X509_new();
-  X509 *ca = X509_new();
-  bail(!!d2i_X509(&cert, &ptr, LENGTH(certdata)));
+  const unsigned char *ptr = RAW(cert);
+  X509 *crt = d2i_X509(NULL, &ptr, LENGTH(cert));
+  bail(!!crt);
 
   /* init ca bundle store */
   X509_STORE *store = X509_STORE_new();
   X509_STORE_CTX *ctx = X509_STORE_CTX_new();
-  X509_STORE_CTX_init(ctx, store, cert, NULL);
+  STACK_OF(X509) *sk = sk_X509_new_null();
+  X509_STORE_CTX_init(ctx, store, crt, sk);
 
-  /* cadata is either path to bundle or cert */
-  if(isString(cadata)){
-    bail(X509_STORE_load_locations(store, CHAR(STRING_ELT(cadata, 0)), NULL));
-  } else {
-    ptr = RAW(cadata);
-    bail(!!d2i_X509(&ca, &ptr, LENGTH(cadata)));
-    bail(X509_STORE_add_cert(store, ca));
+  /* add chain certs */
+  for(int i = 0; i < LENGTH(chain); i++){
+    ptr = RAW(VECTOR_ELT(chain, i));
+    crt = d2i_X509(NULL, &ptr, LENGTH(VECTOR_ELT(chain, i)));
+    bail(!!crt);
+    sk_X509_push(sk, crt);
+  }
+
+  /* Add parent certs */
+  for(int i = 0; i < LENGTH(bundle); i++){
+    ptr = RAW(VECTOR_ELT(bundle, i));
+    crt = d2i_X509(NULL, &ptr, LENGTH(VECTOR_ELT(bundle, i)));
+    bail(!!crt);
+    bail(X509_STORE_add_cert(store, crt));
   }
 
   if(X509_verify_cert(ctx) < 1)
-    stop("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
+    error("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
 
   X509_STORE_CTX_free(ctx);
   X509_STORE_free(store);
-  X509_free(cert);
-  X509_free(ca);
-  return ScalarLogical(1);
+  X509_free(crt);
+  return ScalarLogical(TRUE);
 }

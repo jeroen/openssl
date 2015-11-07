@@ -4,16 +4,13 @@
 \alias{read_cert}
 \alias{read_key}
 \alias{read_pubkey}
-\alias{split_pem}
 \title{Parsing keys and certificates}
 \usage{
 read_key(file, password = readline, der = is.raw(file))
 
 read_pubkey(file, der = is.raw(file))
 
-read_cert(file, der = is.raw(file))
-
-split_pem(file)
+read_cert(file, der = is.raw(file), multi = FALSE)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data (a string for
@@ -22,6 +19,8 @@ pem/ssh format, or a raw vector in der format)}
 \item{password}{A string or callback function to read protected keys}
 
 \item{der}{set to \code{TRUE} if \code{file} is in binary DER format}
+
+\item{multi}{read a single PEM file with multiple certificates, e.g. a chain or bundle.}
 }
 \value{
 An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
@@ -34,7 +33,8 @@ and \code{---END} header), and automatically convert where necessary. The functi
 a single key per file; prepare with \code{split_pem} for parsing bundles.
 }
 \details{
-Most versions of OpenSSL support at least RSA, DSA and ECDSA keys.
+Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must
+conform to the X509 standard.
 
 The \code{password} argument is needed when reading keys that are protected with a
 passphrase. It can either be a string containing the passphrase, or a custom calback
@@ -45,7 +45,11 @@ use \code{readline} which will prompt the user in an interactive R session.
 \examples{
 \dontrun{
 key <- read_key("~/.ssh/id_rsa")
+as.list(key)
+
 pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
+as.list(pubkey)
+
 }
 }
 

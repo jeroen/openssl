@@ -5,7 +5,8 @@
 #' and \code{---END} header), and automatically convert where necessary. The functions assume
 #' a single key per file; prepare with \code{split_pem} for parsing bundles.
 #'
-#' Most versions of OpenSSL support at least RSA, DSA and ECDSA keys.
+#' Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must
+#' conform to the X509 standard.
 #'
 #' The \code{password} argument is needed when reading keys that are protected with a
 #' passphrase. It can either be a string containing the passphrase, or a custom calback
@@ -23,7 +24,11 @@
 #' @rdname read_key
 #' @examples \dontrun{
 #' key <- read_key("~/.ssh/id_rsa")
+#' as.list(key)
+#'
 #' pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
+#' as.list(pubkey)
+#'
 #' }
 read_key <- function(file, password = readline, der = is.raw(file)){
   buf <- read_input(file)
@@ -83,10 +88,13 @@ read_pubkey <- function(file, der = is.raw(file)){
 
 #' @export
 #' @rdname read_key
-read_cert <- function(file, der = is.raw(file)){
+#' @param multi read a single PEM file with multiple certificates, e.g. a chain or bundle.
+read_cert <- function(file, der = is.raw(file), multi = FALSE){
   buf <- read_input(file)
   cert <- if(der){
     parse_der_cert(buf)
+  } else if(isTRUE(multi)){
+    return(lapply(split_pem(buf), read_cert, multi = FALSE))
   } else {
     parse_pem_cert(buf)
   }
@@ -172,10 +180,9 @@ is_pubkey_str <- function(str){
 }
 
 # Split a pem file with multiple keys/certs
-#' @export
-#' @rdname read_key
-split_pem <- function(file) {
-  text <- rawToChar(read_input(file))
+split_pem <- function(text) {
+  if(is.raw(text))
+    text <- rawToChar(text)
   pattern <- "(-+BEGIN)(.+?)(-+END)(.+?)(-+)"
   m <- gregexpr(pattern, text)
   regmatches(text, m)[[1]]
@@ -199,7 +206,9 @@ print.pubkey <- function(x, ...){
 
 #' @export
 print.cert <- function(x, ...){
-  cat("[x509 certificate]\n")
+  subject <- certinfo(x)$subject
+  cname <- substring(regmatches(subject, regexpr("CN ?=[^,]*", subject)), 5)
+  cat(sprintf("[x509 certificate]%s\n", cname))
   cat(sprintf("md5: %s\n", paste(md5(x), collapse = ":")))
   cat(sprintf("sha1: %s\n", paste(sha1(x), collapse = ":")))
 }

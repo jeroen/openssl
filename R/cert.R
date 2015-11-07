@@ -9,7 +9,8 @@
 #' @rdname certs
 certinfo <- function(cert){
   stopifnot(is.raw(cert))
-  .Call(R_certinfo, cert)
+  out <- .Call(R_certinfo, cert)
+  structure(out, names = c("subject", "issuer", "algorithm", "validity"))
 }
 
 #' @useDynLib openssl R_verify_cert

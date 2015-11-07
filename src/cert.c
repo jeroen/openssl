@@ -16,18 +16,28 @@ SEXP R_certinfo(SEXP bin){
   int len;
   X509_NAME *name;
   BIO *b;
-  SEXP out = PROTECT(allocVector(VECSXP, 5));
+  SEXP out = PROTECT(allocVector(VECSXP, 4));
+
+  //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
 
   //subject name
   name = X509_get_subject_name(cert);
-  X509_NAME_oneline(name, buf, bufsize);
-  SET_VECTOR_ELT(out, 0, mkString(buf));
+  b = BIO_new(BIO_s_mem());
+  bail(X509_NAME_print_ex(b, name, 0, XN_FLAG_ONELINE & ~ASN1_STRFLGS_ESC_MSB));
+  len = BIO_read(b, buf, bufsize);
+  BIO_free(b);
+  SET_VECTOR_ELT(out, 0, allocVector(STRSXP, 1));
+  SET_STRING_ELT(VECTOR_ELT(out, 0), 0, mkCharLenCE(buf, len, CE_UTF8));
   X509_NAME_free(name);
 
   //issuer name name
   name = X509_get_issuer_name(cert);
-  X509_NAME_oneline(name, buf, bufsize);
-  SET_VECTOR_ELT(out, 1, mkString(buf));
+  b = BIO_new(BIO_s_mem());
+  bail(X509_NAME_print_ex(b, name, 0, XN_FLAG_ONELINE & ~ASN1_STRFLGS_ESC_MSB));
+  len = BIO_read(b, buf, bufsize);
+  BIO_free(b);
+  SET_VECTOR_ELT(out, 1, allocVector(STRSXP, 1));
+  SET_STRING_ELT(VECTOR_ELT(out, 1), 0, mkCharLenCE(buf, len, CE_UTF8));
   X509_NAME_free(name);
 
   //sign algorithm
@@ -35,22 +45,19 @@ SEXP R_certinfo(SEXP bin){
   SET_VECTOR_ELT(out, 2, mkString(buf));
 
   //start date
+  SET_VECTOR_ELT(out, 3, allocVector(STRSXP, 2));
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notBefore));
   len = BIO_read(b, buf, bufsize);
-  bail(len);
-  buf[len] = '\0';
-  SET_VECTOR_ELT(out, 3, mkString(buf));
   BIO_free(b);
+  SET_STRING_ELT(VECTOR_ELT(out, 3), 0, mkCharLen(buf, len));
 
   //expiration date
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, cert->cert_info->validity->notAfter));
   len = BIO_read(b, buf, bufsize);
-  bail(len);
-  buf[len] = '\0';
-  SET_VECTOR_ELT(out, 4, mkString(buf));
   BIO_free(b);
+  SET_STRING_ELT(VECTOR_ELT(out, 3), 1, mkCharLen(buf, len));
 
   //return
   UNPROTECT(1);

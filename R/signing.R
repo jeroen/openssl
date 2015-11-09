@@ -19,7 +19,7 @@
 #' sig <- sha1_sign(hash)
 #' sha1_verify(hash, sig)
 #' }
-md5_sign <- function(hash, key, password = readline){
+md5_sign <- function(hash, key = my_key(), password = readline){
   key <- read_key(key, password = password)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
@@ -30,7 +30,7 @@ md5_sign <- function(hash, key, password = readline){
 
 #' @export
 #' @rdname signatures
-sha1_sign <- function(hash, key, password = readline){
+sha1_sign <- function(hash, key = my_key(), password = readline){
   key <- read_key(key, password = password)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
@@ -41,7 +41,7 @@ sha1_sign <- function(hash, key, password = readline){
 
 #' @export
 #' @rdname signatures
-sha256_sign <- function(hash, key, password = readline){
+sha256_sign <- function(hash, key = my_key(), password = readline){
   key <- read_key(key, password = password)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
@@ -52,7 +52,7 @@ sha256_sign <- function(hash, key, password = readline){
 
 #' @export
 #' @rdname signatures
-md5_verify <- function(hash, sig, pubkey){
+md5_verify <- function(hash, sig, pubkey = my_pubkey()){
   pubkey <- read_pubkey(pubkey)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
@@ -63,7 +63,7 @@ md5_verify <- function(hash, sig, pubkey){
 
 #' @export
 #' @rdname signatures
-sha1_verify <- function(hash, sig, pubkey){
+sha1_verify <- function(hash, sig, pubkey = my_pubkey()){
   pubkey <- read_pubkey(pubkey)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)
@@ -74,7 +74,7 @@ sha1_verify <- function(hash, sig, pubkey){
 
 #' @export
 #' @rdname signatures
-sha256_verify <- function(hash, sig, pubkey){
+sha256_verify <- function(hash, sig, pubkey = my_pubkey()){
   pubkey <- read_pubkey(pubkey)
   if(is_hexraw(hash))
     hash <- hex_to_raw(hash)

@@ -9,17 +9,17 @@
 \alias{sha256_verify}
 \title{Signatures}
 \usage{
-md5_sign(hash, key, password = readline)
+md5_sign(hash, key = my_key(), password = readline)
 
-sha1_sign(hash, key, password = readline)
+sha1_sign(hash, key = my_key(), password = readline)
 
-sha256_sign(hash, key, password = readline)
+sha256_sign(hash, key = my_key(), password = readline)
 
-md5_verify(hash, sig, pubkey)
+md5_verify(hash, sig, pubkey = my_pubkey())
 
-sha1_verify(hash, sig, pubkey)
+sha1_verify(hash, sig, pubkey = my_pubkey())
 
-sha256_verify(hash, sig, pubkey)
+sha256_verify(hash, sig, pubkey = my_pubkey())
 }
 \arguments{
 \item{hash}{string or raw vector with md5, sha1 or sha256 hash}

@@ -174,7 +174,6 @@ hex_to_raw <- function(str){
 }
 
 #' @export
-#' @rdname hash
 print.hash <- function(x, ...){
   if(is.raw(x))
     cat(class(x)[2], paste(x, collapse = ":"), "\n")

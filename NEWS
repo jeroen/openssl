@@ -1,2 +1,5 @@
+0.5
+ - Major overhaul, add encryption stuff
+
 0.4
  - Added base64 functions

@@ -56,3 +56,24 @@ rsa_verify <- function(hash, sig, pubkey = "~/.ssh/id_rsa.pub"){
     pubkey <- priv2pub(pubkey)
   .Call(R_rsa_verify, hash, sig, hash_type(hash), pubkey)
 }
+
+
+#' @export
+#' @rdname signing
+#' @useDynLib openssl R_sign_sha256
+message_sign <- function(msg, key, password = readline){
+  input <- read_input(msg)
+  md <- sha256(input)
+  key <- read_key(key, password = password)
+  .Call(R_sign_sha256, md, key)
+}
+
+#' @export
+#' @rdname signing
+#' @useDynLib openssl R_verify_sha256
+message_verify <- function(msg, sig, pubkey){
+  input <- read_input(msg)
+  md <- sha256(input)
+  pubkey <- read_pubkey(pubkey)
+  .Call(R_verify_sha256, md, sig, pubkey)
+}

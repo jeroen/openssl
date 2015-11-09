@@ -16,7 +16,7 @@ SEXP R_cert_info(SEXP bin){
   int len;
   X509_NAME *name;
   BIO *b;
-  SEXP out = PROTECT(allocVector(VECSXP, 5));
+  SEXP out = PROTECT(allocVector(VECSXP, 6));
 
   //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
 
@@ -63,12 +63,28 @@ SEXP R_cert_info(SEXP bin){
   BIO_free(b);
   SET_STRING_ELT(VECTOR_ELT(out, 4), 1, mkCharLen(buf, len));
 
+  //test for self signed
+  SET_VECTOR_ELT(out, 5, ScalarLogical(X509_verify(cert, X509_get_pubkey(cert))));
+
   //return
   UNPROTECT(1);
   return out;
 }
 
-SEXP R_cert_verify(SEXP cert, SEXP chain, SEXP bundle) {
+SEXP R_pubkey_verify_cert(SEXP cert, SEXP pubkey){
+  const unsigned char *ptr = RAW(cert);
+  X509 *crt = d2i_X509(NULL, &ptr, LENGTH(cert));
+  bail(!!crt);
+  const unsigned char *ptr2 = RAW(pubkey);
+  EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr2, LENGTH(pubkey));
+  bail(!!pkey);
+  int res = X509_verify(crt, pkey);
+  X509_free(crt);
+  EVP_PKEY_free(pkey);
+  return ScalarLogical(res);
+}
+
+SEXP R_cert_verify_cert(SEXP cert, SEXP chain, SEXP bundle) {
   /* load cert */
   const unsigned char *ptr = RAW(cert);
   X509 *crt = d2i_X509(NULL, &ptr, LENGTH(cert));

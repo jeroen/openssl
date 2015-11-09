@@ -118,7 +118,9 @@ read_input <- function(x){
     readBin(x, raw(), file.info(x)$size)
   } else if(is.character(x) && length(x) == 1 && !grepl("\n", x) && !is_pubkey_str(x)){
     x <- normalizePath(path.expand(x), mustWork = TRUE)
-    readBin(x, raw(), file.info(x)$size)
+    info <- file.info(x)
+    stopifnot(!info$isdir)
+    readBin(x, raw(), info$size)
   } else if(is.character(x)) {
     charToRaw(paste(x, collapse = "\n"))
   } else {

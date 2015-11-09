@@ -5,14 +5,14 @@
 \alias{cert_verify}
 \title{Certificates}
 \usage{
-cert_verify(chain, root = ca_bundle())
+cert_verify(cert, root = ca_bundle())
 
 ca_bundle()
 }
 \arguments{
-\item{chain}{certficate (or certificate-chain) to be verified. Must be cert or list or path.}
+\item{cert}{certficate (or certificate-chain) to be verified. Must be cert or list or path.}
 
-\item{root}{trusted root certificates (e.g. CA bundle). Must be cert or list or path.}
+\item{root}{trusted pubkey or certificate(s) e.g. CA bundle.}
 }
 \description{
 Verify a certificate

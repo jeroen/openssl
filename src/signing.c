@@ -4,6 +4,44 @@
 #include "utils.h"
 #include <openssl/pem.h>
 
+SEXP R_sign_sha256(SEXP md, SEXP key){
+  BIO *mem = BIO_new_mem_buf(RAW(key), LENGTH(key));
+  EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
+  BIO_free(mem);
+  bail(!!pkey);
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_sign_init(ctx) >= 0);
+  //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) >= 0);
+  size_t siglen;
+  unsigned char buf[10000];
+  bail(EVP_PKEY_sign(ctx, buf, &siglen, RAW(md), LENGTH(md)) >= 0);
+  EVP_PKEY_CTX_free(ctx);
+  EVP_PKEY_free(pkey);
+  SEXP res = allocVector(RAWSXP, siglen);
+  memcpy(RAW(res), buf, siglen);
+  return res;
+}
+
+SEXP R_verify_sha256(SEXP md, SEXP sig, SEXP pubkey){
+  const unsigned char *ptr = RAW(pubkey);
+  EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(pubkey));
+  bail(!!pkey);
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_verify_init(ctx) >= 0);
+  //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, EVP_sha256()) >= 0);
+  int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
+  bail(res >= 0);
+  if(res == 0)
+    error("Verification failed: incorrect signature");
+  EVP_PKEY_CTX_free(ctx);
+  EVP_PKEY_free(pkey);
+  return ScalarLogical(1);
+}
+
 int gettype(const char *str){
   if (!strcmp(str, "md5")) {
     return NID_md5;

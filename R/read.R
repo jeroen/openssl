@@ -204,7 +204,7 @@ split_pem <- function(text) {
 print.key <- function(x, ...){
   pk <- derive_pubkey(x)
   fp <- fingerprint(pk)
-  cat(sprintf("[%s private key]\n", pubkey_type(pk)))
+  cat(sprintf("[%d-bit %s private key]\n", pubkey_bitsize(pk), pubkey_type(pk)))
   cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
 }
 
@@ -212,7 +212,7 @@ print.key <- function(x, ...){
 print.pubkey <- function(x, ...){
   fp <- fingerprint(x)
   type <- class(x)[2]
-  cat(sprintf("[%s public key]\n", type))
+  cat(sprintf("[%d-bit %s public key]\n", pubkey_bitsize(x), pubkey_type(x)))
   cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
 }
 

@@ -49,6 +49,11 @@ pubkey_type <- function(key){
   .Call(R_pubkey_type, key)
 }
 
+#' @useDynLib openssl R_pubkey_bitsize
+pubkey_bitsize <- function(key){
+  .Call(R_pubkey_bitsize, key)
+}
+
 decompose <- function(x, ...){
   UseMethod("decompose")
 }

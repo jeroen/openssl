@@ -137,3 +137,8 @@ SEXP R_bignum_compare(SEXP x, SEXP y){
   BN_free(val2);
   return ScalarInteger(out);
 }
+
+SEXP R_bignum_bits(SEXP x){
+  BIGNUM *num = r2bignum(x);
+  return ScalarInteger(BN_num_bits(num));
+}

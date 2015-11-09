@@ -205,3 +205,39 @@ SEXP R_pubkey_type(SEXP input){
   EVP_PKEY_free(pkey);
   return mkString(keytype);
 }
+
+int ec_bitsize(int nid){
+  switch(nid){
+  case NID_X9_62_prime256v1:
+    return 256;
+  case NID_secp384r1:
+    return 384;
+  case NID_secp521r1:
+    return 521;
+  }
+  return 0;
+}
+
+SEXP R_pubkey_bitsize(SEXP input){
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  EVP_PKEY *pkey = d2i_PUBKEY_bio(mem, NULL);
+  BIO_free(mem);
+  if(!pkey)
+    return R_NilValue;
+  int size = 0;
+  switch(EVP_PKEY_type(pkey->type)){
+  case EVP_PKEY_RSA:
+    size = BN_num_bits(EVP_PKEY_get1_RSA(pkey)->n);
+    break;
+  case EVP_PKEY_DSA:
+    size = BN_num_bits(EVP_PKEY_get1_DSA(pkey)->p);
+    break;
+  case EVP_PKEY_EC:
+    size = ec_bitsize(EC_GROUP_get_curve_name(EC_KEY_get0_group(EVP_PKEY_get1_EC_KEY(pkey))));
+    break;
+  default:
+    Rf_error("Unsupported key type: %d", EVP_PKEY_type(pkey->type));
+  }
+  EVP_PKEY_free(pkey);
+  return ScalarInteger(size);
+}

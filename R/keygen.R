@@ -9,7 +9,7 @@
 #' @rdname keygen
 #' @useDynLib openssl R_keygen_rsa
 keygen_rsa <- function(bits = 2048){
-  key <- .Call(R_keygen_rsa, bits)
+  key <- .Call(R_keygen_rsa, as.integer(bits))
   structure(key, class = c("key", "rsa"))
 }
 
@@ -17,7 +17,7 @@ keygen_rsa <- function(bits = 2048){
 #' @rdname keygen
 #' @useDynLib openssl R_keygen_dsa
 keygen_dsa <- function(bits = 2048){
-  key <- .Call(R_keygen_dsa, bits)
+  key <- .Call(R_keygen_dsa, as.integer(bits))
   structure(key, class = c("key", "dsa"))
 }
 
@@ -25,6 +25,6 @@ keygen_dsa <- function(bits = 2048){
 #' @rdname keygen
 #' @useDynLib openssl R_keygen_ecdsa
 keygen_ecdsa <- function(curve = c("P-256", "P-384", "P-521")){
-  key <- .Call(R_keygen_ecdsa, curve)
+  key <- .Call(R_keygen_ecdsa, match.arg(curve))
   structure(key, class = c("key", "ecdsa"))
 }

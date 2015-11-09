@@ -8,6 +8,8 @@
 #' @export
 #' @rdname keygen
 #' @useDynLib openssl R_keygen_rsa
+#' @param bits bitsize of the generated key
+#' @param curve which NIST curve to use
 keygen_rsa <- function(bits = 2048){
   key <- .Call(R_keygen_rsa, as.integer(bits))
   structure(key, class = c("key", "rsa"))

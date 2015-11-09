@@ -12,6 +12,11 @@ keygen_dsa(bits = 2048)
 
 keygen_ecdsa(curve = c("P-256", "P-384", "P-521"))
 }
+\arguments{
+\item{bits}{bitsize of the generated key}
+
+\item{curve}{which NIST curve to use}
+}
 \description{
 The \code{keygen} functions generate a random private key. Use \code{as.list(key)$pubkey}
 to derive the corresponding public key.

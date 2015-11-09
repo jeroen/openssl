@@ -1,79 +1,94 @@
-#' Sign and verify
+#' Signatures
 #'
-#' Create and verify RSA signatures.
+#' Sign and verify a message digest. DSA and ECDSA keys only support SHA1
+#' and SHA256 signatures.
 #'
 #' @export
-#' @rdname signing
-#' @name signing
+#' @rdname signatures
 #' @param hash string or raw vector with md5, sha1 or sha256 hash
-#' @param key file path or raw/character vector with RSA private key
-#' @param pubkey file path or raw/character vector with RSA public key
-#' @param sig raw vector with signature data
-#' @param password either a hardcoded string or a callback function that
-#' returns a string. Only required if key is protected with a passphrase.
-#' @useDynLib openssl R_rsa_sign
+#' @param key private key or file path. See \code{\link{read_key}}.
+#' @param pubkey public key or file path. See \code{\link{read_pubkey}}.
+#' @param sig path or raw vector with signature data
+#' @param password string or a function to read protected keys.
 #' @examples \dontrun{
 #' hash <- sha256(system.file("DESCRIPTION"))
-#' sig <- rsa_sign(hash)
-#' rsa_verify(hash, sig)
+#' sig <- sha256_sign(hash)
+#' sha256_verify(hash, sig)
 #'
 #' hash <- sha1(serialize(iris, NULL))
-#' sig <- rsa_sign(hash)
-#' rsa_verify(hash, sig)
-#'
-#' hash <- md5("i like cookies")
-#' sig <- rsa_sign(hash)
-#' rsa_verify(hash, sig)
+#' sig <- sha1_sign(hash)
+#' sha1_verify(hash, sig)
 #' }
-rsa_sign <- function(hash, key = "~/.ssh/id_rsa", password = readline) {
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || !(length(hash) %in% c(16, 20, 32)))
-    stop("Hash must be raw vector or string with md5, sha1 or sha256 value")
-  if(!is.raw(key)){
-    key <- read_pem(key, password)
-    if(!inherits(key, "rsa.private"))
-      stop("key must be rsa private key")
-  }
-  .Call(R_rsa_sign, hash, hash_type(hash), key)
-}
-
-#' @export
-#' @rdname signing
-#' @useDynLib openssl R_rsa_verify
-rsa_verify <- function(hash, sig, pubkey = "~/.ssh/id_rsa.pub"){
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || !(length(hash) %in% c(16, 20, 32)))
-    stop("Hash must be raw vector or string with md5, sha1 or sha256 value")
-  if(is_hexraw(sig))
-    sig <- hex_to_raw(sig)
-  if(!is.raw(sig))
-    stop("Sig must be raw vector or hex string with signature data")
-  if(!is.raw(pubkey))
-    pubkey <- read_pem(pubkey)
-  if(inherits(pubkey, "rsa.private"))
-    pubkey <- priv2pub(pubkey)
-  .Call(R_rsa_verify, hash, sig, hash_type(hash), pubkey)
-}
-
-
-#' @export
-#' @rdname signing
-#' @useDynLib openssl R_sign_sha256
-message_sign <- function(msg, key, password = readline){
-  input <- read_input(msg)
-  md <- sha256(input)
+md5_sign <- function(hash, key, password = readline){
   key <- read_key(key, password = password)
-  .Call(R_sign_sha256, md, key)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 16)
+    stop("hash must be md5 digest")
+  hash_sign(hash, key)
 }
 
 #' @export
-#' @rdname signing
-#' @useDynLib openssl R_verify_sha256
-message_verify <- function(msg, sig, pubkey){
-  input <- read_input(msg)
-  md <- sha256(input)
+#' @rdname signatures
+sha1_sign <- function(hash, key, password = readline){
+  key <- read_key(key, password = password)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 20)
+    stop("hash must be sha1 digest")
+  hash_sign(hash, key)
+}
+
+#' @export
+#' @rdname signatures
+sha256_sign <- function(hash, key, password = readline){
+  key <- read_key(key, password = password)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 32)
+    stop("hash must be sha256 digest")
+  hash_sign(hash, key)
+}
+
+#' @export
+#' @rdname signatures
+md5_verify <- function(hash, sig, pubkey){
   pubkey <- read_pubkey(pubkey)
-  .Call(R_verify_sha256, md, sig, pubkey)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 16)
+    stop("hash must be md5 digest")
+  hash_verify(hash, sig, pubkey)
+}
+
+#' @export
+#' @rdname signatures
+sha1_verify <- function(hash, sig, pubkey){
+  pubkey <- read_pubkey(pubkey)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 20)
+    stop("hash must be sha1 digest")
+  hash_verify(hash, sig, pubkey)
+}
+
+#' @export
+#' @rdname signatures
+sha256_verify <- function(hash, sig, pubkey){
+  pubkey <- read_pubkey(pubkey)
+  if(is_hexraw(hash))
+    hash <- hex_to_raw(hash)
+  if(!is.raw(hash) || length(hash) != 32)
+    stop("hash must be sha256 digest")
+  hash_verify(hash, sig, pubkey)
+}
+
+#' @useDynLib openssl R_hash_sign
+hash_sign <- function(hash, key){
+  .Call(R_hash_sign, hash, key)
+}
+
+#' @useDynLib openssl R_hash_verify
+hash_verify <- function(hash, sig, pubkey){
+  .Call(R_hash_verify, hash, sig, pubkey)
 }

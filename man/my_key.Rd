@@ -3,7 +3,7 @@
 \name{my_key}
 \alias{my_key}
 \alias{my_pubkey}
-\title{Default user keypair}
+\title{Default keypair}
 \usage{
 my_key()
 

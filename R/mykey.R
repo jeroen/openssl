@@ -1,4 +1,4 @@
-#' Default user keypair
+#' Default keypair
 #'
 #' The default key can be configured using environment variable \code{USER_KEY}
 #' which points to the user (private) key. If unset it defaults to \code{"~/.ssh/id_rsa"}.

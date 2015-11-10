@@ -173,6 +173,12 @@ hex_to_raw <- function(str){
   out
 }
 
+parse_hash <- function(x){
+  if(is.raw(x)) return(x)
+  if(is.character(x)) return(hex_to_raw(x[1]))
+  stop("Invalid hash: ", x)
+}
+
 #' @export
 print.hash <- function(x, ...){
   if(is.raw(x))

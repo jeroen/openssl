@@ -225,3 +225,13 @@ print.cert <- function(x, ...){
   cat(sprintf("md5: %s\n", paste(md5(x), collapse = ":")))
   cat(sprintf("sha1: %s\n", paste(sha1(x), collapse = ":")))
 }
+
+path_or_raw <- function(x){
+  if(is.raw(x)) return(x)
+  if(is.character(x) && length(x) == 1){
+    path <- normalizePath(x, mustWork = TRUE)
+    bin <- readBin(path, raw(), file.info(path)$size)
+    return(bin)
+  }
+  stop("x must be raw vector with data or path to existing file.")
+}

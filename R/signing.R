@@ -5,82 +5,51 @@
 #'
 #' @export
 #' @rdname signatures
-#' @param hash string or raw vector with md5, sha1 or sha256 hash
+#' @param data raw vector or file path for data to be signed. If \code{hash == NULL}
+#' then \code{data} must be a hash.
+#' @param hash the digest function to use. Must be one of \code{\link{md5}},
+#' \code{\link{sha1}}, \code{\link{sha256}}, \code{\link{sha512}} or \code{NULL}.
 #' @param key private key or file path. See \code{\link{read_key}}.
 #' @param pubkey public key or file path. See \code{\link{read_pubkey}}.
-#' @param sig path or raw vector with signature data
+#' @param sig raw vector or file path for the signature data.
 #' @param password string or a function to read protected keys.
-#' @examples \dontrun{
-#' hash <- sha256(system.file("DESCRIPTION"))
-#' sig <- sha256_sign(hash)
-#' sha256_verify(hash, sig)
+#' @examples # Generate a keypair
+#' key <- rsa_keygen()
+#' pubkey <- as.list(key)$pubkey
 #'
-#' hash <- sha1(serialize(iris, NULL))
-#' sig <- sha1_sign(hash)
-#' sha1_verify(hash, sig)
-#' }
-md5_sign <- function(hash, key = my_key(), password = readline){
-  key <- read_key(key, password = password)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 16)
-    stop("hash must be md5 digest")
-  hash_sign(hash, key)
+#' # Sign a file
+#' data <- system.file("DESCRIPTION")
+#' sig <- signature_create(data, key = key)
+#' stopifnot(signature_verify(data, sig, pubkey = pubkey))
+#'
+#' # Sign raw data
+#' data <- serialize(iris, NULL)
+#' sig <- signature_create(data, sha256, key = key)
+#' stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+#'
+#' # Sign a hash
+#' md <- md5(data)
+#' sig <- signature_create(md, hash = NULL, key = key)
+#' stopifnot(signature_verify(md, sig, hash = NULL, pubkey = pubkey))
+signature_create <- function(data, hash = sha1, key = my_key(), password = readline){
+  data <- path_or_raw(data)
+  sk <- read_key(key, password = password)
+  md <- if(is.null(hash)) parse_hash(data) else hash(data)
+  if(!is.raw(md) || !(length(md) %in% c(16, 20, 32, 64)))
+    stop("data must be md5, sha1, sha256 or sha512 digest")
+  hash_sign(md, sk)
 }
 
 #' @export
 #' @rdname signatures
-sha1_sign <- function(hash, key = my_key(), password = readline){
-  key <- read_key(key, password = password)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 20)
-    stop("hash must be sha1 digest")
-  hash_sign(hash, key)
-}
-
-#' @export
-#' @rdname signatures
-sha256_sign <- function(hash, key = my_key(), password = readline){
-  key <- read_key(key, password = password)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 32)
-    stop("hash must be sha256 digest")
-  hash_sign(hash, key)
-}
-
-#' @export
-#' @rdname signatures
-md5_verify <- function(hash, sig, pubkey = my_pubkey()){
-  pubkey <- read_pubkey(pubkey)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 16)
-    stop("hash must be md5 digest")
-  hash_verify(hash, sig, pubkey)
-}
-
-#' @export
-#' @rdname signatures
-sha1_verify <- function(hash, sig, pubkey = my_pubkey()){
-  pubkey <- read_pubkey(pubkey)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 20)
-    stop("hash must be sha1 digest")
-  hash_verify(hash, sig, pubkey)
-}
-
-#' @export
-#' @rdname signatures
-sha256_verify <- function(hash, sig, pubkey = my_pubkey()){
-  pubkey <- read_pubkey(pubkey)
-  if(is_hexraw(hash))
-    hash <- hex_to_raw(hash)
-  if(!is.raw(hash) || length(hash) != 32)
-    stop("hash must be sha256 digest")
-  hash_verify(hash, sig, pubkey)
+signature_verify <- function(data, sig, hash = sha1, pubkey = my_pubkey()){
+  data <- path_or_raw(data)
+  sig <- path_or_raw(sig)
+  pk <- read_pubkey(pubkey)
+  md <- if(is.null(hash)) parse_hash(data) else hash(data)
+  if(!is.raw(md) || !(length(md) %in% c(16, 20, 32, 64)))
+    stop("data must be md5, sha1, sha256 or sha512 digest")
+  hash_verify(md, sig, pk)
 }
 
 #' @useDynLib openssl R_hash_sign

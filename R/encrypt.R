@@ -5,7 +5,7 @@
 #' larger data. This is implemented in the high-level enveloppe functions.
 #'
 #' @export
-#' @param raw vector of max 245 bytes with data to encrypt/decrypt
+#' @param data raw vector of max 245 bytes with data to encrypt/decrypt
 #' @param key private key or file path. See \code{\link{read_key}}
 #' @param pubkey public key or file path. See \code{\link{read_pubkey}}
 #' @param password string or a function to read protected keys. See \code{\link{read_key}}.

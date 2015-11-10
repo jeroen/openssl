@@ -29,6 +29,7 @@
 #' message <- aes_cbc_decrypt(blob, tempkey, iv)
 #' cat(rawToChar(message))
 rsa_encrypt <- function(data, pubkey = my_pubkey()){
+  stopifnot(inherits(pubkey, "rsa"))
   pk <- read_pubkey(pubkey)
   stopifnot(is.raw(data))
   .Call(R_rsa_encrypt, data, pk)
@@ -38,6 +39,7 @@ rsa_encrypt <- function(data, pubkey = my_pubkey()){
 #' @export
 #' @rdname encrypt
 rsa_decrypt <- function(data, key = my_key(), password = readline){
+  stopifnot(inherits(key, "rsa"))
   sk <- read_key(key, password)
   stopifnot(is.raw(data))
   .Call(R_rsa_decrypt, data, sk)

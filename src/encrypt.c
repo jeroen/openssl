@@ -5,10 +5,10 @@
 #include <openssl/pem.h>
 
 SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
-  static unsigned char* buf[8192];
-  RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(keydata);
-  bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(keydata)));
+  RSA *rsa = d2i_RSA_PUBKEY(NULL, &ptr, LENGTH(keydata));
+  bail(!!rsa);
+  unsigned char* buf[8192];
   int len = RSA_public_encrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
   bail(len > 0);
   SEXP res = allocVector(RAWSXP, len);
@@ -17,10 +17,10 @@ SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
 }
 
 SEXP R_rsa_decrypt(SEXP data, SEXP keydata){
-  static unsigned char* buf[8192];
-  RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(keydata);
-  bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(keydata)));
+  RSA *rsa = d2i_RSAPrivateKey(NULL, &ptr, LENGTH(keydata));
+  bail(!!rsa);
+  unsigned char* buf[8192];
   int len = RSA_private_decrypt(LENGTH(data), RAW(data), (unsigned char*) buf, rsa, RSA_PKCS1_PADDING);
   bail(len > 0);
   SEXP res = allocVector(RAWSXP, len);

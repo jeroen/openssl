@@ -2,7 +2,7 @@
 % Please edit documentation in R/keygen.R
 \name{keygen}
 \alias{dsa_keygen}
-\alias{ecdsa_keygen}
+\alias{ec_keygen}
 \alias{keygen}
 \alias{rsa_keygen}
 \title{Generate Key pair}
@@ -11,12 +11,12 @@ rsa_keygen(bits = 2048)
 
 dsa_keygen(bits = 1024)
 
-ecdsa_keygen(curve = c("P-256", "P-384", "P-521"))
+ec_keygen(curve = c("P-256", "P-384", "P-521"))
 }
 \arguments{
 \item{bits}{bitsize of the generated RSA/DSA key}
 
-\item{curve}{only EC: which NIST curve to use}
+\item{curve}{which NIST curve to use}
 }
 \description{
 The \code{keygen} functions generate a random private key. Use \code{as.list(key)$pubkey}

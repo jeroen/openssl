@@ -10,15 +10,15 @@ signature_create(data, hash = sha1, key = my_key(), password = readline)
 signature_verify(data, sig, hash = sha1, pubkey = my_pubkey())
 }
 \arguments{
-\item{data}{raw vector or file path for data to be signed. If \code{hash == NULL}
-then \code{data} must be a hash.}
+\item{data}{raw data vector or file path for message to be signed.
+If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 
 \item{hash}{the digest function to use. Must be one of \code{\link{md5}},
 \code{\link{sha1}}, \code{\link{sha256}}, \code{\link{sha512}} or \code{NULL}.}
 
 \item{key}{private key or file path. See \code{\link{read_key}}.}
 
-\item{password}{string or a function to read protected keys.}
+\item{password}{string or a function to read protected keys. See \code{\link{read_key}}.}
 
 \item{sig}{raw vector or file path for the signature data.}
 

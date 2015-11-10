@@ -5,14 +5,14 @@
 #'
 #' @export
 #' @rdname signatures
-#' @param data raw vector or file path for data to be signed. If \code{hash == NULL}
-#' then \code{data} must be a hash.
+#' @param data raw data vector or file path for message to be signed.
+#' If \code{hash == NULL} then \code{data} must be a hash string or raw vector.
 #' @param hash the digest function to use. Must be one of \code{\link{md5}},
 #' \code{\link{sha1}}, \code{\link{sha256}}, \code{\link{sha512}} or \code{NULL}.
 #' @param key private key or file path. See \code{\link{read_key}}.
 #' @param pubkey public key or file path. See \code{\link{read_pubkey}}.
 #' @param sig raw vector or file path for the signature data.
-#' @param password string or a function to read protected keys.
+#' @param password string or a function to read protected keys. See \code{\link{read_key}}.
 #' @examples # Generate a keypair
 #' key <- rsa_keygen()
 #' pubkey <- as.list(key)$pubkey

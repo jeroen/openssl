@@ -233,5 +233,5 @@ path_or_raw <- function(x){
     bin <- readBin(path, raw(), file.info(path)$size)
     return(bin)
   }
-  stop("x must be raw vector with data or path to existing file.")
+  stop("x must be raw data vector or path to file on disk.")
 }

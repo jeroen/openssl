@@ -8,12 +8,9 @@
 #' @name keygen
 #' @useDynLib openssl R_keygen_rsa
 #' @param bits bitsize of the generated RSA/DSA key
-#' @param curve only EC: which NIST curve to use
+#' @param curve which NIST curve to use
 #' @examples key <- rsa_keygen()
 #' pubkey <- as.list(key)$pubkey
-#'
-#'
-#'
 rsa_keygen <- function(bits = 2048){
   key <- .Call(R_keygen_rsa, as.integer(bits))
   structure(key, class = c("key", "rsa"))
@@ -30,7 +27,7 @@ dsa_keygen <- function(bits = 1024){
 #' @export
 #' @rdname keygen
 #' @useDynLib openssl R_keygen_ecdsa
-ecdsa_keygen <- function(curve = c("P-256", "P-384", "P-521")){
+ec_keygen <- function(curve = c("P-256", "P-384", "P-521")){
   key <- .Call(R_keygen_ecdsa, match.arg(curve))
   structure(key, class = c("key", "ecdsa"))
 }

@@ -115,7 +115,15 @@ read_input <- function(x){
   if(is.raw(x)){
     x
   } else if(inherits(x, "connection")){
-    readBin(x, raw(), file.info(x)$size)
+    if(summary(x)$text == "text") {
+      charToRaw(paste(readLines(x), collapse = "\n"))
+    } else {
+      out <- raw();
+      while(length(buf <- readBin(x, raw(), 1e6))){
+        out <- c(out, buf)
+      }
+      out
+    }
   } else if(is.character(x) && length(x) == 1 && !grepl("\n", x) && !is_pubkey_str(x)){
     x <- normalizePath(path.expand(x), mustWork = TRUE)
     info <- file.info(x)

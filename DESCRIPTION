@@ -11,7 +11,7 @@ Description: Interfaces to the OpenSSL libcrypto library. Currently
 License: MIT + file LICENSE
 URL: https://github.com/jeroenooms/openssl
 BugReports: https://github.com/jeroenooms/openssl/issues
-SystemRequirements: OpenSSL (libssl-dev or openssl-devel)
+SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr
 Suggests:
     testthat,

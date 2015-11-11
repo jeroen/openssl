@@ -4,7 +4,7 @@
 \alias{aes_cbc}
 \alias{aes_cbc_decrypt}
 \alias{aes_cbc_encrypt}
-\title{AES encryption}
+\title{Symmetric AES encryption}
 \usage{
 aes_cbc_encrypt(msg, key, iv = rand_bytes(16))
 

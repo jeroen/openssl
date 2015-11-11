@@ -1,4 +1,4 @@
-#' AES encryption
+#' Symmetric AES encryption
 #'
 #' Symmetric encryption/decryption using the AES block cipher in CBC mode.
 #' When a existing shared secret is available, the key can be a cryptographic

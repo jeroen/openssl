@@ -4,7 +4,7 @@
 \alias{encrypt}
 \alias{rsa_decrypt}
 \alias{rsa_encrypt}
-\title{Low level RSA encryption}
+\title{Low-level RSA encryption}
 \usage{
 rsa_encrypt(data, pubkey = my_pubkey())
 
@@ -13,16 +13,17 @@ rsa_decrypt(data, key = my_key(), password = readline)
 \arguments{
 \item{data}{raw vector of max 245 bytes with data to encrypt/decrypt}
 
-\item{pubkey}{public key or file path. See \code{\link{read_pubkey}}}
+\item{pubkey}{public key or file path. See \code{\link{read_pubkey}}.}
 
-\item{key}{private key or file path. See \code{\link{read_key}}}
+\item{key}{private key or file path. See \code{\link{read_key}}.}
 
 \item{password}{string or a function to read protected keys. See \code{\link{read_key}}.}
 }
 \description{
 Asymmetric encryption and decryption with RSA. Because RSA only supports messages of
 max 245 bytes it is typically used for exchanging a random temporary key for encrypting
-larger data. This is implemented in the high-level enveloppe functions.
+larger data. This is implemented in the high-level \code{\link{encrypt_envelope}} and
+\code{\link{decrypt_envelope}} functions.
 }
 \examples{
 # Generate test keys

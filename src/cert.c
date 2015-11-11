@@ -112,11 +112,17 @@ SEXP R_cert_verify_cert(SEXP cert, SEXP chain, SEXP bundle) {
     bail(X509_STORE_add_cert(store, crt));
   }
 
+  const char *err = NULL;
   if(X509_verify_cert(ctx) < 1)
-    error("Certificate validation failed: %s", X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx)));
+    err = X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx));
 
+  sk_X509_free(sk);
   X509_STORE_CTX_free(ctx);
   X509_STORE_free(store);
   X509_free(crt);
+
+  if(err)
+    error("Certificate validation failed: %s", err);
+
   return ScalarLogical(TRUE);
 }

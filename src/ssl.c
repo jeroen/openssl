@@ -47,23 +47,32 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* Retrieve cert */
   SSL_set_fd(ssl, sockfd);
   bail(SSL_connect(ssl));
-  X509 *cert = SSL_get_peer_certificate(ssl);
-  if(!cert)
-    error("Server did not present a certificate");
 
-  /* Cleanup */
+  /* Convert certs to RAW. Not sure if I should free these */
+  STACK_OF(X509) *chain = SSL_get_peer_cert_chain(ssl);
+  int n = sk_X509_num(chain);
+
+  int len;
+  unsigned char *buf = NULL;
+  SEXP res = PROTECT(allocVector(VECSXP, n));
+  for(int i = 0; i < n; i++){
+    len = i2d_X509(sk_X509_value(chain, i), &buf);
+    SET_VECTOR_ELT(res, i, allocVector(RAWSXP, len));
+    memcpy(RAW(VECTOR_ELT(res, i)), buf, len);
+    setAttrib(VECTOR_ELT(res, i), R_ClassSymbol, mkString("cert"));
+    free(buf);
+    buf = NULL;
+  }
+
+  /* Cleanup connection */
   SSL_free(ssl);
   close(sockfd);
   SSL_CTX_free(ctx);
 
-  //output
-  unsigned char *buf = NULL;
-  int len = i2d_X509(cert, &buf);
-  bail(len > 0);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
-  setAttrib(res, R_ClassSymbol, mkString("cert"));
-  memcpy(RAW(res), buf, len);
+  /* Test for cert */
+  if(n < 1)
+    error("Server did not present a certificate");
+
   UNPROTECT(1);
-  free(buf);
   return res;
 }

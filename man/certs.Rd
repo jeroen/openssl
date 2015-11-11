@@ -3,12 +3,12 @@
 \name{cert_verify}
 \alias{ca_bundle}
 \alias{cert_verify}
-\alias{ssl_cert_chain}
-\title{X509 certificates}
+\alias{download_ssl_cert}
+\title{x509 certificates}
 \usage{
 cert_verify(cert, root = ca_bundle())
 
-ssl_cert_chain(host = "localhost", port = 443)
+download_ssl_cert(host = "localhost", port = 443)
 
 ca_bundle()
 }
@@ -26,7 +26,7 @@ Read, download and verify certificates.
 }
 \examples{
 # Verify the r-project HTTPS cert
-chain <- ssl_cert_chain("www.r-project.org", 443)
+chain <- download_ssl_cert("www.r-project.org", 443)
 print(chain)
 print(as.list(chain[[1]])$pubkey)
 cert_verify(chain, ca_bundle())

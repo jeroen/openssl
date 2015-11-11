@@ -1,4 +1,4 @@
-#' X509 certificates
+#' x509 certificates
 #'
 #' Read, download and verify certificates.
 #'
@@ -8,7 +8,7 @@
 #' @param cert certficate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
 #' @examples # Verify the r-project HTTPS cert
-#' chain <- ssl_cert_chain("www.r-project.org", 443)
+#' chain <- download_ssl_cert("www.r-project.org", 443)
 #' print(chain)
 #' print(as.list(chain[[1]])$pubkey)
 #' cert_verify(chain, ca_bundle())
@@ -40,12 +40,11 @@ cert_verify <- function(cert, root = ca_bundle()){
 #' @rdname certs
 #' @param host string: hostname of the server to connect to
 #' @param port integer: port to connect to
-ssl_cert_chain <- function(host = "localhost", port = 443){
+download_ssl_cert <- function(host = "localhost", port = 443){
   stopifnot(is.character(host))
   stopifnot(is.numeric(port))
   .Call(R_download_cert, host, as.integer(port))
 }
-
 
 #' @useDynLib openssl R_cert_verify_cert
 cert_verify_cert <- function(cert, chain, root){

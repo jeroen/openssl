@@ -8,10 +8,10 @@
 #' @param cert certficate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
 #' @examples # Verify the r-project HTTPS cert
-#' cert <- ssl_cert_chain("www.r-project.org", 443)
-#' print(cert)
-#' print(as.list(cert[[1]])$pubkey)
-#' cert_verify(cert, ca_bundle())
+#' chain <- ssl_cert_chain("www.r-project.org", 443)
+#' print(chain)
+#' print(as.list(chain[[1]])$pubkey)
+#' cert_verify(chain, ca_bundle())
 cert_verify <- function(cert, root = ca_bundle()){
   if(is.raw(cert))
     cert <- list(cert)

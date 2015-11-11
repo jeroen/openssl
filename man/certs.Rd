@@ -26,9 +26,9 @@ Read, download and verify certificates.
 }
 \examples{
 # Verify the r-project HTTPS cert
-cert <- ssl_cert_chain("www.r-project.org", 443)
-print(cert)
-print(as.list(cert[[1]])$pubkey)
-cert_verify(cert, ca_bundle())
+chain <- ssl_cert_chain("www.r-project.org", 443)
+print(chain)
+print(as.list(chain[[1]])$pubkey)
+cert_verify(chain, ca_bundle())
 }
 

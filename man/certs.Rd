@@ -3,9 +3,12 @@
 \name{cert_verify}
 \alias{ca_bundle}
 \alias{cert_verify}
-\title{Certificates}
+\alias{download_cert}
+\title{X509 certificates}
 \usage{
 cert_verify(cert, root = ca_bundle())
+
+download_cert(host = "localhost", port = 443)
 
 ca_bundle()
 }
@@ -13,8 +16,19 @@ ca_bundle()
 \item{cert}{certficate (or certificate-chain) to be verified. Must be cert or list or path.}
 
 \item{root}{trusted pubkey or certificate(s) e.g. CA bundle.}
+
+\item{host}{string: hostname of the server to connect to}
+
+\item{port}{integer: port to connect to}
 }
 \description{
-Verify a certificate
+Read, download and verify certificates.
+}
+\examples{
+# Verify the r-project HTTPS cert
+cert <- download_cert("www.r-project.org", 443)
+print(cert)
+print(as.list(cert)$pubkey)
+cert_verify(cert, ca_bundle())
 }
 

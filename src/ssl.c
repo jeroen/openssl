@@ -10,6 +10,7 @@
 #include <resolv.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 #endif
 
 #include <openssl/ssl.h>
@@ -51,16 +52,16 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
     error("Server did not present a certificate");
 
   /* Cleanup */
-  //SSL_free(ssl);
-  //close(sockfd);
-  //SSL_CTX_free(ctx);
+  SSL_free(ssl);
+  close(sockfd);
+  SSL_CTX_free(ctx);
 
   //output
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
   bail(len > 0);
   SEXP res = PROTECT(allocVector(RAWSXP, len));
-  setAttrib(res, R_ClassSymbol, mkString("x509.cert"));
+  setAttrib(res, R_ClassSymbol, mkString("cert"));
   memcpy(RAW(res), buf, len);
   UNPROTECT(1);
   free(buf);

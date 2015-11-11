@@ -1,12 +1,17 @@
-#' Certificates
+#' X509 certificates
 #'
-#' Verify a certificate
+#' Read, download and verify certificates.
 #'
 #' @useDynLib openssl R_cert_verify_cert R_pubkey_verify_cert
 #' @export
 #' @rdname certs
 #' @param cert certficate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
+#' @examples # Verify the r-project HTTPS cert
+#' cert <- download_cert("www.r-project.org", 443)
+#' print(cert)
+#' print(as.list(cert)$pubkey)
+#' cert_verify(cert, ca_bundle())
 cert_verify <- function(cert, root = ca_bundle()){
   if(is.raw(cert))
     cert <- list(cert)
@@ -29,6 +34,18 @@ cert_verify <- function(cert, root = ca_bundle()){
     cert_verify_cert(cert[[1]], cert[-1], root)
   }
 }
+
+#' @useDynLib openssl R_download_cert
+#' @export
+#' @rdname certs
+#' @param host string: hostname of the server to connect to
+#' @param port integer: port to connect to
+download_cert <- function(host = "localhost", port = 443){
+  stopifnot(is.character(host))
+  stopifnot(is.numeric(port))
+  .Call(R_download_cert, host, as.integer(port))
+}
+
 
 #' @useDynLib openssl R_cert_verify_cert
 cert_verify_cert <- function(cert, chain, root){

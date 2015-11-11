@@ -6,20 +6,18 @@
 \alias{aes_cbc_encrypt}
 \title{Symmetric AES encryption}
 \usage{
-aes_cbc_encrypt(msg, key, iv = rand_bytes(16))
+aes_cbc_encrypt(data, key, iv = rand_bytes(16))
 
-aes_cbc_decrypt(ciphertext, key, iv = attr(ciphertext, "iv"))
+aes_cbc_decrypt(data, key, iv = attr(data, "iv"))
 }
 \arguments{
-\item{msg}{raw vector or path to file with data to encrypt}
+\item{data}{raw vector or path to file with data to encrypt or decrypt}
 
 \item{key}{secret key. Must be raw vector of length 16, 24 or 32, e.g.
 the sha256 hash of a secret passphrase}
 
 \item{iv}{initialization vector. Must be raw vector of length 16 (aes
 block size) or NULL. This part is not secret but should be random.}
-
-\item{ciphertext}{raw vector containing the encrypted message}
 }
 \description{
 Symmetric encryption/decryption using the AES block cipher in CBC mode.

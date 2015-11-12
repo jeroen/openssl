@@ -5,9 +5,14 @@ Version: 0.4.9000
 Authors@R: c(
     person("Jeroen", "Ooms", , "jeroen.ooms@stat.ucla.edu", role = c("cre", "aut")),
     person("Oliver", "Keyes", role = "ctb"))
-Description: Interfaces to the OpenSSL libcrypto library. Currently
-    implements bindings to the OpenSSL secure random number generator,
-    base64 encoder, hashing functions, encryption and signature verifaction.
+Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH pubkey parser.
+    Supports RSA, DSA and NIST curves P-256, P-384 and P-521. Cryptographic signatures
+    can either be created and verified manually or via x509 certificates. The common AES
+    block cipher is used in CBC mode for symmetric encryption; RSA for asymmetric (public
+    key) encryption. The envelope functions combine RSA and AES for encrypting arbitrarily
+    large data. Other utilities include key generators, hash functions (md5, sha1, sha256,
+    etc), base64 encoder, a secure random number generator, and 'bignum' math methods for
+    manually performing crypto calculations on large multibyte integers.
 License: MIT + file LICENSE
 URL: https://github.com/jeroenooms/openssl
 BugReports: https://github.com/jeroenooms/openssl/issues

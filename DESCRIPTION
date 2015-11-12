@@ -1,6 +1,6 @@
 Package: openssl
 Type: Package
-Title: Toolkit for Encryption, Signatures and Certificates
+Title: Toolkit for Encryption, Signatures and Certificates based on OpenSSL
 Version: 0.4.9000
 Authors@R: c(
     person("Jeroen", "Ooms", , "jeroen.ooms@stat.ucla.edu", role = c("cre", "aut")),

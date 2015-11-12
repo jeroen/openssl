@@ -12,6 +12,11 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   SEXP cb = (SEXP) ctx;
   int len;
 
+  /* no password */
+  if(isNull(cb)){
+    return 0;
+  }
+
   /* case where password is a hardcoded string */
   if(isString(cb)){
     len = LENGTH(STRING_ELT(cb, 0));

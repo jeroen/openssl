@@ -9,3 +9,10 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
+env:
+  - secure: "EL4GyLlqgd7VpDt5cPrZXiuyYm72hkD259GS8oxV8kOh8OaW6yH3v3Is42BKIqfosiv+1GfVgqYOyLCOA4Fpl+ERUA3UdPARXxqdGw8RrxqvFfCAZvArvzNs5GJn2956SkCvq6DPK/+RFNMmCFhpgk17HORVvDD1MZfh6OyzT3w="
+
+before_script:
+  - Rscript -e 'print(Sys.getenv("TEST"))'
+

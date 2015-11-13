@@ -30,6 +30,7 @@
 #' stopifnot(identical(msg, orig))
 encrypt_envelope <- function(data, pubkey = my_pubkey()){
   pk <- read_pubkey(pubkey)
+  stopifnot(inherits(pk, "rsa"))
   data <- path_or_raw(data)
   out <- .Call(R_envelope_encrypt, data, pk)
   structure(out, names = c("iv", "session", "data"))
@@ -40,6 +41,7 @@ encrypt_envelope <- function(data, pubkey = my_pubkey()){
 #' @rdname encrypt_envelope
 decrypt_envelope <- function(data, iv, session, key = my_key(), password){
   sk <- read_key(key, password = password)
+  stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(iv))
   stopifnot(is.raw(session))
   data <- path_or_raw(data)

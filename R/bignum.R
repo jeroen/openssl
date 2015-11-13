@@ -73,7 +73,7 @@ as.character.bignum <- function(x, hex = FALSE, ...){
 `-.bignum` <- function(x, y){
   x <- bn(x)
   y <- bn(y)
-  stopifnot(x > y)
+  stopifnot(x >= y)
   .Call(R_bignum_subtract, x, y)
 }
 

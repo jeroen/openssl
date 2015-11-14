@@ -22,8 +22,8 @@ if [ "$PKGCONFIG" ]; then
   PKGCONFIG_LIBS=$(pkg-config --libs ${PKG_CONFIG_NAME})
 fi
 
-# Hack to prevent OSX CRAN server from linking against old OpenSSl
-if [ -e "/Builds/CRAN-QA-Simon" ]; then
+# Prevent OSX from linking against OpenSSL 0.9.8
+if [[ "$OSTYPE" == "darwin"* ]]; then
   unset PKGCONFIG_CFLAGS
   unset PKGCONFIG_LIBS
 fi
@@ -41,10 +41,10 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   if [ $(command -v brew) ]; then
     BREWDIR=$(brew --prefix)
   else
-    echo "Auto-brewing $PKG_BREW_NAME..."
     BREWDIR="/tmp/homebrew"
     rm -Rf $BREWDIR
     mkdir -p $BREWDIR
+    echo "Auto-brewing $PKG_BREW_NAME in $BREWDIR..."
     curl -fsSL https://github.com/Homebrew/homebrew/tarball/master | tar xz --strip 1 -C $BREWDIR
     HOMEBREW_CACHE="/tmp" $BREWDIR/bin/brew install $PKG_BREW_NAME 2>&1 | sed 's/Warning/Note/g'
     rm -f $BREWDIR/opt/$PKG_BREW_NAME/lib/*.dylib

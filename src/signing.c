@@ -51,6 +51,7 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   EVP_PKEY_free(pkey);
   SEXP res = allocVector(RAWSXP, siglen);
   memcpy(RAW(res), sig, siglen);
+  OPENSSL_free(sig);
   return res;
 }
 

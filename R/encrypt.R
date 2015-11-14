@@ -1,12 +1,13 @@
 #' Low-level RSA encryption
 #'
-#' Asymmetric encryption and decryption with RSA. Because RSA only supports messages of
-#' max 245 bytes it is typically used for exchanging a random temporary key for encrypting
-#' larger data. This is implemented in the high-level \code{\link{encrypt_envelope}} and
-#' \code{\link{decrypt_envelope}} functions.
+#' Asymmetric encryption and decryption with RSA. Because RSA can not encrypt messages
+#' larger than it's key size, it is typically used only to exchanging a random session-key.
+#' The session key is can than be used to encipher arbitrary sized data via a stream
+#' cipher such as \link{aes_cbc}. See \code{\link{encrypt_envelope}} for a standard
+#' high-level wrappers combining RSA and AES.
 #'
 #' @export
-#' @param data raw vector of max 245 bytes with data to encrypt/decrypt
+#' @param data raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt
 #' @inheritParams signature_create
 #' @rdname encrypt
 #' @family encrypt
@@ -29,8 +30,8 @@
 #' message <- aes_cbc_decrypt(blob, tempkey, iv)
 #' cat(rawToChar(message))
 rsa_encrypt <- function(data, pubkey = my_pubkey()){
-  stopifnot(inherits(pubkey, "rsa"))
   pk <- read_pubkey(pubkey)
+  stopifnot(inherits(pk, "rsa"))
   stopifnot(is.raw(data))
   .Call(R_rsa_encrypt, data, pk)
 }
@@ -39,9 +40,8 @@ rsa_encrypt <- function(data, pubkey = my_pubkey()){
 #' @export
 #' @rdname encrypt
 rsa_decrypt <- function(data, key = my_key(), password = readline){
-  stopifnot(inherits(key, "rsa"))
   sk <- read_key(key, password)
+  stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(data))
   .Call(R_rsa_decrypt, data, sk)
 }
-

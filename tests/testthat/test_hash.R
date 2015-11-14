@@ -20,3 +20,9 @@ test_that("AES-256 encrypts and decrypts for all lengths", {
   }
 })
 
+test_that("File API", {
+  file <- system.file("DESCRIPTION")
+  key <- rand_bytes(32)
+  ct <- aes_cbc_encrypt(file, key)
+  expect_equal(aes_cbc_decrypt(ct, key), readBin(file, raw(), 1e5))
+})

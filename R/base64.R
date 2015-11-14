@@ -1,14 +1,14 @@
 #' Encode and decode base64
 #'
 #' Encode and decode binary data into a base64 string. Character vectors are
-#' automatically collapse into a single string.
+#' automatically collapsed into a single string.
 #'
 #' @rdname base64
 #' @name base64
 #' @useDynLib openssl R_base64_encode
-#' @param bin Data to encode. Must be raw or character vector.
-#' @param linebreaks Insert linebreaks in the base64 message to make it more readable.
-#' @param text The base64 message to decode. Must be a string.
+#' @param bin raw or character vector with data to encode into base64
+#' @param linebreaks insert linebreaks in the base64 message to make it more readable
+#' @param text string with base64 data to decode
 #' @export
 #' @examples input <- charToRaw("foo = bar + 5")
 #' message <- base64_encode(input)

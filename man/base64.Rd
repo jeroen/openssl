@@ -11,15 +11,15 @@ base64_encode(bin, linebreaks = FALSE)
 base64_decode(text)
 }
 \arguments{
-\item{bin}{Data to encode. Must be raw or character vector.}
+\item{bin}{raw or character vector with data to encode into base64}
 
-\item{linebreaks}{Insert linebreaks in the base64 message to make it more readable.}
+\item{linebreaks}{insert linebreaks in the base64 message to make it more readable}
 
-\item{text}{The base64 message to decode. Must be a string.}
+\item{text}{string with base64 data to decode}
 }
 \description{
 Encode and decode binary data into a base64 string. Character vectors are
-automatically collapse into a single string.
+automatically collapsed into a single string.
 }
 \examples{
 input <- charToRaw("foo = bar + 5")

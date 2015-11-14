@@ -1,7 +1,7 @@
 #' Signatures
 #'
-#' Sign and verify a message digest. DSA and ECDSA keys only support SHA1
-#' and SHA256 signatures.
+#' Sign and verify a message digest. RSA supports both MD5 and SHA signatures
+#' whereas DSA and EC keys only support SHA.
 #'
 #' @export
 #' @rdname signatures

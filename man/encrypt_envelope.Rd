@@ -25,14 +25,12 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \item{password}{string or a function to read protected keys. See \code{\link{read_key}}.}
 }
 \description{
-High level procedures for public key encryption.
-}
-\details{
-Under the hood, \code{\link{encrypt_envelope}} generates a random IV and session-key
-to encrypt the \code{data} with the \code{\link{aes_cbc}} cipher. It then encrypts the
-session-key with the provided RSA public key (see \code{\link{rsa_encrypt}}) and returns
-this encrypted session key along with the IV and ciphertext. Each of these outputs is
-required to decrypt the data from the corresponding private key.
+An \href{https://wiki.openssl.org/index.php/EVP_Asymmetric_Encryption_and_Decryption_of_an_Envelope}{envelope}
+contains ciphertext along with an encrypted session key and optionally and initialiation
+vector. The \code{\link{encrypt_envelope}} generates a random IV and session-key which is
+used to encrypt the \code{data} with \code{\link{aes_cbc}}. The session key itself is
+encrypted with the given RSA pubkey and stored along with the encrypted data. Each of
+these outputs is required to decrypt the data with the corresponding private key.
 }
 \examples{
 # Requires RSA key

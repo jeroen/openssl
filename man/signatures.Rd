@@ -25,8 +25,8 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \item{pubkey}{public key or file path. See \code{\link{read_pubkey}}.}
 }
 \description{
-Sign and verify a message digest. DSA and ECDSA keys only support SHA1
-and SHA256 signatures.
+Sign and verify a message digest. RSA supports both MD5 and SHA signatures
+whereas DSA and EC keys only support SHA.
 }
 \examples{
 # Generate a keypair

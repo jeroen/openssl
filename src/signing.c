@@ -40,8 +40,8 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
   bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) >= 0);
   size_t siglen;
-  unsigned char buf[10000];
-  bail(EVP_PKEY_sign(ctx, buf, &siglen, RAW(md), LENGTH(md)) >= 0);
+  unsigned char buf[1000];
+  bail(EVP_PKEY_sign(ctx, buf, &siglen, RAW(md), LENGTH(md)) > 0);
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   SEXP res = allocVector(RAWSXP, siglen);

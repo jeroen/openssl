@@ -1,10 +1,10 @@
 #' Low-level RSA encryption
 #'
-#' Asymmetric encryption and decryption with RSA. Because RSA can not encrypt messages
-#' larger than it's key size, it is typically used only to exchanging a random session-key.
-#' The session key is can than be used to encipher arbitrary sized data via a stream
-#' cipher such as \link{aes_cbc}. See \code{\link{encrypt_envelope}} for a standard
-#' high-level wrappers combining RSA and AES.
+#' Asymmetric encryption and decryption with RSA. Because RSA can only encrypt messages
+#' smaller than the size of the key, it is typically used only for exchanging a random
+#' session-key. This session key is used to encipher arbitrary sized data via a stream
+#' cipher such as \link{aes_cbc}. See \code{\link{encrypt_envelope}} for a high-level
+#' wrappers combining RSA and AES in this way.
 #'
 #' @export
 #' @param data raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt

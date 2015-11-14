@@ -130,7 +130,7 @@ connectionhash <- function(con, algo, salt){
 }
 
 rawstringhash <- function(x, algo, salt){
-  hash <- if(is(x, "connection")){
+  hash <- if(inherits(x, "connection")){
     connectionhash(x, algo, salt)
   } else if(is.raw(x)){
     rawhash(x, algo, salt)

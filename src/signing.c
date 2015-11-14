@@ -39,13 +39,18 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   bail(EVP_PKEY_sign_init(ctx) > 0);
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
   bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) > 0);
+
+  //detemine buffer length (this is really required, over/under estimate can crash)
   size_t siglen;
-  unsigned char buf[10000];
-  bail(EVP_PKEY_sign(ctx, buf, &siglen, RAW(md), LENGTH(md)) > 0);
+  bail(EVP_PKEY_sign(ctx, NULL, &siglen, RAW(md), LENGTH(md)) > 0);
+
+  //calculate signature
+  unsigned char *sig = OPENSSL_malloc(siglen);
+  bail(EVP_PKEY_sign(ctx, sig, &siglen, RAW(md), LENGTH(md)) > 0);
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   SEXP res = allocVector(RAWSXP, siglen);
-  memcpy(RAW(res), buf, siglen);
+  memcpy(RAW(res), sig, siglen);
   return res;
 }
 

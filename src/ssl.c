@@ -1,6 +1,7 @@
 #include <Rinternals.h>
 #include "apple.h"
 #include "utils.h"
+#include <unistd.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -10,7 +11,6 @@
 #include <resolv.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <unistd.h>
 #endif
 
 #include <openssl/ssl.h>

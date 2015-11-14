@@ -36,11 +36,11 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   bail(!!pkey);
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
   bail(!!ctx);
-  bail(EVP_PKEY_sign_init(ctx) >= 0);
+  bail(EVP_PKEY_sign_init(ctx) > 0);
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
-  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) >= 0);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) > 0);
   size_t siglen;
-  unsigned char buf[1000];
+  unsigned char buf[10000];
   bail(EVP_PKEY_sign(ctx, buf, &siglen, RAW(md), LENGTH(md)) > 0);
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
@@ -55,9 +55,9 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   bail(!!pkey);
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
   bail(!!ctx);
-  bail(EVP_PKEY_verify_init(ctx) >= 0);
+  bail(EVP_PKEY_verify_init(ctx) > 0);
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
-  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) >= 0);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) > 0);
   int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
   bail(res >= 0);
   if(res == 0)

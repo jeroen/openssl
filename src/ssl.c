@@ -51,6 +51,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* Convert certs to RAW. Not sure if I should free these */
   STACK_OF(X509) *chain = SSL_get_peer_cert_chain(ssl);
   int n = sk_X509_num(chain);
+  bail(n > 0);
 
   int len;
   unsigned char *buf = NULL;

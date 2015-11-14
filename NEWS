@@ -1,5 +1,6 @@
 0.5
- - Major overhaul, add encryption stuff
+ - Major overhaul, add encryption, signature, cert stuff
+ - Upgrade libssl and libcrypto on windows to 1.0.2d
 
 0.4
  - Added base64 functions

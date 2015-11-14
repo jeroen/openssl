@@ -5,6 +5,10 @@
 #include <openssl/ssl.h>
 
 void R_init_openssl(DllInfo *info) {
+#ifdef _WIN32
+  WSADATA wsaData;
+  WSAStartup(MAKEWORD(2, 2), &wsaData);
+#endif
   OpenSSL_add_all_digests();
   OpenSSL_add_all_algorithms();
   OpenSSL_add_all_ciphers();

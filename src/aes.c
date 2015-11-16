@@ -28,33 +28,26 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   if(LENGTH(iv) != 16)
     error("aes requires an iv of length 16");
 
-  EVP_CIPHER_CTX ctx;
-  EVP_CIPHER_CTX_init(&ctx);
-  EVP_CipherInit_ex(&ctx, get_cipher(strength), NULL, RAW(key), RAW(iv), asLogical(encrypt));
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  EVP_CIPHER_CTX_init(ctx);
+  bail(EVP_CipherInit_ex(ctx, get_cipher(strength), NULL, RAW(key), RAW(iv), asLogical(encrypt)));
 
-  int blocksize = EVP_CIPHER_CTX_block_size(&ctx);
+  int blocksize = EVP_CIPHER_CTX_block_size(ctx);
   int remainder = LENGTH(x) % blocksize;
   int outlen = LENGTH(x) + blocksize - remainder;
   unsigned char *buf = malloc(outlen);
   unsigned char *cur = buf;
 
   int tmp;
-  if(!EVP_CipherUpdate(&ctx, cur, &tmp, RAW(x), LENGTH(x))) {
-    EVP_CIPHER_CTX_cleanup(&ctx);
-    free(buf);
-    raise_error();
-  }
+  bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 
-  if(!EVP_CipherFinal_ex(&ctx, cur, &tmp)) {
-    EVP_CIPHER_CTX_cleanup(&ctx);
-    free(buf);
-    raise_error();
-  }
+  bail(EVP_CipherFinal_ex(ctx, cur, &tmp));
   cur += tmp;
 
   int total = cur - buf;
-  EVP_CIPHER_CTX_cleanup(&ctx);
+  EVP_CIPHER_CTX_cleanup(ctx);
+  EVP_CIPHER_CTX_free(ctx);
   SEXP out = allocVector(RAWSXP, total);
   memcpy(RAW(out), buf, total);
   free(buf);

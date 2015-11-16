@@ -129,6 +129,22 @@ SEXP R_bignum_exp(SEXP x, SEXP y){
   return res;
 }
 
+SEXP R_bignum_mod_exp(SEXP x, SEXP y, SEXP m){
+  BIGNUM *val1 = r2bignum(x);
+  BIGNUM *val2 = r2bignum(y);
+  BIGNUM *val3 = r2bignum(m);
+  BIGNUM *out = BN_new();
+  BN_CTX *ctx = BN_CTX_new();
+  bail(BN_mod_exp(out, val1, val2, val3, ctx));
+  BN_free(val1);
+  BN_free(val2);
+  BN_free(val3);
+  SEXP res = bignum2r(out);
+  BN_free(out);
+  BN_CTX_free(ctx);
+  return res;
+}
+
 SEXP R_bignum_compare(SEXP x, SEXP y){
   BIGNUM *val1 = r2bignum(x);
   BIGNUM *val2 = r2bignum(y);

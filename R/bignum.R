@@ -139,6 +139,11 @@ as.character.bignum <- function(x, hex = FALSE, ...){
   stop("Use integer division %/% and modulo %% for dividing bignum objects", call. = FALSE)
 }
 
+#' @useDynLib openssl R_bignum_mod_exp
+bignum_mod_exp <- function(x, y, m){
+  .Call(R_bignum_mod_exp, x, y, m)
+}
+
 #' @useDynLib openssl R_bignum_bits
 bignum_bits <- function(x){
   .Call(R_bignum_bits, x)

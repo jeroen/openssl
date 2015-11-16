@@ -63,6 +63,9 @@ read_key <- function(file, password = readline, der = is.raw(file)){
 #' @export
 #' @rdname read_key
 read_pubkey <- function(file, der = is.raw(file)){
+  if(inherits(file, "key") || inherits(file, "cert")){
+    return(as.list(file)$pubkey)
+  }
   buf <- read_input(file)
   key <- if(isTRUE(der)){
     parse_der_pubkey(buf)

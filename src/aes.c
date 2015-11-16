@@ -35,7 +35,7 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   int blocksize = EVP_CIPHER_CTX_block_size(ctx);
   int remainder = LENGTH(x) % blocksize;
   int outlen = LENGTH(x) + blocksize - remainder;
-  unsigned char *buf = malloc(outlen);
+  unsigned char *buf = OPENSSL_malloc(outlen);
   unsigned char *cur = buf;
 
   int tmp;
@@ -50,6 +50,6 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   EVP_CIPHER_CTX_free(ctx);
   SEXP out = allocVector(RAWSXP, total);
   memcpy(RAW(out), buf, total);
-  free(buf);
+  OPENSSL_free(buf);
   return out;
 }

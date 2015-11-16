@@ -9,9 +9,8 @@
 #' @export
 #' @param data raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt
 #' @inheritParams signature_create
-#' @rdname encrypt
-#' @family encrypt
-#' @name encrypt
+#' @rdname rsa_encrypt
+#' @aliases rsa encrypt
 #' @useDynLib openssl R_rsa_encrypt
 #' @examples # Generate test keys
 #' key <- rsa_keygen()
@@ -28,7 +27,7 @@
 #' # Receiver decrypts tempkey from private RSA key
 #' tempkey <- rsa_decrypt(ciphertext, key)
 #' message <- aes_cbc_decrypt(blob, tempkey, iv)
-#' cat(rawToChar(message))
+#' out <- rawToChar(message)
 rsa_encrypt <- function(data, pubkey = my_pubkey()){
   pk <- read_pubkey(pubkey)
   stopifnot(inherits(pk, "rsa"))
@@ -38,7 +37,7 @@ rsa_encrypt <- function(data, pubkey = my_pubkey()){
 
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
-#' @rdname encrypt
+#' @rdname rsa_encrypt
 rsa_decrypt <- function(data, key = my_key(), password = readline){
   sk <- read_key(key, password)
   stopifnot(inherits(sk, "rsa"))

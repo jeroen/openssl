@@ -13,6 +13,7 @@ SEXP R_envelope_encrypt(SEXP data, SEXP pubkey) {
 
   /* Encryption context */
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  EVP_CIPHER_CTX_init(ctx);
   bail(!!ctx);
 
   /* Secret key arrays */
@@ -37,6 +38,7 @@ SEXP R_envelope_encrypt(SEXP data, SEXP pubkey) {
   int len2;
   bail(EVP_SealFinal(ctx, out + len1, &len2));
   EVP_PKEY_free(pkey[0]);
+  EVP_CIPHER_CTX_cleanup(ctx);
   EVP_CIPHER_CTX_free(ctx);
 
   /* Create output vector */
@@ -61,6 +63,7 @@ SEXP R_envelope_decrypt(SEXP data, SEXP iv, SEXP session, SEXP key) {
 
   /* Encryption context */
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  EVP_CIPHER_CTX_init(ctx);
   bail(!!ctx);
 
   /* Verify key size */
@@ -84,6 +87,7 @@ SEXP R_envelope_decrypt(SEXP data, SEXP iv, SEXP session, SEXP key) {
   int len2;
   bail(EVP_OpenFinal(ctx, out + len1, &len2));
   EVP_PKEY_free(pkey);
+  EVP_CIPHER_CTX_cleanup(ctx);
   EVP_CIPHER_CTX_free(ctx);
 
   /* Create RAW vector */

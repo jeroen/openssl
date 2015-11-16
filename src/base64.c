@@ -14,7 +14,7 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
   BIO_set_close(bio, BIO_NOCLOSE);
-  BIO_write(bio, RAW(bin), length(bin));
+  BIO_write(bio, RAW(bin), LENGTH(bin));
   BIO_flush(bio);
 
   //Get the output

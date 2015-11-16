@@ -1,3 +1,6 @@
+0.6
+ - Added --force-bottle to autobrew installer
+
 0.5
  - Major overhaul, add encryption, signature, cert stuff
  - Upgrade libssl and libcrypto on windows to 1.0.2d

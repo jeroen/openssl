@@ -95,10 +95,18 @@ as.character.bignum <- function(x, hex = FALSE, ...){
   .Call(R_bignum_devide, bn(x), bn(y))
 }
 
+
+# Doesn't help because R always evaluates 'x' to determine dispatch method
 #' @export
-#' @useDynLib openssl R_bignum_mod
 `%%.bignum` <- function(x, y){
-  .Call(R_bignum_mod, bn(x), bn(y))
+  xcall = substitute(x)
+  if(length(xcall) == 3 && identical(xcall[[1]], quote(`^`))){
+    a <- eval(xcall[[2]])
+    b <- eval(xcall[[3]])
+    bignum_mod_exp(a, b, y)
+  } else {
+    bignum_mod(x, y)
+  }
 }
 
 #' @export
@@ -137,6 +145,11 @@ as.character.bignum <- function(x, hex = FALSE, ...){
 #' @export
 `/.bignum` <- function(x, y){
   stop("Use integer division %/% and modulo %% for dividing bignum objects", call. = FALSE)
+}
+
+#' @useDynLib openssl R_bignum_mod
+bignum_mod <- function(x, y){
+  .Call(R_bignum_mod, x, y)
 }
 
 #' @useDynLib openssl R_bignum_mod_exp

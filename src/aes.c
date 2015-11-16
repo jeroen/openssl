@@ -29,7 +29,6 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
     error("aes requires an iv of length 16");
 
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-  EVP_CIPHER_CTX_init(ctx);
   bail(EVP_CipherInit_ex(ctx, get_cipher(strength), NULL, RAW(key), RAW(iv), asLogical(encrypt)));
 
   int blocksize = EVP_CIPHER_CTX_block_size(ctx);

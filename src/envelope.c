@@ -13,7 +13,6 @@ SEXP R_envelope_encrypt(SEXP data, SEXP pubkey) {
 
   /* Encryption context */
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-  EVP_CIPHER_CTX_init(ctx);
   bail(!!ctx);
 
   /* Secret key arrays */
@@ -63,7 +62,6 @@ SEXP R_envelope_decrypt(SEXP data, SEXP iv, SEXP session, SEXP key) {
 
   /* Encryption context */
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-  EVP_CIPHER_CTX_init(ctx);
   bail(!!ctx);
 
   /* Verify key size */

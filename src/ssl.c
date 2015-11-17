@@ -2,6 +2,7 @@
 #include "apple.h"
 #include "utils.h"
 #include <unistd.h>
+#include <fcntl.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -14,6 +15,14 @@
 #endif
 
 #include <openssl/ssl.h>
+
+void check_interrupt_fn(void *dummy) {
+  R_CheckUserInterrupt();
+}
+
+int pending_interrupt() {
+  return !(R_ToplevelExec(check_interrupt_fn, NULL));
+}
 
 SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* grab inputs */
@@ -30,10 +39,41 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   dest_addr.sin_addr.s_addr = *(long*)(host->h_addr);
   memset(&(dest_addr.sin_zero), '\0', 8);
 
+  // Set non-blocking
+#ifndef _WIN32
+  long arg = fcntl(sockfd, F_GETFL, NULL);
+  arg |= O_NONBLOCK;
+  fcntl(sockfd, F_SETFL, arg);
+#endif
+
   /* Connect */
-  char *tmp_ptr = inet_ntoa(dest_addr.sin_addr);
-  if (connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr)) < 0)
-    error("Failed to connect to %s on port %d", tmp_ptr, port);
+  struct timeval tv;
+  fd_set myset;
+  tv.tv_sec = 1;
+  tv.tv_usec = 0;
+  FD_ZERO(&myset);
+  FD_SET(sockfd, &myset);
+  int elapsed_time = 0;
+  if (connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr)) < 0){
+    //for blocking sockets:
+    //error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
+    while(select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
+      // wait for 10 sec or user interruption
+      if(pending_interrupt() || ++elapsed_time > 9){
+        close(sockfd);
+        if(elapsed_time > 9)
+          error("Connect timeout");
+        return R_NilValue;
+      }
+    }
+  }
+
+#ifndef _WIN32
+  /* Set back to blocking mode */
+  arg = fcntl(sockfd, F_GETFL, NULL);
+  arg &= (~O_NONBLOCK);
+  fcntl(sockfd, F_SETFL, arg);
+#endif
 
   /* Setup SSL */
   SSL_CTX *ctx = SSL_CTX_new(SSLv23_client_method());

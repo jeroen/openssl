@@ -43,6 +43,7 @@ cert_verify <- function(cert, root = ca_bundle()){
 download_ssl_cert <- function(host = "localhost", port = 443){
   stopifnot(is.character(host))
   stopifnot(is.numeric(port))
+  stopifnot(port < 2^16)
   .Call(R_download_cert, host, as.integer(port))
 }
 

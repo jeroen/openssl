@@ -68,6 +68,9 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
           error("Connect timeout");
         return R_NilValue;
       }
+#ifdef _WIN32
+      Sleep(1000);
+#endif
     }
   }
 

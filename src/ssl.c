@@ -40,7 +40,10 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   memset(&(dest_addr.sin_zero), '\0', sizeof(dest_addr.sin_zero));
 
   // Set non-blocking
-#ifndef _WIN32
+#ifdef _WIN32
+  u_long blocking = 1;
+  ioctlsocket(sockfd, FIONBIO, &blocking);
+#else
   long arg = fcntl(sockfd, F_GETFL, NULL);
   arg |= O_NONBLOCK;
   fcntl(sockfd, F_SETFL, arg);

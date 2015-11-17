@@ -39,10 +39,10 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   memcpy(&dest_addr.sin_addr, host->h_addr, host->h_length);
   memset(&(dest_addr.sin_zero), '\0', sizeof(dest_addr.sin_zero));
 
-  // Set non-blocking
+  /* Set to non-blocking mode */
 #ifdef _WIN32
-  u_long blocking = 1;
-  ioctlsocket(sockfd, FIONBIO, &blocking);
+  u_long nonblocking = 1;
+  ioctlsocket(sockfd, FIONBIO, &nonblocking);
 #else
   long arg = fcntl(sockfd, F_GETFL, NULL);
   arg |= O_NONBLOCK;
@@ -71,8 +71,11 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
     }
   }
 
-#ifndef _WIN32
-  /* Set back to blocking mode */
+  /* Set back in blocking mode */
+#ifdef _WIN32
+  nonblocking = 0;
+  ioctlsocket(sockfd, FIONBIO, &nonblocking);
+#else
   arg = fcntl(sockfd, F_GETFL, NULL);
   arg &= (~O_NONBLOCK);
   fcntl(sockfd, F_SETFL, arg);

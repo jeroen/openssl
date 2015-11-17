@@ -25,19 +25,19 @@ int pending_interrupt() {
 }
 
 SEXP R_download_cert(SEXP hostname, SEXP portnum) {
-  /* grab inputs */
-  int port = asInteger(portnum);
-  struct sockaddr_in dest_addr;
+  /* resolve hostname */
   struct hostent *host = gethostbyname(CHAR(STRING_ELT(hostname, 0)));
   if(!host)
     error("Failed to resolve hostname");
 
   /* create TCP socket */
+  int port = asInteger(portnum);
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  struct sockaddr_in dest_addr;
   dest_addr.sin_family=AF_INET;
   dest_addr.sin_port=htons(port);
-  dest_addr.sin_addr.s_addr = *(long*)(host->h_addr);
-  memset(&(dest_addr.sin_zero), '\0', 8);
+  memcpy(&dest_addr.sin_addr, host->h_addr, host->h_length);
+  memset(&(dest_addr.sin_zero), '\0', sizeof(dest_addr.sin_zero));
 
   // Set non-blocking
 #ifndef _WIN32

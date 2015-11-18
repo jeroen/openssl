@@ -52,25 +52,14 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* Connect */
   struct timeval tv;
   fd_set myset;
-  tv.tv_sec = 1;
+  tv.tv_sec = 5; // 5 sec timeout
   tv.tv_usec = 0;
   FD_ZERO(&myset);
   FD_SET(sockfd, &myset);
-  int elapsed_time = 0;
   if (connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr)) < 0){
-    //for blocking sockets:
-    //error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
-    while(select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
-      // wait for 10 sec or user interruption
-      if(pending_interrupt() || ++elapsed_time > 9){
-        close(sockfd);
-        if(elapsed_time > 9)
-          error("Connect timeout");
-        return R_NilValue;
-      }
-#ifdef _WIN32
-      Sleep(1000);
-#endif
+    if(select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
+      close(sockfd);
+      error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
     }
   }
 
@@ -95,7 +84,9 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 
   /* Retrieve cert */
   SSL_set_fd(ssl, sockfd);
-  bail(SSL_connect(ssl));
+  int con = SSL_connect(ssl);
+  close(sockfd);
+  bail(con > 0);
 
   /* Convert certs to RAW. Not sure if I should free these */
   STACK_OF(X509) *chain = SSL_get_peer_cert_chain(ssl);
@@ -116,7 +107,6 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 
   /* Cleanup connection */
   SSL_free(ssl);
-  close(sockfd);
   SSL_CTX_free(ctx);
 
   /* Test for cert */

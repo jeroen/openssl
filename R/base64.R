@@ -3,8 +3,7 @@
 #' Encode and decode binary data into a base64 string. Character vectors are
 #' automatically collapsed into a single string.
 #'
-#' @rdname base64
-#' @name base64
+#' @rdname base64_encode
 #' @useDynLib openssl R_base64_encode
 #' @param bin raw or character vector with data to encode into base64
 #' @param linebreaks insert linebreaks in the base64 message to make it more readable
@@ -22,7 +21,7 @@ base64_encode <- function(bin, linebreaks = FALSE){
   .Call(R_base64_encode, bin, as.logical(linebreaks))
 }
 
-#' @rdname base64
+#' @rdname base64_encode
 #' @useDynLib openssl R_base64_decode
 #' @export
 base64_decode <- function(text){

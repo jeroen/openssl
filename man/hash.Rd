@@ -76,7 +76,7 @@ sha1("admin", salt="some_random_salt_value") #not googleable
 
 # Use a random salt to identify duplicates while anonymizing values
 sha256("john") # googleable
-sha256(c("john", "mary", "john"), salt = "somerandomsalt")
+sha256(c("john", "mary", "john"), salt = "some_random_salt_value")
 }
 \references{
 OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}.

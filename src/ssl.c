@@ -82,7 +82,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   /* Required for SNI (e.g. cloudflare) */
   bail(SSL_set_tlsext_host_name(ssl, CHAR(STRING_ELT(hostname, 0))));
 
-  /* Retrieve cert */
+  /* SSL handshake to get cert */
   SSL_set_fd(ssl, sockfd);
   int con = SSL_connect(ssl);
   close(sockfd);
@@ -105,7 +105,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
     buf = NULL;
   }
 
-  /* Cleanup connection */
+  /* Cleanup SSL */
   SSL_free(ssl);
   SSL_CTX_free(ctx);
 

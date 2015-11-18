@@ -1,6 +1,6 @@
 0.6
  - Added --force-bottle to autobrew installer
- - Use nonblocking socket in ssl to support timeout and interrupt
+ - Use nonblocking socket in ssl to set connection timeout
  - Fix UBSAN problem in ssl.c
  - Fix ASAN problem in hash.c
 

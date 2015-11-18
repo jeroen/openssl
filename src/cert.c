@@ -4,6 +4,7 @@
 #include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
+#include <openssl/x509.h>
 
 SEXP R_cert_info(SEXP bin){
   X509 *cert = X509_new();
@@ -65,6 +66,14 @@ SEXP R_cert_info(SEXP bin){
 
   //test for self signed
   SET_VECTOR_ELT(out, 5, ScalarLogical(X509_verify(cert, X509_get_pubkey(cert))));
+
+  //check for alternative names
+  int loc = X509_get_ext_by_NID(cert, NID_subject_alt_name, -1);
+  X509_EXTENSION *ext = X509_get_ext(cert, loc);
+
+  if (ext) {
+    Rprintf("certificate has subjectAltName extensions\n");
+  }
 
   //return
   UNPROTECT(1);

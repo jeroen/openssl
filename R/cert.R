@@ -5,6 +5,7 @@
 #' @useDynLib openssl R_cert_verify_cert R_pubkey_verify_cert
 #' @export
 #' @rdname certificates
+#' @seealso \link{read_cert}
 #' @param cert certficate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
 #' @examples # Verify the r-project HTTPS cert

@@ -35,4 +35,7 @@ cert_verify(chain, ca_bundle())
 ocpu <- download_ssl_cert("public.opencpu.org")
 as.list(ocpu[[1]])$subject
 }
+\seealso{
+\link{read_cert}
+}
 

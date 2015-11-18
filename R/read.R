@@ -23,6 +23,7 @@
 #' @return An object of class \code{cert}, \code{key} or \code{pubkey} which holds the data
 #' in binary DER format and can be decomposed using \code{as.list}.
 #' @rdname read_key
+#' @seealso \link{download_ssl_cert}
 #' @examples \dontrun{# Read private key
 #' key <- read_key("~/.ssh/id_rsa")
 #' as.list(key)

@@ -59,4 +59,7 @@ bundle <- read_cert_bundle(txt)
 print(bundle)
 }
 }
+\seealso{
+\link{download_ssl_cert}
+}
 

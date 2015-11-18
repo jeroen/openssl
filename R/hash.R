@@ -54,7 +54,7 @@
 #'
 #' # Use a random salt to identify duplicates while anonymizing values
 #' sha256("john") # googleable
-#' sha256(c("john", "mary", "john"), salt = rand_bytes(100))
+#' sha256(c("john", "mary", "john"), salt = "somerandomsalt")
 sha1 <- function(x, salt = ""){
   rawstringhash(x, "sha1", salt)
 }
@@ -106,6 +106,9 @@ rawhash <- function(x, algo, salt = raw()){
 stringhash <- function(x, algo, salt = ""){
   # Must be character vector
   stopifnot(is.character(x))
+  if(is.raw(salt)){
+    salt <- rawToChar(salt)
+  }
   if(nchar(salt)){
     x <- paste0(x, salt)
   }

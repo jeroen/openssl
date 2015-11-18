@@ -30,5 +30,9 @@ chain <- download_ssl_cert("www.r-project.org", 443)
 print(chain)
 print(as.list(chain[[1]])$pubkey)
 cert_verify(chain, ca_bundle())
+
+# Another example
+ocpu <- download_ssl_cert("public.opencpu.org")
+as.list(ocpu[[1]])$subject
 }
 

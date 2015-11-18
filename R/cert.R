@@ -12,6 +12,10 @@
 #' print(chain)
 #' print(as.list(chain[[1]])$pubkey)
 #' cert_verify(chain, ca_bundle())
+#'
+#' # Another example
+#' ocpu <- download_ssl_cert("public.opencpu.org")
+#' as.list(ocpu[[1]])$subject
 cert_verify <- function(cert, root = ca_bundle()){
   if(is.raw(cert))
     cert <- list(cert)

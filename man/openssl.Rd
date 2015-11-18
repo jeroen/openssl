@@ -16,7 +16,7 @@ encryption. High-level \link[openssl:encrypt_envelope]{envelope} methods
 combine RSA and AES for encrypting arbitrary sized data. Other utilities include
 \link[openssl:rsa_keygen]{key generators}, hash functions (\code{\link[openssl:md5]{md5}},
 \code{\link[openssl:sha1]{sha1}}, \code{\link[openssl:sha256]{sha256}}, etc),
-\code{\link[openssl:base64]{base64}} encoder, a secure \link[openssl:rand_bytes]{random number generator},
+\code{\link[openssl:base64_encode]{base64}} encoder, a secure \link[openssl:rand_bytes]{random number generator},
 and \code{\link[openssl:bignum]{bignum}} math methods for manually performing crypto
 calculations on large multibyte integers.
 }

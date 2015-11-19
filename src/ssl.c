@@ -44,10 +44,12 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 #ifdef _WIN32
   u_long nonblocking = 1;
   ioctlsocket(sockfd, FIONBIO, &nonblocking);
+#define CON_BLOCK_SIG EWOULDBLOCK
 #else
   long arg = fcntl(sockfd, F_GETFL, NULL);
   arg |= O_NONBLOCK;
   fcntl(sockfd, F_SETFL, arg);
+#define CON_BLOCK_SIG EINPROGRESS
 #endif
 
   /* Connect */
@@ -60,7 +62,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 
   /* Try to connect */
   connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr));
-  if(errno != EINPROGRESS || select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
+  if(errno != CON_BLOCK_SIG || select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
     close(sockfd);
     error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
   }

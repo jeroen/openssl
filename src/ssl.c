@@ -3,6 +3,7 @@
 #include "utils.h"
 #include <unistd.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -56,11 +57,12 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   tv.tv_usec = 0;
   FD_ZERO(&myset);
   FD_SET(sockfd, &myset);
-  if (connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr)) < 0){
-    if(select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
-      close(sockfd);
-      error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
-    }
+
+  /* Try to connect */
+  connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr));
+  if(errno != EINPROGRESS || select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
+    close(sockfd);
+    error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
   }
 
   /* Set back in blocking mode */

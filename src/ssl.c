@@ -62,7 +62,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 
   /* Try to connect */
   connect(sockfd, (struct sockaddr *) &dest_addr, sizeof(struct sockaddr));
-  if(!NONBLOCK_OK || select(sockfd+1, NULL, &myset, NULL, &tv) < 1){
+  if(!NONBLOCK_OK || select(FD_SETSIZE, NULL, &myset, NULL, &tv) < 1){
     close(sockfd);
     error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
   }
@@ -76,6 +76,13 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
   arg &= (~O_NONBLOCK);
   fcntl(sockfd, F_SETFL, arg);
 #endif
+
+  int err = 0;
+  socklen_t errbuf = sizeof (err);
+  if(getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &err, &errbuf) || err){
+    close(sockfd);
+    error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
+  }
 
   /* Setup SSL */
   SSL_CTX *ctx = SSL_CTX_new(SSLv23_client_method());

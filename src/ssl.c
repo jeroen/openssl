@@ -79,7 +79,7 @@ SEXP R_download_cert(SEXP hostname, SEXP portnum) {
 
   int err = 0;
   socklen_t errbuf = sizeof (err);
-  if(getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &err, &errbuf) || err){
+  if(getsockopt (sockfd, SOL_SOCKET, SO_ERROR, (char*) &err, &errbuf) || err){
     close(sockfd);
     error("Failed to connect to %s on port %d", inet_ntoa(dest_addr.sin_addr), port);
   }

@@ -76,8 +76,10 @@ SEXP R_cert_info(SEXP bin){
     for (int i = 0; i < numalts; i++) {
       const GENERAL_NAME *name = sk_GENERAL_NAME_value(subjectAltNames, i);
       len = ASN1_STRING_to_UTF8(&tmpbuf, name->d.ia5);
-      SET_STRING_ELT(VECTOR_ELT(out, 6), i, mkCharLenCE((char*) tmpbuf, len, CE_UTF8));
-      OPENSSL_free(tmpbuf);
+      if(len > 0){
+        SET_STRING_ELT(VECTOR_ELT(out, 6), i, mkCharLenCE((char*) tmpbuf, len, CE_UTF8));
+        OPENSSL_free(tmpbuf);
+      }
     }
   }
 

@@ -4,7 +4,7 @@
 #include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
-#include <openssl/x509.h>
+#include <openssl/x509v3.h>
 
 SEXP R_cert_info(SEXP bin){
   X509 *cert = X509_new();
@@ -17,7 +17,7 @@ SEXP R_cert_info(SEXP bin){
   int len;
   X509_NAME *name;
   BIO *b;
-  SEXP out = PROTECT(allocVector(VECSXP, 6));
+  SEXP out = PROTECT(allocVector(VECSXP, 7));
 
   //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
 
@@ -67,12 +67,18 @@ SEXP R_cert_info(SEXP bin){
   //test for self signed
   SET_VECTOR_ELT(out, 5, ScalarLogical(X509_verify(cert, X509_get_pubkey(cert))));
 
-  //check for alternative names
-  int loc = X509_get_ext_by_NID(cert, NID_subject_alt_name, -1);
-  X509_EXTENSION *ext = X509_get_ext(cert, loc);
-
-  if (ext) {
-    Rprintf("certificate has subjectAltName extensions\n");
+  //check for alternative names (requires x509v3 extensions !!)
+  GENERAL_NAMES *subjectAltNames = X509_get_ext_d2i (cert, NID_subject_alt_name, NULL, NULL);
+  int numalts = sk_GENERAL_NAME_num (subjectAltNames);
+  if(numalts > 0) {
+    SET_VECTOR_ELT(out, 6, allocVector(STRSXP, numalts));
+    unsigned char *tmpbuf;
+    for (int i = 0; i < numalts; i++) {
+      const GENERAL_NAME *name = sk_GENERAL_NAME_value(subjectAltNames, i);
+      len = ASN1_STRING_to_UTF8(&tmpbuf, name->d.ia5);
+      SET_STRING_ELT(VECTOR_ELT(out, 6), i, mkCharLenCE((char*) tmpbuf, len, CE_UTF8));
+      OPENSSL_free(tmpbuf);
+    }
   }
 
   //return

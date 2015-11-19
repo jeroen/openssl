@@ -73,5 +73,5 @@ ca_bundle <- function(){
 cert_info <- function(cert){
   stopifnot(is.raw(cert))
   out <- .Call(R_cert_info, cert)
-  structure(out, names = c("subject", "issuer", "algorithm", "signature", "validity", "self_signed"))
+  structure(out, names = c("subject", "issuer", "algorithm", "signature", "validity", "self_signed", "alt_names"))
 }

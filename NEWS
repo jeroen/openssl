@@ -1,3 +1,6 @@
+0.7
+ - as.list(cert) add alt_names field for https certs with multiple domains
+
 0.6
  - Added --force-bottle to autobrew installer
  - Use nonblocking socket in ssl to set connection timeout

@@ -43,6 +43,17 @@ test_that("signatures", {
   expect_true(signature_verify(msg, sig, sha256, pk1))
 })
 
+test_that("roundtrip pem format", {
+  expect_equal(pk1, read_pubkey(write_pem(pk1)))
+  expect_equal(sk1, read_key(write_pem(sk1, NULL)))
+})
+
+test_that("roundtrip der format", {
+  expect_equal(pk1, read_pubkey(write_der(pk1), der = TRUE))
+  expect_equal(sk1, read_key(write_der(sk1), der = TRUE))
+})
+
+
 test_that("signature path interface", {
   sig <- signature_create("../keys/message", sha256, "../keys/id_ecdsa")
   writeBin(sig, tmp <- tempfile())

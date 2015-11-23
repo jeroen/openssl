@@ -21,4 +21,5 @@ VignetteBuilder: knitr
 Suggests:
     testthat,
     digest,
-    knitr
+    knitr,
+    jsonlite

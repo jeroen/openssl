@@ -46,6 +46,8 @@ cert_verify <- function(cert, root = ca_bundle()){
 #' @param host string: hostname of the server to connect to
 #' @param port integer: port to connect to
 download_ssl_cert <- function(host = "localhost", port = 443){
+  if(grepl("https?://", host))
+    stop("Argument 'host' must be a hostname, not url. Take out the https:// prefix.")
   stopifnot(is.character(host))
   stopifnot(is.numeric(port))
   stopifnot(port < 2^16)

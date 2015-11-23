@@ -57,3 +57,7 @@ der_export.key <- function(x, ...){
 der_export.pubkey <- function(x, ...){
   unclass(x)
 }
+
+der_export.cert <- function(x, ...){
+  unclass(x)
+}

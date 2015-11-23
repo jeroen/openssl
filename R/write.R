@@ -13,6 +13,7 @@ write_pem <- function(x, password = readline, path = NULL){
   str <- pem_export(x, password)
   if(is.null(path)) return(str)
   writeLines(str, path)
+  invisible(path)
 }
 
 #' @export
@@ -21,6 +22,7 @@ write_der <- function(x, path = NULL){
   bin <- der_export(x)
   if(is.null(path)) return(bin)
   writeBin(unclass(bin), path)
+  invisible(path)
 }
 
 pem_export <- function(x, ...){

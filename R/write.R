@@ -44,6 +44,12 @@ pem_export.pubkey <- function(x, ...){
   .Call(R_pem_write_pubkey, x)
 }
 
+
+#' @useDynLib openssl R_pem_write_cert
+pem_export.cert <- function(x, ...){
+  .Call(R_pem_write_cert, x)
+}
+
 der_export.key <- function(x, ...){
   unclass(x)
 }

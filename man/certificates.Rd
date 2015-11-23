@@ -4,7 +4,7 @@
 \alias{ca_bundle}
 \alias{cert_verify}
 \alias{download_ssl_cert}
-\title{x509 certificates}
+\title{X509 certificates}
 \usage{
 cert_verify(cert, root = ca_bundle())
 
@@ -22,7 +22,7 @@ ca_bundle()
 \item{port}{integer: port to connect to}
 }
 \description{
-Read, download and verify certificates.
+Read, download, analyize and verify X.509 certificates.
 }
 \examples{
 # Verify the r-project HTTPS cert
@@ -32,8 +32,12 @@ print(as.list(chain[[1]])$pubkey)
 cert_verify(chain, ca_bundle())
 
 # Another example
-ocpu <- download_ssl_cert("public.opencpu.org")
-as.list(ocpu[[1]])$subject
+chain <- download_ssl_cert("public.opencpu.org")
+ocpu <- chain[[1]]
+as.list(ocpu)$subject
+
+# Write PEM format
+write_pem(ocpu)
 }
 \seealso{
 \link{read_cert}

@@ -35,7 +35,12 @@ travis_encrypt <- function(data, pubkey){
   if(is.character(pubkey))
     pubkey <- travis_pubkey(pubkey)
   buf <- rsa_encrypt(data, pubkey)
-  str <- sprintf(' - secure: "%s"\n', openssl::base64_encode(buf))
+  str <- sprintf('  secure: "%s"\n', openssl::base64_encode(buf))
+
+  # print the same as the cmd line
+  cat("Please add the following to your .travis.yml file:\n\n")
   cat(str)
+
+  # return the actual base64 value
   invisible(str)
 }

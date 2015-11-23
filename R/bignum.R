@@ -5,12 +5,18 @@
 #' All basic \link{Arithmetic} and \link{Comparison} operators such as
 #' \code{+}, \code{-}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{==},
 #' \code{!=}, \code{<}, \code{<=}, \code{>} and \code{>=} are implemented for
-#' bignum objects.
+#' bignum objects. The
+#' \href{https://en.wikipedia.org/wiki/Modular_exponentiation}{Modular exponenent}
+#' (\code{a^b \%\% m}) can be calculated using \code{\link{bignum_mod_exp}}
+#' when \code{b} is too large for calculating \code{a^b} directly.
 #'
 #' @export
 #' @name bignum
 #' @rdname bignum
 #' @param x an integer, string (hex or dec) or raw vector
+#' @param a bignum value for \code{(a^b \%\% m)}
+#' @param b bignum value for \code{(a^b \%\% m)}
+#' @param m bignum value for \code{(a^b \%\% m)}
 #' @param hex set to TRUE to parse strings as hex rather than decimal notation
 #' @useDynLib openssl R_parse_bignum
 #' @examples # create a bignum
@@ -152,9 +158,11 @@ bignum_mod <- function(x, y){
   .Call(R_bignum_mod, x, y)
 }
 
+#' @export
+#' @rdname bignum
 #' @useDynLib openssl R_bignum_mod_exp
-bignum_mod_exp <- function(x, y, m){
-  .Call(R_bignum_mod_exp, x, y, m)
+bignum_mod_exp <- function(a, b, m){
+  .Call(R_bignum_mod_exp, a, b, m)
 }
 
 #' @useDynLib openssl R_bignum_bits

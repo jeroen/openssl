@@ -1,6 +1,6 @@
 0.7
  - as.list(cert) add alt_names field for https certs with multiple domains
- - Add travis_encrypt and travis_pubkey functions
+ - added export_pem for certificates
 
 0.6
  - Added --force-bottle to autobrew installer

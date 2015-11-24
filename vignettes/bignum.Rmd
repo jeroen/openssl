@@ -1,6 +1,12 @@
 ---
-title: "Fun with bignum"
-output: html_document
+title: "Fun with bignum: how RSA encryption works"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Fun with bignum: how RSA encryption works}
+  \usepackage[utf8]{inputenc}  
+output:
+  html_document
 ---
 
 ```{r setup, include=FALSE}

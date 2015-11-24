@@ -11,6 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Primitive types such as `int` or `double` can store numbers in exactly one or two bytes, with finite precision. This sufficies for most applications, but cryptographic methods require arithmetic on much larger numbers and without loss of precision. Therefore OpenSSL provides a [bignum](https://www.openssl.org/docs/manmaster/crypto/bn.html) data type which holds arbitrary sized integers and implements all basic arithmetic and comparison operators such as `+`, `-`, `*`, `^`, `%%`, `%/%`, `==`, `!=`, `<`, `<=`, `>` and `>=`.
 
+One special case, the [__modular exponenent__](https://en.wikipedia.org/wiki/Modular_exponentiation) `a^b %% m` can be calculated using `bignum_mod_exp` when `b` is too large for calculating `a^b`.
+
 ```{r}
 # create a bignum
 y <- bignum("123456789123456789")
@@ -88,10 +90,10 @@ base64_encode(c)
 
 ### RSA decryption
 
-The ciphertext can be decrypted using $d$ from the corresponding private key via $m = c^d \pmod{n}$:
+The ciphertext can be decrypted using $d$ from the corresponding private key via $m = c^d \pmod{n}$. Note that `c^d` is too large to calculate directly so we need to use `bignum_mod_exp` instead.
 
 ```{r}
 d <- as.list(key)$data$d
-out <- c ^ d %% n
+out <- bignum_mod_exp(c, d, n)
 rawToChar(out)
 ```

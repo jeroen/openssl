@@ -29,9 +29,7 @@ stopifnot(z2 == z)
 stopifnot(div < z)
 ```
 
-## RSA encryption
-
-RSA involves a public key and a private key. The public key can be known by everyone and is used for encrypting messages. Messages encrypted with the public key can only be decrypted in a reasonable amount of time using the private key. In RSA, this asymmetry is based on the practical difficulty of factoring the product of two large prime numbers.
+RSA involves a public key and a private key. The public key should be known by everyone and is used for encrypting messages. Messages encrypted with the public key can only be decrypted in a reasonable amount of time using the private key. In RSA, this asymmetry is based on the practical difficulty of factoring the product of two large prime numbers.
 
 ### RSA key generation
 
@@ -46,10 +44,22 @@ An RSA key-pair is generated as follows (adapted from [wikipedia](https://en.wik
 OpenSSL has a key generator that does these things for us. 
 
 ```{r}
-key <- rsa_keygen(256)
-pubkey <- as.list(key)$pubkey
-print(key)
+(key <- rsa_keygen(256))
+(pubkey <- as.list(key)$pubkey)
 ```
+
+Usually we would use `rsa_encrypt` and `rsa_decrypt` to perform the encryption:
+
+```{r}
+msg <- charToRaw("hello world")
+ciphertext <- rsa_encrypt(msg, pubkey)
+try(rawToChar(ciphertext))
+rawToChar(rsa_decrypt(ciphertext, key))
+```
+
+Let's look at how this works under the hood.
+
+### How RSA encryption works
 
 Using `as.list` on the private key we can inspect the underlying bignum values:
 
@@ -64,9 +74,7 @@ You can verify that the equations above hold for this key. The public key is sim
 as.list(pubkey)$data
 ```
 
-### RSA encryption
-
-In order to encrypt a message into ciphertext we have to treat the message data as an integer. The message cannot be larger than the key size. For example conver the text `hello world` into an integer:
+In order to encrypt a message into ciphertext we have to treat the message data as an integer. The message cannot be larger than the key size. For example convert the text `hello world` into an integer:
 
 ```{r}
 m <- bignum(charToRaw("hello world"))
@@ -82,13 +90,11 @@ c <- (m ^ e) %% n
 print(c)
 ```
 
-This is number represents out encrypted message! It is usually exchanged using base64 notation or something:
+This is number represents out encrypted message! It is usually exchanged using base64 notation for human readability:
 
 ```{r}
 base64_encode(c)
 ```
-
-### RSA decryption
 
 The ciphertext can be decrypted using $d$ from the corresponding private key via $m = c^d \pmod{n}$. Note that `c^d` is too large to calculate directly so we need to use `bignum_mod_exp` instead.
 
@@ -97,3 +103,5 @@ d <- as.list(key)$data$d
 out <- bignum_mod_exp(c, d, n)
 rawToChar(out)
 ```
+
+The only difference with the actual `rsa_encrypt` and `rsa_decrypt` functions is that these add some additional padding to the data. 

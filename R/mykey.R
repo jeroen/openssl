@@ -7,15 +7,20 @@
 #' @export
 #' @rdname my_key
 my_key <- function(){
-  path <- Sys.getenv("DEFAULT_KEY", "~/.ssh/id_rsa")
+  path <- Sys.getenv("USER_KEY", "~/.ssh/id_rsa")
   if(!file.exists(path))
-    stop("No suitable default key found.")
+    stop("No suitable user key found.")
   read_key(path)
 }
 
 #' @export
 #' @rdname my_key
 my_pubkey <- function(){
+  path <- Sys.getenv("USER_PUBKEY", "~/.ssh/id_rsa.pub")
+  if(file.exists(path))
+    return(read_pubkey(path))
+
+  # alternatively derive pubkey from key
   key <- my_key()
   as.list(key)$pubkey
 }

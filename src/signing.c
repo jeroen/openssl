@@ -3,6 +3,7 @@
 #include "apple.h"
 #include "utils.h"
 #include <openssl/pem.h>
+#include <openssl/hmac.h>
 
 const EVP_MD* guess_hashfun(int length){
   switch(length){
@@ -71,4 +72,13 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   return ScalarLogical(1);
+}
+
+SEXP R_hmac(SEXP data, SEXP key, SEXP length){
+  const EVP_MD *evp_md = guess_hashfun(asInteger(length));
+  unsigned int mdlen = 0;
+  unsigned char* md = HMAC(evp_md, RAW(key), LENGTH(key), RAW(data), LENGTH(data), NULL, &mdlen);
+  SEXP out = allocVector(RAWSXP, mdlen);
+  memcpy(RAW(out), md, mdlen);
+  return out;
 }

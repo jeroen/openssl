@@ -15,13 +15,7 @@ unsigned int digest_string(const char *x, const char *algo, int len, unsigned ch
   const EVP_MD *md = EVP_get_digestbyname(algo);
   if(!md)
     error("Unknown cryptographic algorithm %s\n", algo);
-  EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-
-  /* generate hash */
-  EVP_DigestInit_ex(mdctx, md, NULL);
-  EVP_DigestUpdate(mdctx, x, len);
-  EVP_DigestFinal_ex(mdctx, md_value, &md_len);
-  EVP_MD_CTX_destroy(mdctx);
+  EVP_Digest(x, len, md_value, &md_len, md, NULL);
   return md_len;
 }
 

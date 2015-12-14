@@ -1,4 +1,3 @@
-#include "apple.h"
 #include "utils.h"
 #include <R.h>
 #include <Rinternals.h>

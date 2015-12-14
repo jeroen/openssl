@@ -1,5 +1,4 @@
 #include <Rinternals.h>
-#include "apple.h"
 #include "utils.h"
 #include <unistd.h>
 #include <fcntl.h>

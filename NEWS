@@ -1,5 +1,5 @@
 0.7
- - Added hmac() function
+ - Breaking change: hash functions now use hmac 'key' instead of a 'salt'
  - as.list(cert) add alt_names field for https certs with multiple domains
  - added export_pem for certificates
 

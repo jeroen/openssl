@@ -1,5 +1,6 @@
 0.7
  - Breaking change: hash functions now use hmac 'key' instead of a 'salt'
+ - The my_key() and my_pubkey() functions now work as documented
  - as.list(cert) add alt_names field for https certs with multiple domains
  - added export_pem for certificates
 

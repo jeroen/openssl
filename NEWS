@@ -1,3 +1,6 @@
+0.8
+ - Configure script now checks for OpenSSL minimum version 1.0.0
+
 0.7
  - Breaking change: hash functions now use hmac 'key' instead of a 'salt'
  - The my_key() and my_pubkey() functions now work as documented

@@ -11,7 +11,7 @@ PKG_DEB_NAME="libssl-dev"
 PKG_RPM_NAME="openssl-devel"
 PKG_CSW_NAME="libssl_dev"
 PKG_BREW_NAME="openssl"
-PKG_TEST_HEADER="<openssl/evp.h>"
+PKG_TEST_FILE="tools/version.c"
 PKG_LIBS="-lssl -lcrypto"
 PKG_CFLAGS=""
 
@@ -63,7 +63,7 @@ CFLAGS=$(${R_HOME}/bin/R CMD config CFLAGS)
 CPPFLAGS=$(${R_HOME}/bin/R CMD config CPPFLAGS)
 
 # Test configuration
-echo "#include $PKG_TEST_HEADER" | ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} -E -xc - >/dev/null 2>&1 || R_CONFIG_ERROR=1;
+${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} -E ${PKG_TEST_FILE} >/dev/null 2>&1 || R_CONFIG_ERROR=1;
 
 # Customize the error
 if [ $R_CONFIG_ERROR ]; then

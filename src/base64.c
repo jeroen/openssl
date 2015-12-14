@@ -1,8 +1,9 @@
-#include "utils.h"
-#include <R.h>
 #include <Rinternals.h>
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
+#include "utils.h"
 
 SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   //setup encoder

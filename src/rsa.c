@@ -1,7 +1,8 @@
-#include <R.h>
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/pem.h>
+#include "utils.h"
 
 SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
   const unsigned char *ptr = RAW(keydata);

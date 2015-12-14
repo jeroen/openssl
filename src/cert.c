@@ -1,9 +1,10 @@
-#include <R.h>
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 #include <openssl/x509v3.h>
+#include "utils.h"
 
 SEXP R_cert_info(SEXP bin){
   X509 *cert = X509_new();

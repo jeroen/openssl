@@ -1,10 +1,10 @@
 #include <Rinternals.h>
 #include <string.h>
-#include "utils.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
 #include <openssl/ec.h>
+#include "utils.h"
 
 SEXP R_keygen_rsa(SEXP bits){
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);

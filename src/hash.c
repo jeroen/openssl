@@ -1,8 +1,9 @@
-#include <R.h>
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include "utils.h"
 
 /*
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_DigestInit.html

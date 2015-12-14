@@ -1,8 +1,11 @@
 #include <Rinternals.h>
+#include <stdlib.h>
 #include <string.h>
-#include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
+#include "utils.h"
+
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   if(!ctx)

@@ -1,7 +1,8 @@
-#include <R.h>
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/pem.h>
+#include "utils.h"
 
 SEXP R_envelope_encrypt(SEXP data, SEXP pubkey) {
   /* Input arrays because OpenSSL supports multi-key encryption */

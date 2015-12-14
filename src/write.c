@@ -1,6 +1,6 @@
 #include <Rinternals.h>
-#include "utils.h"
 #include <openssl/pem.h>
+#include "utils.h"
 
 SEXP R_pem_write_key(SEXP input, SEXP password){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));

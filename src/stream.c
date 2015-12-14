@@ -1,8 +1,9 @@
-#include <R.h>
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include "utils.h"
 
 void fin_md(SEXP ptr){
   if(!R_ExternalPtrAddr(ptr)) return;

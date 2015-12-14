@@ -1,8 +1,8 @@
 #include <Rinternals.h>
 #include <string.h>
-#include "utils.h"
 #include <openssl/pem.h>
 #include <openssl/bn.h>
+#include "utils.h"
 
 /* BN_bn2bin() drops leading zeros which can alter openssh fingerprint */
 SEXP bignum_to_r_size(BIGNUM *bn, int bytes){

@@ -1,8 +1,9 @@
 #include <Rinternals.h>
-#include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <openssl/ec.h>
 #include <openssl/bn.h>
-#include <string.h>
+#include "utils.h"
 
 BIGNUM *r2bignum(SEXP x){
   if(!inherits(x, "bignum"))

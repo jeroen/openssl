@@ -67,7 +67,7 @@ Let's look at how this works under the hood.
 
 ### How RSA encryption works
 
-Using `as.list` on the private key we can inspect the underlying bignum values:
+Using `as.list` on the private key we can inspect the underlying bignum integers:
 
 ```{r}
 keydata <- as.list(key)$data

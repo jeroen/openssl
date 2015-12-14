@@ -21,3 +21,22 @@ test_that("HMAC functions match openssl command line tool", {
   expect_that(unclass(sha256("foo", key = "secret")), equals("773ba44693c7553d6ee20f61ea5d2757a9a4f4a44d2841ae4e95b52e4cd62db4"))
   expect_that(unclass(sha512("foo", key = "secret")), equals("82df7103de8d82de45e01c45fe642b5d13c6c2b47decafebc009431c665c6fa5f3d1af4e978ea1bde91426622073ebeac61a3461efd467e0971c788bc8ebdbbe"))
 })
+
+test_that("Connection interface matches raw interface", {
+  mydata <- serialize(iris, NULL)
+  expect_equal(md5(mydata), md5(rawConnection(mydata)))
+  expect_equal(sha1(mydata), sha1(rawConnection(mydata)))
+  expect_equal(sha256(mydata), sha256(rawConnection(mydata)))
+  expect_equal(md5(mydata, key = "secret"), md5(rawConnection(mydata), key = "secret"))
+  expect_equal(sha1(mydata, key = "secret"), sha1(rawConnection(mydata), key = "secret"))
+  expect_equal(sha256(mydata, key = "secret"), sha256(rawConnection(mydata), key = "secret"))
+})
+
+test_that("Connection interface matches string interface", {
+  expect_equal(md5(charToRaw("foo")), md5(textConnection("foo")))
+  expect_equal(sha1(charToRaw("foo")), sha1(textConnection("foo")))
+  expect_equal(sha256(charToRaw("foo")), sha256(textConnection("foo")))
+  expect_equal(md5(charToRaw("foo"), key = "secret"), md5(textConnection("foo"), key = "secret"))
+  expect_equal(sha1(charToRaw("foo"), key = "secret"), sha1(textConnection("foo"), key = "secret"))
+  expect_equal(sha256(charToRaw("foo"), key = "secret"), sha256(textConnection("foo"), key = "secret"))
+})

@@ -110,8 +110,14 @@ connectionhash <- function(con, algo){
     open(con, "rb")
     on.exit(close(con))
   }
-  while(length(data <- readBin(con, raw(), 512*1024))){
-    md_feed(md, data)
+  if(summary(con)$text == "binary"){
+    while(length(data <- readBin(con, raw(), 512*1024))){
+      md_feed(md, data)
+    }
+  } else {
+    while(length(data <- readLines(con, n = 1L, warn = FALSE))){
+      md_feed(md, charToRaw(data))
+    }
   }
   md_final(md)
 }
@@ -124,8 +130,14 @@ connectionhmac <- function(con, algo, key){
     open(con, "rb")
     on.exit(close(con))
   }
-  while(length(data <- readBin(con, raw(), 1024))){
-    hmac_feed(hmac, data)
+  if(summary(con)$text == "binary"){
+    while(length(data <- readBin(con, raw(), 1024))){
+      hmac_feed(hmac, data)
+    }
+  } else {
+    while(length(data <- readLines(con, n = 1L, warn = FALSE))){
+      hmac_feed(hmac, charToRaw(data))
+    }
   }
   hmac_final(hmac)
 }

@@ -3,30 +3,36 @@
 #include "apple.h"
 #include "utils.h"
 #include <openssl/evp.h>
+#include <openssl/hmac.h>
 
 /*
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_DigestInit.html
  */
 
-unsigned int digest_string(const char *x, const char *algo, int len, unsigned char *md_value) {
+unsigned int digest_string(unsigned char *x, int len, SEXP key, const char *algo, unsigned char *md_value) {
 
   /* init openssl stuff */
   unsigned int md_len;
   const EVP_MD *md = EVP_get_digestbyname(algo);
   if(!md)
     error("Unknown cryptographic algorithm %s\n", algo);
-  EVP_Digest(x, len, md_value, &md_len, md, NULL);
+
+  if(key == R_NilValue){
+    EVP_Digest(x, len, md_value, &md_len, md, NULL);
+  } else {
+    HMAC(md, RAW(key), LENGTH(key), x, len, md_value, &md_len);
+  }
   return md_len;
 }
 
-SEXP R_digest_raw(SEXP x, SEXP algo){
+SEXP R_digest_raw(SEXP x, SEXP algo, SEXP key){
   /* Check inputs */
   if(TYPEOF(x) != RAWSXP)
     error("Argument 'x' must be a raw vector.");
 
   /* Convert the Raw vector to an unsigned char */
   unsigned char md_value[EVP_MAX_MD_SIZE];
-  unsigned int md_len = digest_string((const char*) RAW(x), CHAR(asChar(algo)), length(x), md_value);
+  unsigned int md_len = digest_string(RAW(x), length(x), key, CHAR(asChar(algo)), md_value);
 
   /* create raw output vector */
   SEXP out = PROTECT(allocVector(RAWSXP, md_len));
@@ -35,7 +41,7 @@ SEXP R_digest_raw(SEXP x, SEXP algo){
   return out;
 }
 
-SEXP R_digest(SEXP x, SEXP algo){
+SEXP R_digest(SEXP x, SEXP algo, SEXP key){
   if(!isString(x))
     error("Argument 'x' must be a character vector.");
   if(!isString(algo))
@@ -51,8 +57,9 @@ SEXP R_digest(SEXP x, SEXP algo){
     }
     /* create hash */
     const char* str = CHAR(STRING_ELT(x, i));
+    int stringlen = LENGTH(STRING_ELT(x, i));
     unsigned char md_value[EVP_MAX_MD_SIZE];
-    unsigned int md_len = digest_string(str, CHAR(asChar(algo)), strlen(str), md_value);
+    unsigned int md_len = digest_string( (unsigned char*) str, stringlen, key, CHAR(asChar(algo)), md_value);
 
     /* create character vector */
     char mdString[2*md_len+1];

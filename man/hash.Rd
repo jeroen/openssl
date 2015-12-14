@@ -2,55 +2,59 @@
 % Please edit documentation in R/hash.R
 \name{hashing}
 \alias{hashing}
+\alias{hmac}
+\alias{mac}
 \alias{md4}
 \alias{md5}
 \alias{ripemd160}
 \alias{sha1}
 \alias{sha256}
 \alias{sha512}
-\title{Vectorized hashing functions}
+\title{Vectorized hash/hmac functions}
 \usage{
-sha1(x, salt = "")
+sha1(x, key = NULL)
 
-sha256(x, salt = "")
+sha256(x, key = NULL)
 
-sha512(x, salt = "")
+sha512(x, key = NULL)
 
-md4(x, salt = "")
+md4(x, key = NULL)
 
-md5(x, salt = "")
+md5(x, key = NULL)
 
-ripemd160(x, salt = "")
+ripemd160(x, key = NULL)
 }
 \arguments{
-\item{x}{a character, raw vector or connection object.}
+\item{x}{character vector, raw vector or connection object.}
 
-\item{salt}{a \href{http://en.wikipedia.org/wiki/Salt_(cryptography)}{salt}
-appended to each input element to anonymize or prevent dictionary attacks. See details.}
+\item{key}{string or raw vector used as the key for HMAC hashing}
 }
 \description{
-Bindings to hash functions in OpenSSL. Supported inputs are binary (raw vector),
-strings (character vector) or a connection object. Functions are vectorized for
-the case of character vectors: a vector with \code{n} strings returns \code{n}
-hashes. When passing a connection object, the contents will be stream-hashed which
-minimizes the amount of required memory.
+All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC
+(hashed message authentication code) when \code{key} is not \code{NULL}. Supported
+inputs are binary (raw vector), strings (character vector) or a connection object.
 }
 \details{
+Functions are vectorized for the case of character vectors: a vector with \code{n}
+strings returns \code{n} hashes. When passing a connection object, the contents will
+be stream-hashed which minimizes the amount of required memory. This is recommended
+for hashing files from disk or network.
+
 The "sha256" algorithm is generally recommended for sensitive information. While md5
 and weaker members of the sha family are usually sufficient for collision-resistant
 identifiers, they are no longer considered secure for cryptographic purposes.
 
 In applications where hashes should be irreversible (such as names or passwords) it is
-often recommended to add a random, fixed \emph{salt} to each input before hashing. This
-prevents attacks where we can lookup hashes of common and/or short strings. See examples.
-An common special case is adding a random salt to a large number of records to test for
-uniqueness within the dataset, while simultaneously rendering the results incomparable
-to other datasets.
+often recommended to use a random \emph{key} for HMAC hashing. This prevents attacks where
+we can lookup hashes of common and/or short strings. See examples. A common special case
+is adding a random salt to a large number of records to test for uniqueness within the
+dataset, while simultaneously rendering the results incomparable to other datasets.
 }
 \examples{
 # Support both strings and binary
-md5("foo")
+md5(c("foo", "bar"))
 md5(charToRaw("foo"))
+md5("foo", key = "secret")
 
 # Compare to digest
 library(digest)
@@ -60,23 +64,21 @@ digest("foo", "md5", serialize = FALSE)
 digest(cars, skip = 0)
 md5(serialize(cars, NULL))
 
-# Vectorized for strings
-md5(c("foo", "bar", "baz"))
-
 # Stream-verify from connections (including files)
 myfile <- system.file("CITATION")
 md5(file(myfile))
+md5(file(myfile), key = "secret")
 
 \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/old/3.1.1/md5sum.txt
 md5(url("http://cran.r-project.org/bin/windows/base/old/3.1.1/R-3.1.1-win.exe"))}
 
 # Use a salt to prevent dictionary attacks
 sha1("admin") # googleable
-sha1("admin", salt="some_random_salt_value") #not googleable
+sha1("admin", key = "random_salt_value") #not googleable
 
 # Use a random salt to identify duplicates while anonymizing values
 sha256("john") # googleable
-sha256(c("john", "mary", "john"), salt = "some_random_salt_value")
+sha256(c("john", "mary", "john"), key = "random_salt_value")
 }
 \references{
 OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}.

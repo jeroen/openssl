@@ -1,34 +1,37 @@
-#' Vectorized hashing functions
+#' Vectorized hash/hmac functions
 #'
-#' Bindings to hash functions in OpenSSL. Supported inputs are binary (raw vector),
-#' strings (character vector) or a connection object. Functions are vectorized for
-#' the case of character vectors: a vector with \code{n} strings returns \code{n}
-#' hashes. When passing a connection object, the contents will be stream-hashed which
-#' minimizes the amount of required memory.
+#' All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC
+#' (hashed message authentication code) when \code{key} is not \code{NULL}. Supported
+#' inputs are binary (raw vector), strings (character vector) or a connection object.
+#'
+#' Functions are vectorized for the case of character vectors: a vector with \code{n}
+#' strings returns \code{n} hashes. When passing a connection object, the contents will
+#' be stream-hashed which minimizes the amount of required memory. This is recommended
+#' for hashing files from disk or network.
 #'
 #' The "sha256" algorithm is generally recommended for sensitive information. While md5
 #' and weaker members of the sha family are usually sufficient for collision-resistant
 #' identifiers, they are no longer considered secure for cryptographic purposes.
 #'
 #' In applications where hashes should be irreversible (such as names or passwords) it is
-#' often recommended to add a random, fixed \emph{salt} to each input before hashing. This
-#' prevents attacks where we can lookup hashes of common and/or short strings. See examples.
-#' An common special case is adding a random salt to a large number of records to test for
-#' uniqueness within the dataset, while simultaneously rendering the results incomparable
-#' to other datasets.
+#' often recommended to use a random \emph{key} for HMAC hashing. This prevents attacks where
+#' we can lookup hashes of common and/or short strings. See examples. A common special case
+#' is adding a random salt to a large number of records to test for uniqueness within the
+#' dataset, while simultaneously rendering the results incomparable to other datasets.
 #'
-#' @param x a character, raw vector or connection object.
-#' @param salt a \href{http://en.wikipedia.org/wiki/Salt_(cryptography)}{salt}
-#' appended to each input element to anonymize or prevent dictionary attacks. See details.
+#' @param x character vector, raw vector or connection object.
+#' @param key string or raw vector used as the key for HMAC hashing
 #' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/EVP_DigestInit.html}.
 #' Digest types: \url{https://www.openssl.org/docs/apps/dgst.html}
 #' @export
+#' @aliases hmac mac
 #' @rdname hash
 #' @name hashing
 #' @useDynLib openssl R_digest_raw R_digest
 #' @examples # Support both strings and binary
-#' md5("foo")
+#' md5(c("foo", "bar"))
 #' md5(charToRaw("foo"))
+#' md5("foo", key = "secret")
 #'
 #' # Compare to digest
 #' library(digest)
@@ -38,107 +41,108 @@
 #' digest(cars, skip = 0)
 #' md5(serialize(cars, NULL))
 #'
-#' # Vectorized for strings
-#' md5(c("foo", "bar", "baz"))
-#'
 #' # Stream-verify from connections (including files)
 #' myfile <- system.file("CITATION")
 #' md5(file(myfile))
+#' md5(file(myfile), key = "secret")
 #'
 #' \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/old/3.1.1/md5sum.txt
 #' md5(url("http://cran.r-project.org/bin/windows/base/old/3.1.1/R-3.1.1-win.exe"))}
 #'
 #' # Use a salt to prevent dictionary attacks
 #' sha1("admin") # googleable
-#' sha1("admin", salt="some_random_salt_value") #not googleable
+#' sha1("admin", key = "random_salt_value") #not googleable
 #'
 #' # Use a random salt to identify duplicates while anonymizing values
 #' sha256("john") # googleable
-#' sha256(c("john", "mary", "john"), salt = "some_random_salt_value")
-sha1 <- function(x, salt = ""){
-  rawstringhash(x, "sha1", salt)
+#' sha256(c("john", "mary", "john"), key = "random_salt_value")
+sha1 <- function(x, key = NULL){
+  rawstringhash(x, "sha1", key)
 }
 
 #' @rdname hash
 #' @export
-sha256 <- function(x, salt = ""){
-  rawstringhash(x, "sha256", salt)
+sha256 <- function(x, key = NULL){
+  rawstringhash(x, "sha256", key)
 }
 
 #' @rdname hash
 #' @export
-sha512 <- function(x, salt = ""){
-  rawstringhash(x, "sha512", salt)
+sha512 <- function(x, key = NULL){
+  rawstringhash(x, "sha512", key)
 }
 
 #' @rdname hash
 #' @export
-md4 <- function(x, salt = ""){
-  rawstringhash(x, "md4", salt)
+md4 <- function(x, key = NULL){
+  rawstringhash(x, "md4", key)
 }
 
 #' @rdname hash
 #' @export
-md5 <- function(x, salt = ""){
-  rawstringhash(x, "md5", salt)
+md5 <- function(x, key = NULL){
+  rawstringhash(x, "md5", key)
 }
 
 #' @rdname hash
 #' @export
-ripemd160 <- function(x, salt = ""){
-  rawstringhash(x, "ripemd160", salt)
+ripemd160 <- function(x, key = NULL){
+  rawstringhash(x, "ripemd160", key)
 }
 
 # Low level interfaces, not exported.
-rawhash <- function(x, algo, salt = raw()){
+rawhash <- function(x, algo, key = NULL){
   stopifnot(is.raw(x))
-  if(is.character(salt)){
-    salt <- charToRaw(salt)
-  }
-  stopifnot(is.raw(salt))
-  if(length(salt)){
-    x <- c(x, salt)
-  }
-  .Call(R_digest_raw, x, as.character(algo))
+  stopifnot(is.null(key) || is.raw(key))
+  .Call(R_digest_raw, x, as.character(algo), key)
 }
 
 #' @useDynLib openssl R_digest
-stringhash <- function(x, algo, salt = ""){
-  # Must be character vector
+stringhash <- function(x, algo, key = NULL){
   stopifnot(is.character(x))
-  if(is.raw(salt)){
-    salt <- rawToChar(salt)
-  }
-  if(nchar(salt)){
-    x <- paste0(x, salt)
-  }
-  .Call(R_digest,x, as.character(algo))
+  stopifnot(is.null(key) || is.raw(key))
+  .Call(R_digest,x, as.character(algo), key)
 }
 
-connectionhash <- function(con, algo, salt){
+connectionhash <- function(con, algo){
   md <- md_init(algo);
   if(!isOpen(con)){
     open(con, "rb")
     on.exit(close(con))
   }
-  if(is.character(salt)){
-    salt <- charToRaw(salt);
-  }
-  stopifnot(is.raw(salt))
-  md_feed(md, salt)
   while(length(data <- readBin(con, raw(), 512*1024))){
     md_feed(md, data)
   }
   md_final(md)
 }
 
-rawstringhash <- function(x, algo, salt){
+connectionhmac <- function(con, algo, key){
+  if(is.character(key))
+    key <- charToRaw(key)
+  hmac <- hmac_init(algo, key);
+  if(!isOpen(con)){
+    open(con, "rb")
+    on.exit(close(con))
+  }
+  while(length(data <- readBin(con, raw(), 1024))){
+    hmac_feed(hmac, data)
+  }
+  hmac_final(hmac)
+}
+
+rawstringhash <- function(x, algo, key){
+  if(is.character(key))
+    key <- charToRaw(key)
   hash <- if(inherits(x, "connection")){
-    connectionhash(x, algo, salt)
+    if(is.null(key)){
+      connectionhash(x, algo)
+    } else {
+      connectionhmac(x, algo, key)
+    }
   } else if(is.raw(x)){
-    rawhash(x, algo, salt)
+    rawhash(x, algo, key)
   } else if(is.character(x)){
-    stringhash(x, algo, salt)
+    stringhash(x, algo, key)
   } else {
     stop("Argument 'x' must be raw or character vector.")
   }

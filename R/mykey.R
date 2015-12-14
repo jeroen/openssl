@@ -1,8 +1,10 @@
 #' Default keypair
 #'
-#' The default key can be configured using environment variable \code{USER_KEY}
-#' which points to the user (private) key. If unset it defaults to \code{"~/.ssh/id_rsa"}.
-#' The \code{my_pubkey} function derives the corresponding public key.
+#' The \code{my_key()} function looks for environment variable \code{USER_KEY} with a
+#' path to a private keyfile. If unset it defaults to \code{"~/.ssh/id_rsa"}. The
+#' \code{my_pubkey()} function looks for environment variable \code{USER_PUBKEY} which
+#' defaults to \code{"~/.ssh/id_rsa.pub"}. If neither exists it will also try \code{my_key()}
+#' and derive the corresponding public key.
 #'
 #' @export
 #' @rdname my_key
@@ -16,7 +18,7 @@ my_key <- function(){
 #' @export
 #' @rdname my_key
 my_pubkey <- function(){
-  path <- Sys.getenv("USER_PUBKEY", "~/.ssh/id_rsa.pub")
+  path <- Sys.getenv("USER_PUBKEY", Sys.getenv("USER_KEY", "~/.ssh/id_rsa.pub"))
   if(file.exists(path))
     return(read_pubkey(path))
 

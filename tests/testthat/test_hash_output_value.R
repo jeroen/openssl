@@ -24,12 +24,13 @@ test_that("HMAC functions match openssl command line tool", {
 
 test_that("Connection interface matches raw interface", {
   mydata <- serialize(iris, NULL)
-  expect_equal(md5(mydata), md5(rawConnection(mydata)))
-  expect_equal(sha1(mydata), sha1(rawConnection(mydata)))
-  expect_equal(sha256(mydata), sha256(rawConnection(mydata)))
-  expect_equal(md5(mydata, key = "secret"), md5(rawConnection(mydata), key = "secret"))
-  expect_equal(sha1(mydata, key = "secret"), sha1(rawConnection(mydata), key = "secret"))
-  expect_equal(sha256(mydata, key = "secret"), sha256(rawConnection(mydata), key = "secret"))
+  saveRDS(iris, tmp <- tempfile())
+  expect_equal(md5(mydata), md5(file(tmp)))
+  expect_equal(sha1(mydata), sha1(file(tmp)))
+  expect_equal(sha256(mydata), sha256(file(tmp)))
+  expect_equal(md5(mydata, key = "secret"), md5(file(tmp), key = "secret"))
+  expect_equal(sha1(mydata, key = "secret"), sha1(file(tmp), key = "secret"))
+  expect_equal(sha256(mydata, key = "secret"), sha256(file(tmp), key = "secret"))
 })
 
 test_that("Connection interface matches string interface", {

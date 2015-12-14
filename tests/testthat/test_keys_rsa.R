@@ -48,9 +48,9 @@ test_that("signatures", {
 
 test_that("roundtrip pem format", {
   expect_equal(pk1, read_pubkey(write_pem(pk1)))
-  expect_equal(sk1, read_key(write_pem(sk1, NULL)))
+  expect_equal(sk1, read_key(write_pem(sk1, password = NULL)))
   expect_equal(pk1, read_pubkey(write_pem(pk1, tempfile())))
-  expect_equal(sk1, read_key(write_pem(sk1, NULL, tempfile())))
+  expect_equal(sk1, read_key(write_pem(sk1, tempfile(), password = NULL)))
 })
 
 test_that("roundtrip der format", {

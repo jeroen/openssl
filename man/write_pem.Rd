@@ -5,17 +5,17 @@
 \alias{write_pem}
 \title{Export key or certificate}
 \usage{
-write_pem(x, password = readline, path = NULL)
+write_pem(x, path = NULL, password = readline)
 
 write_der(x, path = NULL)
 }
 \arguments{
 \item{x}{a public/private key or certificate object}
 
+\item{path}{file to write to. If \code{NULL} it returns the output as a string.}
+
 \item{password}{string or callback function to set password (only applicable for
 private keys).}
-
-\item{path}{file to write to. If \code{NULL} it returns the output as a string.}
 }
 \description{
 The \code{write_pem} functions exports a key or certificate to the standard

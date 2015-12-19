@@ -19,7 +19,7 @@ ca_bundle()
 
 \item{host}{string: hostname of the server to connect to}
 
-\item{port}{integer: port to connect to}
+\item{port}{string or integer: port or protocol to use, e.g: \code{443} or \code{"https"}}
 }
 \description{
 Read, download, analyize and verify X.509 certificates.

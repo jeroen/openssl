@@ -48,14 +48,12 @@ cert_verify <- function(cert, root = ca_bundle()){
 #' @export
 #' @rdname certificates
 #' @param host string: hostname of the server to connect to
-#' @param port integer: port to connect to
+#' @param port string or integer: port or protocol to use, e.g: \code{443} or \code{"https"}
 download_ssl_cert <- function(host = "localhost", port = 443){
   if(grepl("https?://", host))
     stop("Argument 'host' must be a hostname, not url. Take out the https:// prefix.")
   stopifnot(is.character(host))
-  stopifnot(is.numeric(port))
-  stopifnot(port < 2^16)
-  .Call(R_download_cert, host, as.integer(port))
+  .Call(R_download_cert, host, as.character(port))
 }
 
 #' @useDynLib openssl R_cert_verify_cert

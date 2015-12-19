@@ -1,16 +1,14 @@
-/* libmongoc requires 'inet_ntop' and 'inet_pton' but Rtools with
- * gcc 4.6.3 does not have this for win32, only for win64.
- *
+/* download_ssl_cert requires 'inet_ntop' but mingw-w64 does
+ * not have this for win32, only for win64.
  */
 #include <_mingw.h>
-#if !defined(_WIN64) && defined(__MINGW64_VERSION_MAJOR) && __MINGW64_VERSION_MAJOR < 3
+#if !defined(_WIN64)
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
 
 int inet_pton(int af, const char *src, void *dst)
 {

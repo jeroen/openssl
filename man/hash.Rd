@@ -57,11 +57,10 @@ md5(charToRaw("foo"))
 md5("foo", key = "secret")
 
 # Compare to digest
-library(digest)
-digest("foo", "md5", serialize = FALSE)
+digest::digest("foo", "md5", serialize = FALSE)
 
 # Other way around
-digest(cars, skip = 0)
+digest::digest(cars, skip = 0)
 md5(serialize(cars, NULL))
 
 # Stream-verify from connections (including files)

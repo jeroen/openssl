@@ -28,9 +28,15 @@ int pending_interrupt() {
 }
 
 SEXP R_download_cert(SEXP hostname, SEXP service) {
+  /* The 'hints' arg is only needed for solaris */
+  struct addrinfo hints;
+  memset(&hints,0,sizeof(hints));
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_family = PF_UNSPEC;
+
   /* Because gethostbyname() is deprecated */
   struct addrinfo *addr;
-  if(getaddrinfo(CHAR(STRING_ELT(hostname, 0)), CHAR(STRING_ELT(service, 0)), 0, &addr))
+  if(getaddrinfo(CHAR(STRING_ELT(hostname, 0)), CHAR(STRING_ELT(service, 0)), &hints, &addr))
     error("Failed to resolve hostname or unknown port");
   int sockfd = socket(addr->ai_family, SOCK_STREAM, 0);
 

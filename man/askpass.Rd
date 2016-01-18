@@ -4,7 +4,7 @@
 \alias{askpass}
 \title{Password Prompt Utility}
 \usage{
-askpass(prompt = "Please enter your password")
+askpass(prompt = "Please enter your password: ")
 }
 \arguments{
 \item{prompt}{the string printed when prompting the user for input.}

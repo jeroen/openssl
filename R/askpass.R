@@ -6,7 +6,7 @@
 #'
 #' @export
 #' @param prompt the string printed when prompting the user for input.
-askpass <- function(prompt = "Please enter your password"){
+askpass <- function(prompt = "Please enter your password: "){
   FUN <- getOption("askpass", readline)
   FUN(prompt)
 }

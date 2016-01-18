@@ -37,7 +37,7 @@
 #' bundle <- read_cert_bundle(txt)
 #' print(bundle)
 #' }
-read_key <- function(file, password = readline, der = is.raw(file)){
+read_key <- function(file, password = askpass, der = is.raw(file)){
   buf <- read_input(file)
   key <- if(isTRUE(der)){
     parse_der_key(buf)

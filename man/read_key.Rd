@@ -7,7 +7,7 @@
 \alias{read_pubkey}
 \title{Parsing keys and certificates}
 \usage{
-read_key(file, password = readline, der = is.raw(file))
+read_key(file, password = askpass, der = is.raw(file))
 
 read_pubkey(file, der = is.raw(file))
 

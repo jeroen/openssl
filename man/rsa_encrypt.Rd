@@ -9,7 +9,7 @@
 \usage{
 rsa_encrypt(data, pubkey = my_pubkey())
 
-rsa_decrypt(data, key = my_key(), password = readline)
+rsa_decrypt(data, key = my_key(), password = askpass)
 }
 \arguments{
 \item{data}{raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt}

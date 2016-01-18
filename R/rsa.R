@@ -38,7 +38,7 @@ rsa_encrypt <- function(data, pubkey = my_pubkey()){
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
 #' @rdname rsa_encrypt
-rsa_decrypt <- function(data, key = my_key(), password = readline){
+rsa_decrypt <- function(data, key = my_key(), password = askpass){
   sk <- read_key(key, password)
   stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(data))

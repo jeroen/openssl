@@ -5,7 +5,7 @@
 \alias{signature_verify}
 \title{Signatures}
 \usage{
-signature_create(data, hash = sha1, key = my_key(), password = readline)
+signature_create(data, hash = sha1, key = my_key(), password = askpass)
 
 signature_verify(data, sig, hash = sha1, pubkey = my_pubkey())
 }

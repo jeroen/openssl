@@ -31,7 +31,7 @@
 #' md <- md5(data)
 #' sig <- signature_create(md, hash = NULL, key = key)
 #' stopifnot(signature_verify(md, sig, hash = NULL, pubkey = pubkey))
-signature_create <- function(data, hash = sha1, key = my_key(), password = readline){
+signature_create <- function(data, hash = sha1, key = my_key(), password = askpass){
   data <- path_or_raw(data)
   sk <- read_key(key, password = password)
   md <- if(is.null(hash)) parse_hash(data) else hash(data)

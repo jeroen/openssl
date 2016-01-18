@@ -1,3 +1,7 @@
+0.9.1
+ - Fix for getaddrinfo() in Solaris
+ - Use the configurable askpass() for password prompt
+
 0.9
  - Switched download_ssl_cert to getaddrinfo() api for ipv6 support
  - Fix for example for naming conflict with new digest package

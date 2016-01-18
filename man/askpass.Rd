@@ -6,6 +6,9 @@
 \usage{
 askpass(prompt = "Please enter your password")
 }
+\arguments{
+\item{prompt}{the string printed when prompting the user for input.}
+}
 \description{
 Function to prompt the user for a password to read a protected private key.
 Frontends can provide a custom password entry widget by setting the \code{askpass}

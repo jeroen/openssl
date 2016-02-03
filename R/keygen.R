@@ -1,7 +1,8 @@
 #' Generate Key pair
 #'
 #' The \code{keygen} functions generate a random private key. Use \code{as.list(key)$pubkey}
-#' to derive the corresponding public key.
+#' to derive the corresponding public key. Use \link{write_pem} to save a private key
+#' to a file, optionally with a password.
 #'
 #' @export
 #' @rdname keygen
@@ -11,6 +12,10 @@
 #' @param curve which NIST curve to use
 #' @examples key <- rsa_keygen()
 #' pubkey <- as.list(key)$pubkey
+#'
+#' # Write/read the key with a passphrase
+#' write_pem(key, "id_rsa", password = "supersecret")
+#' read_key("id_rsa", password = "supersecret")
 rsa_keygen <- function(bits = 2048){
   key <- .Call(R_keygen_rsa, as.integer(bits))
   structure(key, class = c("key", "rsa"))

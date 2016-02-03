@@ -20,10 +20,15 @@ ec_keygen(curve = c("P-256", "P-384", "P-521"))
 }
 \description{
 The \code{keygen} functions generate a random private key. Use \code{as.list(key)$pubkey}
-to derive the corresponding public key.
+to derive the corresponding public key. Use \link{write_pem} to save a private key
+to a file, optionally with a password.
 }
 \examples{
 key <- rsa_keygen()
 pubkey <- as.list(key)$pubkey
+
+# Write/read the key with a passphrase
+write_pem(key, "id_rsa", password = "supersecret")
+read_key("id_rsa", password = "supersecret")
 }
 

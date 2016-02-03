@@ -10,7 +10,8 @@
 #' @useDynLib openssl R_keygen_rsa
 #' @param bits bitsize of the generated RSA/DSA key
 #' @param curve which NIST curve to use
-#' @examples key <- rsa_keygen()
+#' @examples # Generate keypair
+#' key <- rsa_keygen()
 #' pubkey <- as.list(key)$pubkey
 #'
 #' # Write/read the key with a passphrase

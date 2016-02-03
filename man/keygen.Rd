@@ -24,6 +24,7 @@ to derive the corresponding public key. Use \link{write_pem} to save a private k
 to a file, optionally with a password.
 }
 \examples{
+# Generate keypair
 key <- rsa_keygen()
 pubkey <- as.list(key)$pubkey
 

@@ -3,11 +3,17 @@
 \name{base64_encode}
 \alias{base64_decode}
 \alias{base64_encode}
+\alias{base64url_decode}
+\alias{base64url_encode}
 \title{Encode and decode base64}
 \usage{
 base64_encode(bin, linebreaks = FALSE)
 
 base64_decode(text)
+
+base64url_encode(bin)
+
+base64url_decode(text)
 }
 \arguments{
 \item{bin}{raw or character vector with data to encode into base64}
@@ -19,6 +25,12 @@ base64_decode(text)
 \description{
 Encode and decode binary data into a base64 string. Character vectors are
 automatically collapsed into a single string.
+}
+\details{
+The \code{base64url_encode} functions are specified in Section 5 of RFC 4648
+as a URL-safe alternative to the standard base64. They use different characters
+for the 62:nd and 63:rd alphabet character and don't include trailing \code{==}
+padding.
 }
 \examples{
 input <- charToRaw("foo = bar + 5")

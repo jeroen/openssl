@@ -31,5 +31,12 @@ base64_decode <- function(text){
   stopifnot(is.character(text))
   text <- paste(text, collapse="")
   text <- gsub("[\r\n]", "", text)[[1]]
+
+  # OpenSSL really needs proper padding
+  mod <- nchar(text) %% 4;
+  if(mod > 0){
+    padding <- paste(rep("=", (4 - mod)), collapse = "")
+    text <- paste0(text, padding)
+  }
   .Call(R_base64_decode, text)
 }

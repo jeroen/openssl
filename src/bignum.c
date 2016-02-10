@@ -1,7 +1,6 @@
 #include <Rinternals.h>
 #include <stdlib.h>
 #include <string.h>
-#include <openssl/ec.h>
 #include <openssl/bn.h>
 #include "utils.h"
 

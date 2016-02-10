@@ -3,8 +3,11 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
-#include <openssl/ec.h>
 #include "utils.h"
+
+#ifndef OPENSSL_NO_EC
+#include <openssl/ec.h>
+#endif
 
 SEXP R_keygen_rsa(SEXP bits){
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
@@ -39,6 +42,7 @@ SEXP R_keygen_dsa(SEXP bits){
 }
 
 SEXP R_keygen_ecdsa(SEXP curve){
+#ifndef OPENSSL_NO_EC
   int nid = my_nist2nid(CHAR(STRING_ELT(curve, 0)));
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
   bail(!!ctx);
@@ -56,4 +60,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   memcpy(RAW(res), buf, len);
   free(buf);
   return res;
+#else //OPENSSL_NO_EC
+  Rf_error("OpenSSL has been configured without EC support");
+#endif //OPENSSL_NO_EC
 }

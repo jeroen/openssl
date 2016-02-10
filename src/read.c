@@ -239,9 +239,11 @@ SEXP R_pubkey_bitsize(SEXP input){
   case EVP_PKEY_DSA:
     size = BN_num_bits(EVP_PKEY_get1_DSA(pkey)->p);
     break;
+#ifndef OPENSSL_NO_EC
   case EVP_PKEY_EC:
     size = ec_bitsize(EC_GROUP_get_curve_name(EC_KEY_get0_group(EVP_PKEY_get1_EC_KEY(pkey))));
     break;
+#endif //OPENSSL_NO_EC
   default:
     Rf_error("Unsupported key type: %d", EVP_PKEY_type(pkey->type));
   }

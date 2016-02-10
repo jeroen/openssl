@@ -4,6 +4,10 @@
 #include <openssl/bn.h>
 #include "utils.h"
 
+#ifndef OPENSSL_NO_EC
+#include <openssl/ec.h>
+#endif
+
 /* BN_bn2bin() drops leading zeros which can alter openssh fingerprint */
 SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
   int bits = BN_num_bits(bn);
@@ -152,6 +156,7 @@ int nid_keysize(int nid){
 }
 
 SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
+#ifndef OPENSSL_NO_EC
   int nid = my_nist2nid(CHAR(STRING_ELT(nist, 0)));
   bail(nid);
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
@@ -166,9 +171,13 @@ SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
   memcpy(RAW(res), buf, len);
   free(buf);
   return res;
+#else //OPENSSL_NO_EC
+  Rf_error("OpenSSL has been configured without EC support");
+#endif //OPENSSL_NO_EC
 }
 
 SEXP R_ecdsa_pubkey_decompose(SEXP input){
+#ifndef OPENSSL_NO_EC
   const unsigned char *ptr = RAW(input);
   EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(input));
   bail(!!pkey);
@@ -191,9 +200,13 @@ SEXP R_ecdsa_pubkey_decompose(SEXP input){
   EVP_PKEY_free(pkey);
   UNPROTECT(1);
   return res;
+#else //OPENSSL_NO_EC
+  Rf_error("OpenSSL has been configured without EC support");
+#endif //OPENSSL_NO_EC
 }
 
 SEXP R_ecdsa_priv_decompose(SEXP input){
+#ifndef OPENSSL_NO_EC
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
   EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
   BIO_free(mem);
@@ -219,4 +232,7 @@ SEXP R_ecdsa_priv_decompose(SEXP input){
   EVP_PKEY_free(pkey);
   UNPROTECT(1);
   return res;
+#else //OPENSSL_NO_EC
+  Rf_error("OpenSSL has been configured without EC support");
+#endif //OPENSSL_NO_EC
 }

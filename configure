@@ -1,4 +1,3 @@
-#!/bin/bash
 # Anticonf (tm) script by Jeroen Ooms (2015)
 # This script will query 'pkg-config' for the required cflags and ldflags.
 # If pkg-config is unavailable or does not find the library, try setting
@@ -16,17 +15,18 @@ PKG_LIBS="-lssl -lcrypto"
 PKG_CFLAGS=""
 
 # Use pkg-config if available
-PKGCONFIG=$(command -v pkg-config)
-if [ "$PKGCONFIG" ]; then
-  PKGCONFIG_CFLAGS=$(pkg-config --cflags ${PKG_CONFIG_NAME})
-  PKGCONFIG_LIBS=$(pkg-config --libs ${PKG_CONFIG_NAME})
+pkg-config --version >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  PKGCONFIG_CFLAGS=`pkg-config --cflags ${PKG_CONFIG_NAME}`
+  PKGCONFIG_LIBS=`pkg-config --libs ${PKG_CONFIG_NAME}`
 fi
 
 # Prevent OSX from linking against OpenSSL 0.9.8
-if [[ "$OSTYPE" == "darwin"* ]]; then
+case "$OSTYPE" in "darwin"*)
   unset PKGCONFIG_CFLAGS
   unset PKGCONFIG_LIBS
-fi
+  ;;
+esac
 
 # Note that cflags may be empty in case of success
 if [ "$INCLUDE_DIR" ] || [ "$LIB_DIR" ]; then
@@ -37,9 +37,11 @@ elif [ "$PKGCONFIG_CFLAGS" ] || [ "$PKGCONFIG_LIBS" ]; then
   echo "Found pkg-config cflags and libs!"
   PKG_CFLAGS=${PKGCONFIG_CFLAGS}
   PKG_LIBS=${PKGCONFIG_LIBS}
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  if [ $(command -v brew) ]; then
-    BREWDIR=$(brew --prefix)
+else
+  case "$OSTYPE" in "darwin"*)
+  brew --version 2>/dev/null
+  if [ $? -eq 0 ]; then
+    BREWDIR=`brew --prefix`
   else
     BREWDIR="/tmp/homebrew"
     rm -Rf $BREWDIR
@@ -51,6 +53,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   fi
   PKG_CFLAGS="-I$BREWDIR/opt/$PKG_BREW_NAME/include"
   PKG_LIBS="-L$BREWDIR/opt/$PKG_BREW_NAME/lib $PKG_LIBS"
+  ;;
+  esac
 fi
 
 # For debugging
@@ -58,9 +62,9 @@ echo "Using PKG_CFLAGS=$PKG_CFLAGS"
 echo "Using PKG_LIBS=$PKG_LIBS"
 
 # Find compiler
-CC=$(${R_HOME}/bin/R CMD config CC)
-CFLAGS=$(${R_HOME}/bin/R CMD config CFLAGS)
-CPPFLAGS=$(${R_HOME}/bin/R CMD config CPPFLAGS)
+CC=`${R_HOME}/bin/R CMD config CC`
+CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
+CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 
 # Test configuration
 ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} -E ${PKG_TEST_FILE} >/dev/null 2>&1 || R_CONFIG_ERROR=1;

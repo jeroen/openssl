@@ -16,9 +16,13 @@ parse_ssh_pem <- function(buf){
   ssh_build(text)
 }
 
+validate_openssh <- function(str){
+  is.character(str) && grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+", str[1])
+}
+
 parse_openssh <- function(buf){
   text <- rawToChar(buf)
-  if(!grepl("^(ssh-dss|ssh-rsa|ssh-ed25519|ecdsa-sha2-nistp\\d+)\\s+", text))
+  if(!validate_openssh(text))
     stop("Unsupported ssh key id format: ", substring(text, 1, 15))
 
   # Extract the base64 part

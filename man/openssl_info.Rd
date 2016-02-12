@@ -4,7 +4,7 @@
 \alias{openssl_info}
 \title{OpenSSL Info}
 \usage{
-openssl_info(prompt = "Please enter your password: ")
+openssl_info()
 }
 \description{
 Shows libssl version and configuration information.

@@ -1,5 +1,7 @@
 context("Test ECDSA 521 formats")
 
+if(openssl_info()$ec){
+
 # Read secret key and public key
 sk1 <- read_key("../keys/id_ecdsa521")
 pk1 <- read_pubkey("../keys/id_ecdsa521.pub")
@@ -65,3 +67,8 @@ test_that("signature path interface", {
 
 # Cleanup
 rm(sk1, pk1)
+
+} else {
+  cat("ec not supported")
+}
+

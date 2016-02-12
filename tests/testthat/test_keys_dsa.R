@@ -22,6 +22,10 @@ test_that("reading public key formats", {
 test_that("pubkey ssh fingerprint", {
   fp <- paste(as.list(pk1)$fingerprint, collapse = "")
   expect_equal(fp, "6c42ea8454e549b855cadd7fc86609ca")
+  pk5 <- read_pubkey(readLines("../keys/authorized_keys")[1])
+  expect_equal(pk1, pk5)
+  pk6 <- read_pubkey(write_ssh(pk1))
+  expect_equal(pk1, pk6)
 })
 
 test_that("signatures", {

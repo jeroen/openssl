@@ -9,9 +9,10 @@
 #' be stream-hashed which minimizes the amount of required memory. This is recommended
 #' for hashing files from disk or network.
 #'
-#' The "sha256" algorithm is generally recommended for sensitive information. While md5
-#' and weaker members of the sha family are usually sufficient for collision-resistant
-#' identifiers, they are no longer considered secure for cryptographic purposes.
+#' The sha2 family of algorithms (sha224, sha256, sha384 and sha512) is generally
+#' recommended for sensitive information. While sha1 and md5 are usually sufficient for
+#' collision-resistant identifiers, they are no longer considered secure for cryptographic
+#' purposes.
 #'
 #' In applications where hashes should be irreversible (such as names or passwords) it is
 #' often recommended to use a random \emph{key} for HMAC hashing. This prevents attacks where
@@ -81,6 +82,12 @@ sha384 <- function(x, key = NULL){
 #' @export
 sha512 <- function(x, key = NULL){
   rawstringhash(x, "sha512", key)
+}
+
+#' @rdname hash
+#' @export
+sha2 <- function(x, size = 256, key = NULL){
+  rawstringhash(x, paste0("sha", size), key)
 }
 
 #' @rdname hash

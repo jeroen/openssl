@@ -3,6 +3,7 @@
  - Added openssl_info() function to test if libssl is built with EC support
  - Make configure script bourne compatible (remove bash shebang)
  - Tweak for OpenBSD in ssl.c
+ - Added sha224, sha384 and sha2 functions
 
 0.9.1
  - Fix for getaddrinfo() in Solaris

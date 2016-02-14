@@ -8,12 +8,15 @@
 \alias{md5}
 \alias{ripemd160}
 \alias{sha1}
+\alias{sha224}
 \alias{sha256}
 \alias{sha384}
 \alias{sha512}
 \title{Vectorized hash/hmac functions}
 \usage{
 sha1(x, key = NULL)
+
+sha224(x, key = NULL)
 
 sha256(x, key = NULL)
 

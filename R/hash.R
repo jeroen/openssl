@@ -61,6 +61,12 @@ sha1 <- function(x, key = NULL){
 
 #' @rdname hash
 #' @export
+sha224 <- function(x, key = NULL){
+  rawstringhash(x, "sha224", key)
+}
+
+#' @rdname hash
+#' @export
 sha256 <- function(x, key = NULL){
   rawstringhash(x, "sha256", key)
 }

@@ -35,8 +35,8 @@ signature_create <- function(data, hash = sha1, key = my_key(), password = askpa
   data <- path_or_raw(data)
   sk <- read_key(key, password = password)
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
-  if(!is.raw(md) || !(length(md) %in% c(16, 20, 32, 64)))
-    stop("data must be md5, sha1, sha256 or sha512 digest")
+  if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
+    stop("data must be md5, sha1, or sha2 digest")
   hash_sign(md, sk)
 }
 
@@ -47,8 +47,8 @@ signature_verify <- function(data, sig, hash = sha1, pubkey = my_pubkey()){
   sig <- path_or_raw(sig)
   pk <- read_pubkey(pubkey)
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
-  if(!is.raw(md) || !(length(md) %in% c(16, 20, 32, 64)))
-    stop("data must be md5, sha1, sha256 or sha512 digest")
+  if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
+    stop("data must be md5, sha1, or sha2 digest")
   hash_verify(md, sig, pk)
 }
 

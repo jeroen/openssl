@@ -11,23 +11,16 @@ const EVP_MD* guess_hashfun(int length){
     return EVP_md5();
   case 20:
     return EVP_sha1();
+  case 24:
+    return EVP_sha224();
   case 32:
     return EVP_sha256();
+  case 48:
+    return EVP_sha384();
   case 64:
     return EVP_sha512();
   }
   return EVP_md_null();
-}
-
-int gettype(const char *str){
-  if (!strcmp(str, "md5")) {
-    return NID_md5;
-  } else if (!strcmp(str, "sha1")) {
-    return NID_sha1;
-  } else if (!strcmp(str, "sha256")) {
-    return NID_sha256;
-  }
-  error("Invalid hash type: %s", str);
 }
 
 SEXP R_hash_sign(SEXP md, SEXP key){

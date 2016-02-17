@@ -37,6 +37,8 @@ ripemd160(x, key = NULL)
 \item{x}{character vector, raw vector or connection object.}
 
 \item{key}{string or raw vector used as the key for HMAC hashing}
+
+\item{size}{must be equal to 224 256 384 or 512}
 }
 \description{
 All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC

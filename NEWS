@@ -4,6 +4,7 @@
  - Make configure script bourne compatible (remove bash shebang)
  - Tweak for OpenBSD in ssl.c
  - Added sha224, sha384 and sha2 functions
+ - Export the fingerprint function
 
 0.9.1
  - Fix for getaddrinfo() in Solaris

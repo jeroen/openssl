@@ -1,5 +1,37 @@
-fingerprint <- function(x, hashfun = md5, ...){
-  hashdata <- fpdata(x)
+#' OpenSSH fingerprint
+#'
+#' Calculates the OpenSSH fingerprint of a public key. This value should
+#' match what you get to see when connecting with SSH to a server. Note
+#' that some other systems might use a different algorithm to derive a
+#' (different) fingerprint for the same keypair.
+#'
+#' @export
+#' @param key a public or private key
+#' @param hashfun which hash function to use to calculate the fingerprint
+#' @examples mykey <- rsa_keygen()
+#' pubkey <- as.list(mykey)$pubkey
+#' fingerprint(mykey)
+#' fingerprint(pubkey)
+#'
+#' # Some systems use other hash functions
+#' fingerprint(pubkey, sha1)
+#' fingerprint(pubkey, sha256)
+#'
+#' # Other key types
+#' fingerprint(dsa_keygen())
+fingerprint <- function(key, hashfun = md5){
+  UseMethod("fingerprint")
+}
+
+#' @export
+fingerprint.key <- function(key, hashfun = md5){
+  pubkey <- derive_pubkey(key)
+  fingerprint(pubkey, hashfun = hashfun)
+}
+
+#' @export
+fingerprint.pubkey <- function(key, hashfun = md5){
+  hashdata <- fpdata(key)
   hashfun(unlist(unname(hashdata)))
 }
 

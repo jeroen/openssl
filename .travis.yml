@@ -5,6 +5,9 @@ warnings_are_errors: true
 apt_packages:
   - libssl-dev
 
+r_packages:
+  - rmarkdown
+
 notifications:
   email:
     on_success: change

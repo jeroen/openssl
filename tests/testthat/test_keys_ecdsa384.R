@@ -1,6 +1,6 @@
 context("Test ECDSA 384 formats")
 
-if(openssl_info()$ec){
+if(openssl_config()$ec){
 
 # Read secret key and public key
 sk1 <- read_key("../keys/id_ecdsa384")

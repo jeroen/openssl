@@ -2,7 +2,7 @@
 #include <openssl/opensslconf.h>
 #include <openssl/opensslv.h>
 
-SEXP R_openssl_info() {
+SEXP R_openssl_config() {
   int has_ec = 1;
   #ifdef OPENSSL_NO_EC
   has_ec = 0;

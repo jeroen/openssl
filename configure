@@ -5,7 +5,7 @@
 # R CMD INSTALL --configure-vars='INCLUDE_DIR=/.../include LIB_DIR=/.../lib'
 
 # Library settings
-PKG_CONFIG_NAME="libssl"
+PKG_CONFIG_NAME="openssl"
 PKG_DEB_NAME="libssl-dev"
 PKG_RPM_NAME="openssl-devel"
 PKG_CSW_NAME="libssl_dev"

@@ -2,11 +2,11 @@
 
 ##### *Toolkit for Encryption, Signatures and Certificates Based on OpenSSL*
 
-[![Build Status](https://travis-ci.org/jeroenooms/curl.svg?branch=master)](https://travis-ci.org/jeroenooms/curl)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroenooms/curl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroenooms/curl)
-[![Coverage Status](https://codecov.io/github/jeroenooms/curl/coverage.svg?branch=master)](https://codecov.io/github/jeroenooms/curl?branch=master)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/curl)](http://cran.r-project.org/package=curl)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/curl)](http://cran.r-project.org/web/packages/curl/index.html)
+[![Build Status](https://travis-ci.org/jeroenooms/openssl.svg?branch=master)](https://travis-ci.org/jeroenooms/openssl)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroenooms/openssl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroenooms/openssl)
+[![Coverage Status](https://codecov.io/github/jeroenooms/openssl/coverage.svg?branch=master)](https://codecov.io/github/jeroenooms/openssl?branch=master)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/openssl)](http://cran.r-project.org/package=openssl)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/openssl)](http://cran.r-project.org/web/packages/openssl/index.html)
 
 > Bindings to OpenSSL libssl and libcrypto, plus custom SSH
   pubkey parsers. Supports RSA, DSA and NIST curves P-256, P-384 and P-521.

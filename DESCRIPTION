@@ -23,5 +23,6 @@ Suggests:
     testthat,
     digest,
     knitr,
+    rmarkdown,
     jsonlite
 RoxygenNote: 5.0.1

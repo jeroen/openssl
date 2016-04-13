@@ -34,7 +34,7 @@ ciphertext <- rsa_encrypt(secret, pubkey)
 rsa_decrypt(ciphertext, key)
 ```
 
-Create a signature using RSA private key:
+Create a signature using your RSA private key:
 
 ```r
 # Sign a file with your private key

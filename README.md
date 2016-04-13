@@ -17,22 +17,55 @@
   generators, hash functions (md5, sha1, sha256, etc), base64 encoder, a secure
   random number generator, and 'bignum' math methods for manually performing
 
-### Installation
+## Hello World
 
-Windows and Mac users can use the binary packages from [CRAN](http://cran.r-project.org/web/packages/openssl/index.html):
+Encrypt a secret message using someone's RSA public key:
+
+```r
+# Generate test keys
+key <- rsa_keygen()
+pubkey <- as.list(key)$pubkey
+
+# Encrypt tempkey using receivers public RSA key
+secret <- charToRaw("TTIP is evil")
+ciphertext <- rsa_encrypt(secret, pubkey)
+
+# Receiver decrypts secret from private her RSA key
+rsa_decrypt(ciphertext, key)
+```
+
+Create a signature using RSA private key:
+
+```r
+# Sign a file with your private key
+myfile <- system.file("DESCRIPTION")
+sig <- signature_create(myfile, key = key)
+
+# Others can verify form your public key
+signature_verify(myfile, sig, pubkey = pubkey)
+```
+
+## Installation
+
+Binary packages for __OS-X__ or __Windows__ can be installed directly from CRAN:
 
 ```r
 install.packages("openssl")
 ```
 
-Building from source requires `libssl` e.g:
+Installation from source on Linux requires [`openssl`](http://openssl.org/source). On __Debian__ or __Ubuntu__ use [libssl-dev](https://packages.debian.org/testing/libssl-dev):
 
- - deb: `libssl-dev` (Debian, Ubuntu)
- - rpm: `openssl-devel` (Fedora, Redhat)
- - brew: `openssl` (OSX)
+```
+sudo apt-get install -y libssl-dev
+```
 
-Special note for Mac: because OSX includes an old version of openssl, brew does
-not automatically link openssl. You need:
+On __Fedora__, __CentOS or RHEL__ use [openssl-devel](https://apps.fedoraproject.org/packages/openssl-devel):
+
+```
+sudo yum install openssl-devel
+````
+
+On __OS-X__ we need [openssl](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb) from homebrew. Because OSX used to include an old version of openssl, brew does automatically link openssl. You need to do:
 
 ```
 brew install openssl
@@ -44,4 +77,3 @@ To check which version you are running (run in a fresh terminal):
 ```
 openssl version -a
 ```
-

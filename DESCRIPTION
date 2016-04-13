@@ -15,7 +15,7 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH
     random number generator, and 'bignum' math methods for manually performing
     crypto calculations on large multibyte integers.
 License: MIT + file LICENSE
-URL: https://github.com/jeroenooms/openssl
+URL: https://github.com/jeroenooms/openssl#readme
 BugReports: https://github.com/jeroenooms/openssl/issues
 SystemRequirements: OpenSSL >= 1.0.0
 VignetteBuilder: knitr

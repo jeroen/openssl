@@ -41,7 +41,7 @@ secret <- charToRaw("TTIP is evil")
 ciphertext <- rsa_encrypt(secret, pubkey)
 
 # Receiver decrypts secret from private her RSA key
-rsa_decrypt(ciphertext, key)
+rawToChar(rsa_decrypt(ciphertext, key))
 ```
 
 Create a signature using your RSA private key:

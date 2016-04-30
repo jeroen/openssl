@@ -24,7 +24,7 @@ Download and verify an SSL certrificate:
 ```r
 library(openssl)
 cert <- download_ssl_cert("www.r-project.org")
-cert_verify()(cert, ca_bundle())
+cert_verify(cert, ca_bundle())
 print(cert)
 as.list(cert[[1]])
 ```

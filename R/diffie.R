@@ -7,8 +7,8 @@
 #' Currently only Elliptic Curve Diffie Hellman (ECDH) is implemented.
 #'
 #' @export
-#' @rdname ec_diffie
-#' @name ec_diffie
+#' @rdname ec_dh
+#' @name ec_dh
 #' @useDynLib openssl R_diffie_hellman
 #' @param key your own private key
 #' @param peerkey the public key from your peer
@@ -24,10 +24,10 @@
 #' pk2 <- as.list(sk2)$pubkey
 #'
 #' # Both peers can derive the shared secret
-#' alice <- ec_diffie(sk1, pk2)
-#' bob <- ec_diffie(sk2, pk1)
+#' alice <- ec_dh(sk1, pk2)
+#' bob <- ec_dh(sk2, pk1)
 #' }
-ec_diffie <- function(key = my_key(), peerkey, password = askpass){
+ec_dh <- function(key = my_key(), peerkey, password = askpass){
   key <- read_key(key, password = password)
   peerkey <- read_pubkey(peerkey)
   stopifnot(inherits(key, "ecdsa"))

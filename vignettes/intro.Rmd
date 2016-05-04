@@ -28,7 +28,7 @@ The `openssl` package implements a modern interface to libssl and libcrypto for 
 | authentication | `signature_create` | `signature_create` | `signature_create` | `hmac` |
 | encrypt secret | `rsa_encrypt` | - | - | - |
 | encrypt large data | `encrypt_envelope` | - | - | `aes_cbc` |
-| diffie hellman | - | - | `ec_diffie` | - |
+| diffie hellman | - | - | `ec_dh` | - |
 | save private key | `write_pem` | `write_pem` | `write_pem`  ||
 | save pubkey | `write_{pem,ssh}` | `write_{pem,ssh}` | `write_{pem,ssh}`  ||
 

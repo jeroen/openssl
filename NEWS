@@ -1,5 +1,5 @@
 0.9.3
- - Added ec_diffie() function for ECDH
+ - Added ec_dh() function for ECDH
  - Added --atleast-version=1.0 to pkg-config in configure script
  - Switch as.list(cert) to RFC2253 format for 'subject' and 'issuer' fields
 

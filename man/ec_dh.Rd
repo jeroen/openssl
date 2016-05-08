@@ -24,15 +24,16 @@ Currently only Elliptic Curve Diffie Hellman (ECDH) is implemented.
 \examples{
 \dontrun{
 # Need two EC keypairs from the same curve
-sk1 <- ec_keygen()
-pk1 <- as.list(sk1)$pubkey
+alice_key <- ec_keygen("P-521")
+bob_key <- ec_keygen("P-521")
 
-sk2 <- ec_keygen()
-pk2 <- as.list(sk2)$pubkey
+# Derive public keys
+alice_pub <- as.list(alice_key)$pubkey
+bob_pub <- as.list(bob_key)$pubkey
 
-# Both peers can derive the shared secret
-alice <- ec_dh(sk1, pk2)
-bob <- ec_dh(sk2, pk1)
+# Both peers can derive the (same) shared secret via each other's pubkey
+ec_dh(alice_key, bob_pub)
+ec_dh(bob_key, alice_pub)
 }
 }
 \references{

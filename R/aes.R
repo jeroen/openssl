@@ -22,25 +22,57 @@
 #' y <- aes_cbc_encrypt(x, key = key)
 #' x2 <- aes_cbc_decrypt(y, key = key)
 #' stopifnot(identical(x, x2))
+aes_ctr_encrypt <- function(data, key, iv = rand_bytes(16)){
+  aes_encrypt(data, key, iv, "ctr")
+}
+
+#' @export
+#' @rdname aes_cbc
+aes_ctr_decrypt <- function(data, key, iv = attr(data, "iv")){
+  aes_decrypt(data, key, iv, "ctr")
+}
+
+#' @export
+#' @rdname aes_cbc
 aes_cbc_encrypt <- function(data, key, iv = rand_bytes(16)){
-  data <- path_or_raw(data)
-  if(!is.raw(data))
-    stop("The 'data' must path to a file or raw vector")
-  out <- aes_cbc(data, key, iv, TRUE)
-  structure(out, iv = iv)
+  aes_encrypt(data, key, iv, "cbc")
 }
 
 #' @export
 #' @rdname aes_cbc
 aes_cbc_decrypt <- function(data, key, iv = attr(data, "iv")){
+  aes_decrypt(data, key, iv, "cbc")
+}
+
+#' @export
+#' @rdname aes_cbc
+aes_gcm_encrypt <- function(data, key, iv = rand_bytes(16)){
+  aes_encrypt(data, key, iv, "gcm")
+}
+
+#' @export
+#' @rdname aes_cbc
+aes_gcm_decrypt <- function(data, key, iv = attr(data, "iv")){
+  aes_decrypt(data, key, iv, "gcm")
+}
+
+aes_encrypt <- function(data, key, iv, mode){
+  data <- path_or_raw(data)
+  if(!is.raw(data))
+    stop("The 'data' must path to a file or raw vector")
+  out <- aes_any(data, key, iv, TRUE, mode)
+  structure(out, iv = iv)
+}
+
+aes_decrypt <- function(data, key, iv, mode){
   data <- path_or_raw(data)
   if(!is.raw(data))
     stop("The 'data' must be raw vector")
-  aes_cbc(data, key, iv, FALSE);
+  aes_any(data, key, iv, FALSE, mode)
 }
 
-#' @useDynLib openssl R_aes_cbc
-aes_cbc <- function(x, key, iv = NULL, encrypt){
+#' @useDynLib openssl R_aes_any
+aes_any <- function(x, key, iv = NULL, encrypt, mode){
   if(is.null(iv)){
     iv <- as.raw(rep(0, 16))
   }
@@ -48,5 +80,7 @@ aes_cbc <- function(x, key, iv = NULL, encrypt){
   stopifnot(is.raw(key))
   stopifnot(is.raw(iv))
   stopifnot(is.logical(encrypt))
-  .Call(R_aes_cbc, x, key, iv, encrypt)
+  stopifnot(is.character(mode))
+  cipher <- paste("aes", length(key) * 8, mode, sep = "-")
+  .Call(R_aes_any, x, key, iv, encrypt, cipher)
 }

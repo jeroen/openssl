@@ -8,28 +8,26 @@
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_EncryptInit.html
  */
 
-const EVP_CIPHER* get_cipher(int length){
-  switch(length){
-  case 16:
-    return EVP_aes_128_cbc();
-  case 24:
-    return EVP_aes_192_cbc();
-  case 32:
-    return EVP_aes_256_cbc();
-  }
-  error("Invalid key length: %d", length);
-}
-
-SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
+SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   int strength = LENGTH(key);
   if(strength != 16 && strength != 24 && strength != 32)
     error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
 
-  if(LENGTH(iv) != 16)
-    error("aes requires an iv of length 16");
-
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-  bail(EVP_CipherInit_ex(ctx, get_cipher(strength), NULL, RAW(key), RAW(iv), asLogical(encrypt)));
+  bail(!!ctx);
+
+  const EVP_CIPHER *cph = EVP_get_cipherbyname(CHAR(STRING_ELT(cipher, 0)));
+  bail(!!cph);
+
+  //GCM mode has shorter IV from the others
+  if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){
+    bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, asLogical(encrypt)));
+    bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, LENGTH(iv), NULL));
+  } else {
+    if(LENGTH(iv) != 16)
+      error("aes requires an iv of length 16");
+  }
+  bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), asLogical(encrypt)));
 
   int blocksize = EVP_CIPHER_CTX_block_size(ctx);
   int remainder = LENGTH(x) % blocksize;
@@ -41,7 +39,10 @@ SEXP R_aes_cbc(SEXP x, SEXP key, SEXP iv, SEXP encrypt) {
   bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 
-  bail(EVP_CipherFinal_ex(ctx, cur, &tmp));
+  //in GCM mode, res indicates if the security tag was verified successfully.
+  int res = EVP_CipherFinal_ex(ctx, cur, &tmp);
+  if(EVP_CIPHER_mode(cph) != EVP_CIPH_GCM_MODE)
+    bail(res);
   cur += tmp;
 
   int total = cur - buf;

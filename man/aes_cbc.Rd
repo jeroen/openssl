@@ -4,11 +4,23 @@
 \alias{aes_cbc}
 \alias{aes_cbc_decrypt}
 \alias{aes_cbc_encrypt}
+\alias{aes_ctr_decrypt}
+\alias{aes_ctr_encrypt}
+\alias{aes_gcm_decrypt}
+\alias{aes_gcm_encrypt}
 \title{Symmetric AES encryption}
 \usage{
+aes_ctr_encrypt(data, key, iv = rand_bytes(16))
+
+aes_ctr_decrypt(data, key, iv = attr(data, "iv"))
+
 aes_cbc_encrypt(data, key, iv = rand_bytes(16))
 
 aes_cbc_decrypt(data, key, iv = attr(data, "iv"))
+
+aes_gcm_encrypt(data, key, iv = rand_bytes(16))
+
+aes_gcm_decrypt(data, key, iv = attr(data, "iv"))
 }
 \arguments{
 \item{data}{raw vector or path to file with data to encrypt or decrypt}

@@ -1,3 +1,6 @@
+0.9.4
+ - Added aes_ctr and aes_gcm modes
+
 0.9.3
  - Added ec_dh() function for ECDH
  - Added --atleast-version=1.0 to pkg-config in configure script

@@ -14,10 +14,9 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
     error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
 
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
-  bail(!!ctx);
-
   const EVP_CIPHER *cph = EVP_get_cipherbyname(CHAR(STRING_ELT(cipher, 0)));
-  bail(!!cph);
+  if(!cph)
+    Rf_error("Invalid cipher: %s", CHAR(STRING_ELT(cipher, 0)));
 
   //GCM mode has shorter IV from the others
   if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){

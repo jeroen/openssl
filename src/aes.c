@@ -22,9 +22,8 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){
     bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, asLogical(encrypt)));
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, LENGTH(iv), NULL));
-  } else {
-    if(LENGTH(iv) != 16)
-      error("aes requires an iv of length 16");
+  } else if(LENGTH(iv) != 16){
+    Rf_error("aes requires an iv of length 16");
   }
   bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), asLogical(encrypt)));
 

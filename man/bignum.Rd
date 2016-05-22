@@ -10,7 +10,7 @@ bignum(x, hex = FALSE)
 
 bignum_mod_exp(a, b, m)
 
-bignum_mod_inv(a, n)
+bignum_mod_inv(a, m)
 }
 \arguments{
 \item{x}{an integer, string (hex or dec) or raw vector}

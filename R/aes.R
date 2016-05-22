@@ -9,6 +9,7 @@
 #' @export
 #' @rdname aes_cbc
 #' @name aes_cbc
+#' @param length how many bytes to generate. Usually 16 (128-bit) or 12 (92-bit) for \code{aes_gcm}
 #' @param data raw vector or path to file with data to encrypt or decrypt
 #' @param key raw vector of length 16, 24 or 32, e.g. the hash of a shared secret
 #' @param iv raw vector of length 16 (aes block size) or NULL. The initialization vector
@@ -83,4 +84,10 @@ aes_any <- function(x, key, iv = NULL, encrypt, mode){
   stopifnot(is.character(mode))
   cipher <- paste("aes", length(key) * 8, mode, sep = "-")
   .Call(R_aes_any, x, key, iv, encrypt, cipher)
+}
+
+#' @rdname aes_cbc
+#' @export
+aes_keygen <- function(length = 16){
+  rand_bytes(length)
 }

@@ -8,6 +8,7 @@
 \alias{aes_ctr_encrypt}
 \alias{aes_gcm_decrypt}
 \alias{aes_gcm_encrypt}
+\alias{aes_keygen}
 \title{Symmetric AES encryption}
 \usage{
 aes_ctr_encrypt(data, key, iv = rand_bytes(16))
@@ -21,6 +22,8 @@ aes_cbc_decrypt(data, key, iv = attr(data, "iv"))
 aes_gcm_encrypt(data, key, iv = rand_bytes(16))
 
 aes_gcm_decrypt(data, key, iv = attr(data, "iv"))
+
+aes_keygen(length = 16)
 }
 \arguments{
 \item{data}{raw vector or path to file with data to encrypt or decrypt}
@@ -29,6 +32,8 @@ aes_gcm_decrypt(data, key, iv = attr(data, "iv"))
 
 \item{iv}{raw vector of length 16 (aes block size) or NULL. The initialization vector
 is not secret but should be random}
+
+\item{length}{how many bytes to generate. Usually 16 (128-bit) or 12 (92-bit) for \code{aes_gcm}}
 }
 \description{
 Low-level symmetric encryption/decryption using the AES block cipher in CBC mode.

@@ -12,3 +12,13 @@ dsa_pubkey_build <- function(p,q,g,y){
 rsa_pubkey_build <- function(exp, mod){
   .Call(R_rsa_pubkey_build, exp, mod)
 }
+
+#' @useDynLib openssl R_ecdsa_key_build
+ecdsa_key_build <- function(x, y, d, nist_name){
+  .Call(R_ecdsa_key_build, x, y, d, nist_name)
+}
+
+#' @useDynLib openssl R_rsa_key_build
+rsa_key_build <- function(e, n, p, q, d){
+  .Call(R_rsa_key_build, e, n, p, q, d)
+}

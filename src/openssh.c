@@ -50,6 +50,23 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
+SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d){
+  RSA *rsa = RSA_new();
+  rsa->e = new_bignum_from_r(e);
+  rsa->n = new_bignum_from_r(n);
+  rsa->p = new_bignum_from_r(p);
+  rsa->q = new_bignum_from_r(q);
+  rsa->d = new_bignum_from_r(d);
+  unsigned char *buf = NULL;
+  int len = i2d_RSAPrivateKey(rsa, &buf);
+  bail(len);
+  RSA_free(rsa);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+}
+
 SEXP R_rsa_pubkey_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);
@@ -167,6 +184,28 @@ SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
   int len = i2d_EC_PUBKEY(pubkey, &buf);
   bail(len);
   EC_KEY_free(pubkey);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+#else //OPENSSL_NO_EC
+  Rf_error("OpenSSL has been configured without EC support");
+#endif //OPENSSL_NO_EC
+}
+
+SEXP R_ecdsa_key_build(SEXP x, SEXP y, SEXP d, SEXP nist){
+#ifndef OPENSSL_NO_EC
+  int nid = my_nist2nid(CHAR(STRING_ELT(nist, 0)));
+  bail(nid);
+  EC_KEY *key = EC_KEY_new_by_curve_name(nid);
+  EC_KEY_set_asn1_flag(key, OPENSSL_EC_NAMED_CURVE);
+  if(!EC_KEY_set_public_key_affine_coordinates(key, new_bignum_from_r(x), new_bignum_from_r(y)))
+    error("Failed to construct EC key. Perhaps invalid point or curve.");
+  EC_KEY_set_private_key(key, new_bignum_from_r(d));
+  unsigned char *buf = NULL;
+  int len = i2d_ECPrivateKey(key, &buf);
+  bail(len);
+  EC_KEY_free(key);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);

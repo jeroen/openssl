@@ -56,23 +56,20 @@ ssh_build <- function(b64text){
   )
 }
 
-#' @useDynLib openssl R_rsa_pubkey_build
 rsa_build <- function(keydata){
   exp <- keydata[[2]]
   mod <- keydata[[3]]
-  .Call(R_rsa_pubkey_build, exp, mod)
+  rsa_pubkey_build(exp, mod)
 }
 
-#' @useDynLib openssl R_dsa_pubkey_build
 dsa_build <- function(keydata){
   p <- keydata[[2]]
   q <- keydata[[3]]
   g <- keydata[[4]]
   y <- keydata[[5]]
-  .Call(R_dsa_pubkey_build, p, q, g, y)
+  dsa_pubkey_build(p, q, g, y)
 }
 
-#' @useDynLib openssl R_ecdsa_pubkey_build
 ecdsa_build <- function(keydata){
   curve_name <- rawToChar(keydata[[2]])
   nist_name <- switch(curve_name,
@@ -88,7 +85,7 @@ ecdsa_build <- function(keydata){
   curve_size <- length(ec_point)/2
   x <- utils::head(ec_point, curve_size)
   y <- utils::tail(ec_point, curve_size)
-  .Call(R_ecdsa_pubkey_build, x, y, nist_name);
+  ecdsa_pubkey_build(x, y, nist_name)
 }
 
 ed25519_build <- function(keydata){

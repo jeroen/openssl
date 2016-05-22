@@ -50,13 +50,17 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
-SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d){
+SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d, SEXP dp, SEXP dq, SEXP qi){
   RSA *rsa = RSA_new();
   rsa->e = new_bignum_from_r(e);
   rsa->n = new_bignum_from_r(n);
   rsa->p = new_bignum_from_r(p);
   rsa->q = new_bignum_from_r(q);
   rsa->d = new_bignum_from_r(d);
+  rsa->dmp1 = new_bignum_from_r(dp);
+  rsa->dmq1 = new_bignum_from_r(dq);
+  rsa->iqmp = new_bignum_from_r(qi);
+  bail(RSA_check_key(rsa));
   unsigned char *buf = NULL;
   int len = i2d_RSAPrivateKey(rsa, &buf);
   bail(len);
@@ -82,12 +86,15 @@ SEXP R_rsa_priv_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(bin)));
-  SEXP res = PROTECT(allocVector(VECSXP, 5));
+  SEXP res = PROTECT(allocVector(VECSXP, 8));
   SET_VECTOR_ELT(res, 0, bignum_to_r(rsa->e));
   SET_VECTOR_ELT(res, 1, bignum_to_r(rsa->n));
   SET_VECTOR_ELT(res, 2, bignum_to_r(rsa->p));
   SET_VECTOR_ELT(res, 3, bignum_to_r(rsa->q));
   SET_VECTOR_ELT(res, 4, bignum_to_r(rsa->d));
+  SET_VECTOR_ELT(res, 5, bignum_to_r(rsa->dmp1));
+  SET_VECTOR_ELT(res, 6, bignum_to_r(rsa->dmq1));
+  SET_VECTOR_ELT(res, 7, bignum_to_r(rsa->iqmp));
   UNPROTECT(1);
   return res;
 }

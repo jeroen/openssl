@@ -165,6 +165,13 @@ bignum_mod_exp <- function(a, b, m){
   .Call(R_bignum_mod_exp, a, b, m)
 }
 
+#' @export
+#' @rdname bignum
+#' @useDynLib openssl R_bignum_mod_inv
+bignum_mod_inv <- function(a, n){
+  .Call(R_bignum_mod_inv, a, n)
+}
+
 #' @useDynLib openssl R_bignum_bits
 bignum_bits <- function(x){
   .Call(R_bignum_bits, x)

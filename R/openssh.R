@@ -107,7 +107,7 @@ pubkey_decompose.rsa <- function(key){
 #' @useDynLib openssl R_rsa_priv_decompose
 priv_decompose.rsa <- function(key){
   out <- .Call(R_rsa_priv_decompose, key)
-  structure(out, names = c("e", "n", "p", "q", "d"))
+  structure(out, names = c("e", "n", "p", "q", "d", "dp", "dq", "qi"))
 }
 
 #' @useDynLib openssl R_dsa_pubkey_decompose

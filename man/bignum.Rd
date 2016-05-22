@@ -3,11 +3,14 @@
 \name{bignum}
 \alias{bignum}
 \alias{bignum_mod_exp}
+\alias{bignum_mod_inv}
 \title{Big number arithmetic}
 \usage{
 bignum(x, hex = FALSE)
 
 bignum_mod_exp(a, b, m)
+
+bignum_mod_inv(a, n)
 }
 \arguments{
 \item{x}{an integer, string (hex or dec) or raw vector}

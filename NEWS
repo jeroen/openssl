@@ -1,6 +1,7 @@
 0.9.4
  - Added aes_ctr() and aes_gcm() modes
  - Added aes_keygen()
+ - Added bignum_mod_inv()
  - Internal tools for JWT/JWK support (see pkg: jose)
 
 0.9.3

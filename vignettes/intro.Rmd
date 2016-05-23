@@ -11,6 +11,7 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(comment = "")
 library(openssl)
 ```
 
@@ -79,6 +80,25 @@ write_ssh(pubkey)
 ```
 
 The `read_pubkey` function will automatically detect if a file contains a `PEM` or `SSH` key.
+
+### The JSON Web Key (JWK) format
+
+Yet another recent format to store RSA or EC keys are JSON Web Keys (JWK). JWK is part of the **Javascript Object Signing and Encryption (JOSE)** specification. The `jwk_write` and `jwk_read` functions are implemented in a separate package which uses the `openssl` package.
+
+```{r}
+library(jose)
+json <- jwk_write(pubkey)
+jsonlite::prettify(json)
+```
+
+Keys from `jose` and `openssl` are the same.
+
+```{r}
+mykey <- jwk_read(json)
+identical(mykey, pubkey)
+print(mykey)
+```
+
 
 
 ## Methods: RSA, DSA, ECDSA

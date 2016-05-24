@@ -24,5 +24,6 @@ Suggests:
     digest,
     knitr,
     rmarkdown,
-    jsonlite
+    jsonlite,
+    jose
 RoxygenNote: 5.0.1

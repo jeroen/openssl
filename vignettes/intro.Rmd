@@ -49,7 +49,7 @@ DER is the standard __binary__ format using by protocols for storing and exchang
 
 
 ```{r}
-key <- ec_keygen()
+key <- rsa_keygen()
 pubkey <- as.list(key)$pubkey
 write_der(pubkey)
 ```

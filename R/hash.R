@@ -177,7 +177,10 @@ rawstringhash <- function(x, algo, key){
   } else {
     stop("Argument 'x' must be raw or character vector.")
   }
-  structure(hash, class = c("hash", algo))
+  out <- structure(hash, class = c("hash", algo))
+  if(!is.null(key))
+    class(out) <- c(class(out), "hmac")
+  out
 }
 
 hash_type <- function(hash){
@@ -220,7 +223,7 @@ parse_hash <- function(x){
 #' @export
 print.hash <- function(x, ...){
   if(is.raw(x))
-    cat(class(x)[2], paste(x, collapse = ":"), "\n")
+    cat(class(x)[-1], paste(x, collapse = ":"), "\n")
   else
     print(unclass(x, ...))
 }

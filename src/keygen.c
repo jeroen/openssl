@@ -44,18 +44,23 @@ SEXP R_keygen_dsa(SEXP bits){
 SEXP R_keygen_ecdsa(SEXP curve){
 #ifndef OPENSSL_NO_EC
   int nid = my_nist2nid(CHAR(STRING_ELT(curve, 0)));
-  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
-  bail(!!ctx);
-  bail(EVP_PKEY_keygen_init(ctx) > 0);
-  bail(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, nid));
+  EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
+  bail(!!pctx);
+  EVP_PKEY_paramgen_init(pctx);
+  bail(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, nid));
+  EVP_PKEY *params;
+  bail(EVP_PKEY_paramgen(pctx, &params));
+  EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new(params, NULL);
+  bail(EVP_PKEY_keygen_init(kctx) > 0);
   EVP_PKEY *pkey = EVP_PKEY_new();
-  bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
+  bail(EVP_PKEY_keygen(kctx, &pkey) > 0);
   EC_KEY_set_asn1_flag(EVP_PKEY_get1_EC_KEY(pkey), OPENSSL_EC_NAMED_CURVE);
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
   EVP_PKEY_free(pkey);
-  EVP_PKEY_CTX_free(ctx);
+  EVP_PKEY_CTX_free(kctx);
+  EVP_PKEY_CTX_free(pctx);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);

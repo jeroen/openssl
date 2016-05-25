@@ -59,7 +59,6 @@ Usually we would use `rsa_encrypt` and `rsa_decrypt` to perform the encryption:
 ```{r}
 msg <- charToRaw("hello world")
 ciphertext <- rsa_encrypt(msg, pubkey)
-try(rawToChar(ciphertext))
 rawToChar(rsa_decrypt(ciphertext, key))
 ```
 

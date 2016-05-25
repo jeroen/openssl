@@ -21,4 +21,7 @@ test_that("reading protected keys", {
 
   Sys.unsetenv("USER_KEY")
   expect_equal(pk1, my_pubkey())
+
+  # Clean up to prevent side effects
+  Sys.unsetenv("USER_PUBKEY")
 })

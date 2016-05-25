@@ -48,7 +48,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   bail(!!pctx);
   EVP_PKEY_paramgen_init(pctx);
   bail(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, nid));
-  EVP_PKEY *params;
+  EVP_PKEY *params = EVP_PKEY_new();
   bail(EVP_PKEY_paramgen(pctx, &params));
   EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new(params, NULL);
   bail(EVP_PKEY_keygen_init(kctx) > 0);

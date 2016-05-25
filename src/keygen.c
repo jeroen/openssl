@@ -59,6 +59,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
   EVP_PKEY_free(pkey);
+  EVP_PKEY_free(params);
   EVP_PKEY_CTX_free(kctx);
   EVP_PKEY_CTX_free(pctx);
   SEXP res = allocVector(RAWSXP, len);

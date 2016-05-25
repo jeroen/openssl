@@ -70,5 +70,17 @@ test_that("signature path interface", {
   expect_true(signature_verify("../keys/message", tmp, sha256, "../keys/id_rsa.pub"))
 })
 
+test_that("rsa_keygen works", {
+  key <- rsa_keygen(1024)
+  expect_is(key, "rsa")
+  expect_equal(as.list(key)$size, 1024)
+  rm(key)
+
+  key <- rsa_keygen(2048)
+  expect_is(key, "rsa")
+  expect_equal(as.list(key)$size, 2048)
+  rm(key)
+})
+
 # Cleanup
 rm(sk1, pk1)

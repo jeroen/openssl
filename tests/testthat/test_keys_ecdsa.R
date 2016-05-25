@@ -69,6 +69,13 @@ test_that("signature path interface", {
   expect_true(signature_verify("../keys/message", tmp, sha256, "../keys/id_ecdsa.pub"))
 })
 
+test_that("ec_keygen works", {
+  key <- ec_keygen("P-256")
+  expect_equal(as.list(key)$size, 256)
+  expect_equal(as.list(key)$data$curve, "P-256")
+  rm(key)
+})
+
 # Cleanup
 rm(sk1, pk1)
 

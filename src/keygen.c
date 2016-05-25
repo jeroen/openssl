@@ -48,8 +48,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   bail(!!ctx);
   bail(EVP_PKEY_keygen_init(ctx) > 0);
   bail(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, nid));
-  EVP_PKEY *pkey = NULL;
-  bail(EVP_PKEY_paramgen(ctx, &pkey));
+  EVP_PKEY *pkey = EVP_PKEY_new();
   bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
   EC_KEY_set_asn1_flag(EVP_PKEY_get1_EC_KEY(pkey), OPENSSL_EC_NAMED_CURVE);
   unsigned char *buf = NULL;

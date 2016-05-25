@@ -1,4 +1,5 @@
 0.9.4
+ - Fix ec_keygen() for old versions of OpenSSL
  - Added aes_ctr() and aes_gcm() modes
  - Added aes_keygen()
  - Added bignum_mod_inv()

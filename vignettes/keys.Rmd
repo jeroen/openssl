@@ -82,18 +82,18 @@ read_pubkey(str)
 
 ### The JSON Web Key (JWK) format
 
-Yet another recent format to store RSA or EC keys are JSON Web Keys (JWK). JWK is part of the **Javascript Object Signing and Encryption (JOSE)** specification. The `jwk_write` and `jwk_read` functions are implemented in a separate package which uses the `openssl` package.
+Yet another recent format to store RSA or EC keys are JSON Web Keys (JWK). JWK is part of the **Javascript Object Signing and Encryption (JOSE)** specification. The `write_jwk` and `read_jwk` functions are implemented in a separate package which uses the `openssl` package.
 
 ```{r}
 library(jose)
-json <- jwk_write(pubkey)
+json <- write_jwk(pubkey)
 jsonlite::prettify(json)
 ```
 
 Keys from `jose` and `openssl` are the same.
 
 ```{r}
-mykey <- jwk_read(json)
+mykey <- read_jwk(json)
 identical(mykey, pubkey)
 print(mykey)
 ```

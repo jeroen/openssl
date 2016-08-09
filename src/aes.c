@@ -18,11 +18,14 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   if(!cph)
     Rf_error("Invalid cipher: %s", CHAR(STRING_ELT(cipher, 0)));
 
-  //GCM mode has shorter IV from the others
+#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0 does not have GCM
   if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){
+    //GCM mode has shorter IV from the others
     bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, asLogical(encrypt)));
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, LENGTH(iv), NULL));
-  } else if(LENGTH(iv) != 16){
+  } else
+#endif //EVP_CIPH_GCM_MODE
+  if(LENGTH(iv) != 16){
     Rf_error("aes requires an iv of length 16");
   }
   bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), asLogical(encrypt)));
@@ -37,10 +40,15 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 
+
+#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0
   //in GCM mode, res indicates if the security tag was verified successfully.
   int res = EVP_CipherFinal_ex(ctx, cur, &tmp);
   if(EVP_CIPHER_mode(cph) != EVP_CIPH_GCM_MODE)
     bail(res);
+#else
+  EVP_CipherFinal_ex(ctx, cur, &tmp);
+#endif //EVP_CIPH_GCM_MODE
   cur += tmp;
 
   int total = cur - buf;

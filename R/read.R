@@ -127,6 +127,8 @@ read_pkcs12 <- function(file, password = askpass){
     out$cert <- read_cert(data[[1]], der = TRUE)
   if(length(data[[2]]))
     out$key <- read_key(data[[2]], der = TRUE)
+  if(length(data[[3]]))
+    out$ca <- lapply(data[[3]], read_cert, der = TRUE)
   return(out)
 }
 

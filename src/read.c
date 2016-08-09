@@ -3,6 +3,7 @@
 #include <string.h>
 #include <openssl/pem.h>
 #include <openssl/bn.h>
+#include <openssl/pkcs12.h>
 #include "utils.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -21,10 +22,9 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
 
   /* case where password is a hardcoded string */
   if(isString(cb)){
-    len = LENGTH(STRING_ELT(cb, 0));
-    len = MIN(len, max_size);
-    memcpy(buf, CHAR(STRING_ELT(cb, 0)), len);
-    return len;
+    strncpy(buf, CHAR(STRING_ELT(cb, 0)), max_size);
+    buf[max_size-1] = '\0'; //in case of max size
+    return strlen(buf);
   }
 
   /* case where password is an R function */
@@ -36,11 +36,10 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
       UNPROTECT(2);
       error("Password callback did not return a string value");
     }
-    len = LENGTH(STRING_ELT(res, 0));
-    len = MIN(len, max_size);
-    memcpy(buf, CHAR(STRING_ELT(res, 0)), len);
+    strncpy(buf, CHAR(STRING_ELT(res, 0)), max_size);
+    buf[max_size-1] = '\0';
     UNPROTECT(2);
-    return len;
+    return strlen(buf);
   }
   error("Callback must be string or function");
 }
@@ -155,6 +154,68 @@ SEXP R_parse_der_cert(SEXP input){
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);
+  return res;
+}
+
+SEXP R_parse_pkcs12(SEXP input, SEXP pass){
+  const unsigned char *ptr = RAW(input);
+  PKCS12 *p12 = d2i_PKCS12(NULL, &ptr, LENGTH(input));
+  bail(!!p12);
+  EVP_PKEY *pkey = NULL;
+  X509 *cert = NULL;
+  STACK_OF(X509) *ca = NULL;
+
+  int success = 0;
+  int max_size = 200;
+  char passwd[max_size];
+  if(PKCS12_verify_mac(p12, NULL, 0) || PKCS12_verify_mac(p12, "", 1)){
+    success = PKCS12_parse(p12, NULL, &pkey, &cert, &ca);
+  } else {
+    password_cb(passwd, max_size, 0, pass);
+    if(!PKCS12_verify_mac(p12, passwd, strlen(passwd)))
+      Rf_errorcall(R_NilValue, "PKCS12 read failure: invalid password");
+    success = PKCS12_parse(p12, passwd, &pkey, &cert, &ca);
+  }
+  PKCS12_free(p12);
+  bail(success);
+
+  unsigned char *buf = NULL;
+  int len = 0;
+  SEXP res = PROTECT(allocVector(VECSXP, 3));
+  if (cert != NULL) {
+    len = i2d_X509(cert, &buf);
+    X509_free(cert);
+    bail(len);
+    SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, len));
+    memcpy(RAW(VECTOR_ELT(res, 0)), buf, len);
+    free(buf);
+    buf = NULL;
+  }
+  if(pkey != NULL){
+    len = i2d_PrivateKey(pkey, &buf);
+    EVP_PKEY_free(pkey);
+    bail(len);
+    SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, len));
+    memcpy(RAW(VECTOR_ELT(res, 1)), buf, len);
+    free(buf);
+    buf = NULL;
+  }
+  if(ca && sk_X509_num(ca)){
+    SEXP bundle = PROTECT(allocVector(VECSXP, sk_X509_num(ca)));
+    for(int i = 0; i < sk_X509_num(ca); i++){
+      cert = sk_X509_value(ca, i);
+      len = i2d_X509(cert, &buf);
+      bail(len);
+      SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
+      memcpy(RAW(VECTOR_ELT(res, i)), buf, len);
+      free(buf);
+      buf = NULL;
+    }
+    sk_X509_pop_free(ca, X509_free);
+    SET_VECTOR_ELT(res, 2, bundle);
+    UNPROTECT(1);
+  }
+  UNPROTECT(1);
   return res;
 }
 

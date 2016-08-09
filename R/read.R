@@ -116,6 +116,20 @@ read_cert_bundle <- function(file){
   lapply(split_pem(buf), read_cert)
 }
 
+#' @export
+#' @rdname read_key
+#' @useDynLib openssl R_parse_pkcs12
+read_pkcs12 <- function(file, password = askpass){
+  buf <- read_input(file)
+  out <- list(cert = NULL, key = NULL, ca = NULL)
+  data <- .Call(R_parse_pkcs12, buf, password)
+  if(length(data[[1]]))
+    out$cert <- read_cert(data[[1]], der = TRUE)
+  if(length(data[[2]]))
+    out$key <- read_key(data[[2]], der = TRUE)
+  return(out)
+}
+
 read_input <- function(x){
   if(is.raw(x)){
     x

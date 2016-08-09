@@ -4,6 +4,7 @@
 \alias{read_cert}
 \alias{read_cert_bundle}
 \alias{read_key}
+\alias{read_pkcs12}
 \alias{read_pubkey}
 \title{Parsing keys and certificates}
 \usage{
@@ -14,6 +15,8 @@ read_pubkey(file, der = is.raw(file))
 read_cert(file, der = is.raw(file))
 
 read_cert_bundle(file)
+
+read_pkcs12(file, password = askpass)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data (a string for

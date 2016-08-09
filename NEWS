@@ -1,3 +1,6 @@
+0.9.5
+ - Work around missing EVP_CIPH_GCM_MODE in OpenSSL 1.0.0
+
 0.9.4
  - Fix ec_keygen() for old versions of OpenSSL
  - Added aes_ctr() and aes_gcm() modes

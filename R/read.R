@@ -118,11 +118,11 @@ read_cert_bundle <- function(file){
 
 #' @export
 #' @rdname read_key
-#' @useDynLib openssl R_parse_pkcs12
 read_pkcs12 <- function(file, password = askpass){
   buf <- read_input(file)
+  #print(md5(buf))
+  data <- parse_pkcs12(buf, password)
   out <- list(cert = NULL, key = NULL, ca = NULL)
-  data <- .Call(R_parse_pkcs12, buf, password)
   if(length(data[[1]]))
     out$cert <- read_cert(data[[1]], der = TRUE)
   if(length(data[[2]]))
@@ -198,6 +198,11 @@ parse_pem_cert <- function(buf, password){
 #' @useDynLib openssl R_parse_der_cert
 parse_der_cert <- function(buf){
   .Call(R_parse_der_cert, buf)
+}
+
+#' @useDynLib openssl R_parse_pkcs12
+parse_pkcs12 <- function(buf, password){
+  .Call(R_parse_pkcs12, buf, password)
 }
 
 #' @useDynLib openssl R_derive_pubkey

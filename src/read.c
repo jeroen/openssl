@@ -207,7 +207,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
       len = i2d_X509(cert, &buf);
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
-      memcpy(RAW(VECTOR_ELT(res, i)), buf, len);
+      memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
       free(buf);
       buf = NULL;
     }

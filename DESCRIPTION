@@ -17,7 +17,7 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH pubkey pa
 License: MIT + file LICENSE
 URL: https://github.com/jeroenooms/openssl#readme
 BugReports: https://github.com/jeroenooms/openssl/issues
-SystemRequirements: OpenSSL >= 1.0.0
+SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr
 Suggests:
     testthat,

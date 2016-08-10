@@ -120,7 +120,6 @@ read_cert_bundle <- function(file){
 #' @rdname read_key
 read_pkcs12 <- function(file, password = askpass){
   buf <- read_input(file)
-  #print(md5(buf))
   data <- parse_pkcs12(buf, password)
   out <- list(cert = NULL, key = NULL, ca = NULL)
   if(length(data[[1]]))

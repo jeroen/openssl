@@ -50,7 +50,7 @@ as.environment.pubkey <- as.environment.cert
 
 #' @export
 #' @importFrom utils .DollarNames
-.DollarNames.cert <- function(x, pattern) {
+.DollarNames.cert <- function(x, pattern = "") {
   x <- as.list(x)
   matches <- grep(pattern, names(x), value = TRUE)
   structure(matches,
@@ -80,7 +80,7 @@ str.pubkey <- function(object, ...){
 
 ### Not (yet?) implemented stuff
 
-stopfun <- function(x, value){ stop("object cannot be modified", call. = FALSE) }
+stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE) }
 
 #' @export
 `[<-.cert` <- stopfun

@@ -14,7 +14,7 @@
 #' @useDynLib openssl R_rsa_encrypt
 #' @examples # Generate test keys
 #' key <- rsa_keygen()
-#' pubkey <- as.list(key)$pubkey
+#' pubkey <- key$pubkey
 #'
 #' # Encrypt data with AES
 #' tempkey <- rand_bytes(32)

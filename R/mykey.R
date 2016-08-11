@@ -36,5 +36,5 @@ my_pubkey <- function(){
 
   # alternatively derive pubkey from key
   key <- my_key()
-  as.list(key)$pubkey
+  key$pubkey
 }

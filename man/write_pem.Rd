@@ -29,7 +29,7 @@ base64 PEM format. For private keys it is possible to set a password.
 \examples{
 # Generate RSA keypair
 key <- rsa_keygen()
-pubkey <- as.list(key)$pubkey
+pubkey <- key$pubkey
 
 # Write to output formats
 write_ssh(pubkey)

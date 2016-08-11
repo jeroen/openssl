@@ -18,7 +18,7 @@
 #' @param session raw vector with encrypted session key as returned by \code{encrypt_envelope}.
 #' @examples # Requires RSA key
 #' key <- rsa_keygen()
-#' pubkey <- as.list(key)$pubkey
+#' pubkey <- key$pubkey
 #' msg <- serialize(iris, NULL)
 #'
 #' # Encrypt

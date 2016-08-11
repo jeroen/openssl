@@ -50,11 +50,11 @@ use \code{readline} which will prompt the user in an interactive R session.
 \examples{
 \dontrun{# Read private key
 key <- read_key("~/.ssh/id_rsa")
-as.list(key)
+str(key)
 
 # Read public key
 pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
-as.list(pubkey)
+str(pubkey)
 
 # Read certificates
 txt <- readLines("http://curl.haxx.se/ca/cacert.pem")

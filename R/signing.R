@@ -15,7 +15,7 @@
 #' @param password string or a function to read protected keys. See \code{\link{read_key}}.
 #' @examples # Generate a keypair
 #' key <- rsa_keygen()
-#' pubkey <- as.list(key)$pubkey
+#' pubkey <- key$pubkey
 #'
 #' # Sign a file
 #' data <- system.file("DESCRIPTION")

@@ -31,7 +31,7 @@ whereas DSA and EC keys only support SHA.
 \examples{
 # Generate a keypair
 key <- rsa_keygen()
-pubkey <- as.list(key)$pubkey
+pubkey <- key$pubkey
 
 # Sign a file
 data <- system.file("DESCRIPTION")

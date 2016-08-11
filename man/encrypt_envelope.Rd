@@ -36,7 +36,7 @@ the data with the corresponding private key.
 \examples{
 # Requires RSA key
 key <- rsa_keygen()
-pubkey <- as.list(key)$pubkey
+pubkey <- key$pubkey
 msg <- serialize(iris, NULL)
 
 # Encrypt

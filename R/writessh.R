@@ -3,7 +3,7 @@
 #' @param pubkey a public key
 #' @examples # Generate RSA keypair
 #' key <- rsa_keygen()
-#' pubkey <- as.list(key)$pubkey
+#' pubkey <- key$pubkey
 #'
 #' # Write to output formats
 #' write_ssh(pubkey)

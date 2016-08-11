@@ -50,7 +50,12 @@ as.environment.pubkey <- as.environment.cert
 
 #' @export
 #' @importFrom utils .DollarNames
-.DollarNames.cert <- function(x, pattern) grep(pattern, names(x), value = TRUE)
+.DollarNames.cert <- function(x, pattern) {
+  x <- as.list(x)
+  matches <- grep(pattern, names(x), value = TRUE)
+  structure(matches,
+    types = vapply(x[matches], typeof, character(1), USE.NAMES = FALSE))
+}
 
 #' @export
 .DollarNames.key <- .DollarNames.cert

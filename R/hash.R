@@ -32,8 +32,10 @@
 #' @useDynLib openssl R_digest_raw R_digest
 #' @examples # Support both strings and binary
 #' md5(c("foo", "bar"))
-#' md5(charToRaw("foo"))
 #' md5("foo", key = "secret")
+#'
+#' hash <- md5(charToRaw("foo"))
+#' as.character(hash, sep = ":")
 #'
 #' # Compare to digest
 #' digest::digest("foo", "md5", serialize = FALSE)
@@ -221,9 +223,16 @@ parse_hash <- function(x){
 }
 
 #' @export
-print.hash <- function(x, ...){
+print.hash <- function(x, sep = ":", ...){
   if(is.raw(x))
-    cat(class(x)[-1], paste(x, collapse = ":"), "\n")
+    cat(class(x)[-1], as.character(x, sep = sep), "\n")
   else
     print(unclass(x, ...))
+}
+
+#' @export
+as.character.hash <- function(x, sep = "", ...){
+  if(is.raw(x))
+    paste(unclass(x), collapse = sep)
+  else x
 }

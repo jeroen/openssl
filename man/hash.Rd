@@ -65,8 +65,10 @@ dataset, while simultaneously rendering the results incomparable to other datase
 \examples{
 # Support both strings and binary
 md5(c("foo", "bar"))
-md5(charToRaw("foo"))
 md5("foo", key = "secret")
+
+hash <- md5(charToRaw("foo"))
+as.character(hash, sep = ":")
 
 # Compare to digest
 digest::digest("foo", "md5", serialize = FALSE)

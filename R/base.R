@@ -76,3 +76,35 @@ str.pubkey <- function(object, ...){
   x$ssh <- paste(substring(x$ssh, 1, getOption('width') - 30), "...")
   utils::str(x, ...)
 }
+
+
+### Not (yet?) implemented stuff
+
+stopfun <- function(x, value){ stop("object cannot be modified", call. = FALSE) }
+
+#' @export
+`[<-.cert` <- stopfun
+
+#' @export
+`[<-.key` <- stopfun
+
+#' @export
+`[<-.pubkey` <- stopfun
+
+#' @export
+`[[<-.cert` <- stopfun
+
+#' @export
+`[[<-.key` <- stopfun
+
+#' @export
+`[[<-.pubkey` <- stopfun
+
+#' @export
+`$<-.cert` <- stopfun
+
+#' @export
+`$<-.key` <- stopfun
+
+#' @export
+`$<-.pubkey` <- stopfun

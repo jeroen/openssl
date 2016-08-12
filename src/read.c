@@ -13,7 +13,6 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
     error("No password callback supplied.");
 
   SEXP cb = (SEXP) ctx;
-  int len;
 
   /* no password */
   if(isNull(cb)){

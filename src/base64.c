@@ -13,9 +13,9 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   if(!asLogical(linebreaks))
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
-  BIO_set_close(bio, BIO_NOCLOSE);
+  bail(BIO_set_close(bio, BIO_NOCLOSE));
   BIO_write(bio, RAW(bin), LENGTH(bin));
-  BIO_flush(bio);
+  bail(BIO_flush(bio));
 
   //Get the output
   BUF_MEM *buf;

@@ -18,7 +18,7 @@ SEXP R_md_init(SEXP algo){
   EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
   EVP_DigestInit_ex(mdctx, md, NULL);
   SEXP ptr = PROTECT(R_MakeExternalPtr(mdctx, R_NilValue, R_NilValue));
-  R_RegisterCFinalizerEx(ptr, fin_md, 1);
+  R_RegisterCFinalizerEx(ptr, fin_md, TRUE);
   setAttrib(ptr, R_ClassSymbol, mkString("md"));
   UNPROTECT(1);
   return ptr;
@@ -62,7 +62,7 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
   HMAC_CTX_init(ctx);
   bail(HMAC_Init_ex(ctx, RAW(key), LENGTH(key), md, NULL));
   SEXP ptr = PROTECT(R_MakeExternalPtr(ctx, R_NilValue, R_NilValue));
-  R_RegisterCFinalizerEx(ptr, fin_hmac, 1);
+  R_RegisterCFinalizerEx(ptr, fin_hmac, TRUE);
   setAttrib(ptr, R_ClassSymbol, mkString("md"));
   UNPROTECT(1);
   return ptr;

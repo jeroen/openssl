@@ -200,9 +200,10 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     buf = NULL;
   }
   if(ca && sk_X509_num(ca)){
-    SEXP bundle = PROTECT(allocVector(VECSXP, sk_X509_num(ca)));
-    for(int i = 0; i < sk_X509_num(ca); i++){
-      cert = sk_X509_value(ca, i);
+    int ncerts = sk_X509_num(ca);
+    SEXP bundle = PROTECT(allocVector(VECSXP, ncerts));
+    for(int i = 0; i < ncerts; i++){
+      cert = sk_X509_value(ca, (ncerts - i - 1)); //reverse order to match PEM/SSL
       len = i2d_X509(cert, &buf);
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));

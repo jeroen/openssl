@@ -3,6 +3,7 @@
  - Add read_pkcs12
  - Add base methods [, [[, $, names, .DollarNames for keys and certificates
  - Update libssl on Windows to 1.0.2h
+ - Add #define _POSIX_C_SOURCE in ssl.c to ensure getaddrinfo() is available
 
 0.9.4
  - Fix ec_keygen() for old versions of OpenSSL

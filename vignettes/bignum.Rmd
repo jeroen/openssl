@@ -51,7 +51,7 @@ OpenSSL has a key generator that does these things for us.
 
 ```{r}
 (key <- rsa_keygen(256))
-(pubkey <- as.list(key)$pubkey)
+(pubkey <- key$pubkey)
 ```
 
 Usually we would use `rsa_encrypt` and `rsa_decrypt` to perform the encryption:
@@ -66,17 +66,16 @@ Let's look at how this works under the hood.
 
 ### How RSA encryption works
 
-Using `as.list` on the private key we can inspect the underlying bignum integers:
+The `data` field of the private key extracts the underlying bignum integers:
 
 ```{r}
-keydata <- as.list(key)$data
-print(keydata)
+key$data
 ```
 
 You can verify that the equations above hold for this key. The public key is simply a subset of the key which only contains $n$ and $e$:
 
 ```{r}
-as.list(pubkey)$data
+pubkey$data
 ```
 
 In order to encrypt a message into ciphertext we have to treat the message data as an integer. The message cannot be larger than the key size. For example convert the text `hello world` into an integer:
@@ -89,8 +88,8 @@ print(m)
 To encrypt this message $m$ into ciphertext $c$ we calculate $c = m^e\pmod n$. Using the public key from above:
 
 ```{r}
-e <- as.list(pubkey)$data$e
-n <- as.list(pubkey)$data$n
+e <- pubkey$data$e
+n <- pubkey$data$n
 c <- (m ^ e) %% n
 print(c)
 ```
@@ -104,7 +103,7 @@ base64_encode(c)
 The ciphertext can be decrypted using $d$ from the corresponding private key via $m = c^d \pmod{n}$. Note that `c^d` is too large to calculate directly so we need to use `bignum_mod_exp` instead.
 
 ```{r}
-d <- as.list(key)$data$d
+d <- key$data$d
 out <- bignum_mod_exp(c, d, n)
 rawToChar(out)
 ```

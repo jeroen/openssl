@@ -37,7 +37,7 @@ DER is the standard __binary__ format using by protocols for storing and exchang
 
 ```{r}
 key <- ec_keygen()
-pubkey <- as.list(key)$pubkey
+pubkey <- key$pubkey
 bin <- write_der(pubkey)
 print(bin)
 ```
@@ -48,7 +48,7 @@ To read a DER key use `read_key` or `read_pubkey` with `der = TRUE`.
 read_pubkey(bin, der = TRUE)
 ```
 
-Users typically don't need to worry about the key's underlying primes, but have a look at `as.list(key)` if you are curious.
+Users typically don't need to worry about the key's underlying primes, but have a look at `key$data` if you are curious.
 
 ### The PEM format
 

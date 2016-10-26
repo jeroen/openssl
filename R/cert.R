@@ -32,8 +32,8 @@ cert_verify <- function(cert, root = ca_bundle()){
   stopifnot(inherits(cert[[1]], "cert"))
   if(!is.raw(root) && !is.list(root)){
     buf <- read_input(root)
-    info <- parse_pem(buf)
-    if(grepl("CERT", info$name)){
+    names <- pem_names(buf)
+    if(any(grepl("CERT", names))){
       root <- read_cert_bundle(root)
     } else {
       root <- read_pubkey(root)

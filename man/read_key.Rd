@@ -6,6 +6,7 @@
 \alias{read_cert}
 \alias{read_cert_bundle}
 \alias{read_pkcs12}
+\alias{read_pem}
 \title{Parsing keys and certificates}
 \usage{
 read_key(file, password = askpass, der = is.raw(file))
@@ -17,6 +18,8 @@ read_cert(file, der = is.raw(file))
 read_cert_bundle(file)
 
 read_pkcs12(file, password = askpass)
+
+read_pem(file)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data (a string for
@@ -36,6 +39,9 @@ support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{
 and \code{---END} header), and automatically convert where necessary. The functions assume
 a single key per file except for \code{read_cert_bundle} which supports PEM files
 with multiple certificates.
+
+The `read_pem` function parses the PEM file into a header and a data payload. It
+is mostly useful for debugging.
 }
 \details{
 Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must

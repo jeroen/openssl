@@ -4,6 +4,7 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 #include <openssl/pkcs12.h>
+#include <openssl/err.h>
 #include "utils.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -45,21 +46,32 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
 
 /* parses any pem file, does not support passwords */
 SEXP R_parse_pem(SEXP input){
-  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
   char *name = NULL;
   char *header = NULL;
   unsigned char *data = NULL;
   long len = 0;
-  PEM_read_bio(mem, &name, &header, &data, &len);
+  int count = 0;
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  while(PEM_read_bio(mem, &name, &header, &data, &len) && len)
+    count++;
+  ERR_clear_error();
   BIO_free(mem);
-  if(!len) return R_NilValue;
-  SEXP res = PROTECT(allocVector(VECSXP, 3));
-  SET_VECTOR_ELT(res, 0, mkString(name));
-  SET_VECTOR_ELT(res, 1, mkString(header));
-  SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, (int) len));
-  memcpy(RAW(VECTOR_ELT(res, 2)), data, (int) len);
+  mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  SEXP out = PROTECT(allocVector(VECSXP, count));
+  for(int i = 0; i < count; i++){
+    PEM_read_bio(mem, &name, &header, &data, &len);
+    SEXP res = PROTECT(allocVector(VECSXP, 3));
+    SET_VECTOR_ELT(res, 0, mkString(name));
+    SET_VECTOR_ELT(res, 1, mkString(header));
+    SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, (int) len));
+    memcpy(RAW(VECTOR_ELT(res, 2)), data, (int) len);
+    SET_VECTOR_ELT(out, i, res);
+    UNPROTECT(1);
+  }
   UNPROTECT(1);
-  return res;
+  BIO_free(mem);
+  ERR_clear_error();
+  return out;
 }
 
 SEXP R_parse_pem_key(SEXP input, SEXP password){

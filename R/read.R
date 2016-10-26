@@ -46,16 +46,15 @@ read_key <- function(file, password = askpass, der = is.raw(file)){
   } else if(is_pubkey_str(buf)){
     stop("Input is a public key. Use read_pubkey() to read")
   } else {
-    info <- parse_pem(buf)
-    name <- info$name
-    if(!length(name) || !nchar(name))
+    names <- pem_names(buf)
+    if(!length(names) || !any(nchar(names) > 0))
       stop("Failed to parse private key: unknown format")
-    if(grepl("PUBLIC", name))
+    if(any(grepl("PUBLIC", names)))
       stop("Input is a public key. Use read_pubkey() to read")
-    if(grepl("CERTIFICATE", name))
+    if(any(grepl("CERTIFICATE", names)))
       stop("Input is a certificate. Use read_cert() to read.")
-    if(!grepl("PRIVATE", name))
-      stop("Invalid input: ", name)
+    if(!any(grepl("PRIVATE", names)))
+      stop("Invalid input: ", names)
     parse_pem_key(buf, password)
   }
   structure(key, class = c("key", pubkey_type(derive_pubkey(key))))
@@ -76,20 +75,19 @@ read_pubkey <- function(file, der = is.raw(file)){
   } else if(is_pubkey_str(buf)){
     parse_openssh(buf)
   } else {
-    info <- parse_pem(buf)
-    name <- info$name
-    if(!length(name) || !nchar(name)){
+    names <- pem_names(buf)
+    if(!length(names) || !any(nchar(names) > 0)){
       stop("Failed to parse public key: unknown format")
-    } else if(grepl("RSA PUBLIC KEY", name)){
+    } else if(any(grepl("RSA PUBLIC KEY", names))){
       parse_legacy_pubkey(buf)
-    } else if(grepl("PUBLIC", name)){
+    } else if(any(grepl("PUBLIC", names))){
       parse_pem_pubkey(buf)
-    } else if(grepl("PRIVATE", name)){
+    } else if(any(grepl("PRIVATE|PARAMETERS", names))){
       derive_pubkey(read_key(buf, der = FALSE))
-    } else if(grepl("CERTIFICATE", name)){
+    } else if(any(grepl("CERTIFICATE", names))){
       cert_pubkey(parse_pem_cert(buf))
     } else {
-      stop("Invalid PEM type: ", name)
+      stop("Invalid PEM type: ", names)
     }
   }
   if(is.null(attr(key, "class")))
@@ -156,12 +154,28 @@ read_input <- function(x){
   }
 }
 
+#' The `read_pem` function parses the PEM file into a header and a data payload. It
+#' is mostly useful for debugging.
+#' @export
+#' @rdname read_key
+read_pem <- function(file){
+  buf <- read_input(file)
+  out <- parse_pem(buf)
+  data <- lapply(out, `[[`, "data")
+  names <- vapply(out, `[[`, character(1), "name")
+  structure(data, names = names)
+}
+
 #' @useDynLib openssl R_parse_pem
 parse_pem <- function(input){
   stopifnot(is.raw(input))
   out <- .Call(R_parse_pem, input)
-  if(is.null(out)) return(out)
-  structure(out, names = c("name", "header", "data"))
+  lapply(out, structure, names = c("name", "header", "data"))
+}
+
+pem_names <- function(input){
+  out <- parse_pem(input)
+  vapply(out, `[[`, character(1), "name")
 }
 
 #' @useDynLib openssl R_parse_pem_key

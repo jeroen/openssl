@@ -2,12 +2,12 @@
 % Please edit documentation in R/aes.R
 \name{aes_cbc}
 \alias{aes_cbc}
-\alias{aes_cbc_decrypt}
-\alias{aes_cbc_encrypt}
-\alias{aes_ctr_decrypt}
 \alias{aes_ctr_encrypt}
-\alias{aes_gcm_decrypt}
+\alias{aes_ctr_decrypt}
+\alias{aes_cbc_encrypt}
+\alias{aes_cbc_decrypt}
 \alias{aes_gcm_encrypt}
+\alias{aes_gcm_decrypt}
 \alias{aes_keygen}
 \title{Symmetric AES encryption}
 \usage{

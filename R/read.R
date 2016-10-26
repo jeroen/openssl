@@ -33,7 +33,7 @@
 #' str(pubkey)
 #'
 #' # Read certificates
-#' txt <- readLines("http://curl.haxx.se/ca/cacert.pem")
+#' txt <- readLines("https://curl.haxx.se/ca/cacert.pem")
 #' bundle <- read_cert_bundle(txt)
 #' print(bundle)
 #' }

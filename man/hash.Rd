@@ -2,17 +2,17 @@
 % Please edit documentation in R/hash.R
 \name{hashing}
 \alias{hashing}
+\alias{sha1}
 \alias{hmac}
 \alias{mac}
-\alias{md4}
-\alias{md5}
-\alias{ripemd160}
-\alias{sha1}
-\alias{sha2}
 \alias{sha224}
 \alias{sha256}
 \alias{sha384}
 \alias{sha512}
+\alias{sha2}
+\alias{md4}
+\alias{md5}
+\alias{ripemd160}
 \title{Vectorized hash/hmac functions}
 \usage{
 sha1(x, key = NULL)

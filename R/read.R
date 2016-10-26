@@ -48,7 +48,7 @@ read_key <- function(file, password = askpass, der = is.raw(file)){
   } else {
     names <- pem_names(buf)
     if(!length(names) || !any(nchar(names) > 0))
-      stop("Failed to parse private key: unknown format")
+      stop("Failed to parse private key PEM file")
     if(any(grepl("PUBLIC", names)))
       stop("Input is a public key. Use read_pubkey() to read")
     if(any(grepl("CERTIFICATE", names)))
@@ -77,7 +77,7 @@ read_pubkey <- function(file, der = is.raw(file)){
   } else {
     names <- pem_names(buf)
     if(!length(names) || !any(nchar(names) > 0)){
-      stop("Failed to parse public key: unknown format")
+      stop("Failed to parse pubkey PEM file")
     } else if(any(grepl("RSA PUBLIC KEY", names))){
       parse_legacy_pubkey(buf)
     } else if(any(grepl("PUBLIC", names))){

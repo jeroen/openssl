@@ -233,6 +233,6 @@ print.hash <- function(x, sep = ":", ...){
 #' @export
 as.character.hash <- function(x, sep = "", ...){
   if(is.raw(x))
-    paste(unclass(x), collapse = sep)
+    structure(paste(unclass(x), collapse = sep), class = class(x))
   else x
 }

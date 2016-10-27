@@ -114,21 +114,6 @@ read_cert_bundle <- function(file){
   lapply(split_pem(buf), read_cert)
 }
 
-#' @export
-#' @rdname read_key
-read_pkcs12 <- function(file, password = askpass){
-  buf <- read_input(file)
-  data <- parse_pkcs12(buf, password)
-  out <- list(cert = NULL, key = NULL, ca = NULL)
-  if(length(data[[1]]))
-    out$cert <- read_cert(data[[1]], der = TRUE)
-  if(length(data[[2]]))
-    out$key <- read_key(data[[2]], der = TRUE)
-  if(length(data[[3]]))
-    out$ca <- lapply(data[[3]], read_cert, der = TRUE)
-  return(out)
-}
-
 read_input <- function(x){
   if(is.raw(x)){
     x
@@ -211,11 +196,6 @@ parse_pem_cert <- function(buf, password){
 #' @useDynLib openssl R_parse_der_cert
 parse_der_cert <- function(buf){
   .Call(R_parse_der_cert, buf)
-}
-
-#' @useDynLib openssl R_parse_pkcs12
-parse_pkcs12 <- function(buf, password){
-  .Call(R_parse_pkcs12, buf, password)
 }
 
 #' @useDynLib openssl R_derive_pubkey

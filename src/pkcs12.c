@@ -4,6 +4,60 @@
 #include <openssl/pkcs12.h>
 #include "utils.h"
 
+SEXP R_write_pkcs12(SEXP keydata, SEXP certdata, SEXP cadata, SEXP namedata, SEXP pwdata){
+  EVP_PKEY * pkey = NULL;
+  X509 * cert = NULL;
+  STACK_OF(X509) * ca = sk_X509_new_null();
+  char * name = NULL;
+  char * pw = NULL;
+
+  //parse private key
+  if(Rf_length(keydata)){
+    BIO *mem = BIO_new_mem_buf(RAW(keydata), LENGTH(keydata));
+    pkey = d2i_PrivateKey_bio(mem, NULL);
+    BIO_free(mem);
+    bail(!!pkey);
+  }
+
+  //parse certificate
+  if(Rf_length(certdata)){
+    const unsigned char *ptr = RAW(certdata);
+    cert = d2i_X509(NULL, &ptr, LENGTH(certdata));
+    bail(!!cert);
+  }
+
+  //add other certs
+  for(int i = 0; i < Rf_length(cadata); i++){
+    const unsigned char *ptr = RAW(VECTOR_ELT(cadata, i));
+    X509 * crt = d2i_X509(NULL, &ptr, Rf_length(VECTOR_ELT(cadata, i)));
+    bail(!!crt);
+    sk_X509_push(ca, crt);
+  }
+
+  //get name
+  if(Rf_length(namedata)){
+    name = (char*) CHAR(STRING_ELT(namedata, 0));
+  }
+
+  //get password
+  if(Rf_length(pwdata)){
+    pw = (char*) CHAR(STRING_ELT(pwdata, 0));
+  }
+
+  // create the P12
+  PKCS12 *p12 = PKCS12_create(pw, name, pkey, cert, ca, 0, 0, 0, 0, 0);
+  bail(!!p12);
+
+  //serialize to R
+  unsigned char *buf = NULL;
+  int len = i2d_PKCS12(p12, &buf);
+  bail(len);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+}
+
 SEXP R_parse_pkcs12(SEXP input, SEXP pass){
   const unsigned char *ptr = RAW(input);
   PKCS12 *p12 = d2i_PKCS12(NULL, &ptr, LENGTH(input));

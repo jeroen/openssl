@@ -5,7 +5,6 @@
 \alias{read_pubkey}
 \alias{read_cert}
 \alias{read_cert_bundle}
-\alias{read_pkcs12}
 \alias{read_pem}
 \title{Parsing keys and certificates}
 \usage{
@@ -16,8 +15,6 @@ read_pubkey(file, der = is.raw(file))
 read_cert(file, der = is.raw(file))
 
 read_cert_bundle(file)
-
-read_pkcs12(file, password = askpass)
 
 read_pem(file)
 }

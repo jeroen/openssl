@@ -9,7 +9,7 @@
 #' private keys).
 #' @param path file to write to. If \code{NULL} it returns the output as a string.
 #' @rdname write_pem
-write_pem <- function(x, path = NULL, password = readline){
+write_pem <- function(x, path = NULL, password = NULL){
   str <- pem_export(x, password)
   if(is.null(path)) return(str)
   writeLines(str, path)

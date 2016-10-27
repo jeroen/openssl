@@ -2,6 +2,7 @@
 % Please edit documentation in R/pkcs12.R
 \name{write_pkcs12}
 \alias{write_pkcs12}
+\alias{pkcs12}
 \alias{read_pkcs12}
 \title{PKCS12 bundles}
 \usage{
@@ -19,7 +20,7 @@ read_pkcs12(file, password = askpass)
 
 \item{name}{a friendly title for the bundle}
 
-\item{password}{a password to protect the content. Recommended if `key` is not `NULL`.}
+\item{password}{string or function to set/get the password.}
 
 \item{path}{a file where to write the output to. If `NULL` the output is returned
 as a raw vector.}

@@ -6,7 +6,7 @@
 \alias{write_ssh}
 \title{Export key or certificate}
 \usage{
-write_pem(x, path = NULL, password = readline)
+write_pem(x, path = NULL, password = NULL)
 
 write_der(x, path = NULL)
 

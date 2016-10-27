@@ -1,4 +1,4 @@
-context("Test PKCS12 reader")
+context("Test PKCS12 format")
 
 test_that("reading p12 certificates", {
   p1 <- read_pkcs12("../google.dk/wildcard-google.dk-chain.p12")
@@ -37,5 +37,19 @@ test_that("reading p12 keys", {
     expect_identical(b3$key, k3)
     expect_identical(b3$cert$pubkey, b3$key$pubkey)
   }
+})
 
+test_that("roundtrip p12 key and cert", {
+  b3 <- read_pkcs12("../certigo/example-elliptic-sha1.p12", password = "password")
+  c3 <- read_cert("../certigo/example-elliptic-sha1.crt")
+  k3 <- read_key("../certigo/example-elliptic-sha1.key")
+  buf <- write_pkcs12(key = k3, cert = c3)
+  expect_identical(b3, read_pkcs12(buf))
+})
+
+test_that("writing big p12 bundle", {
+  bundle = ca_bundle()
+  buf <- write_pkcs12(ca = bundle, password = 'test')
+  out <- read_pkcs12(buf, password = 'test')
+  expect_equal(bundle, out$ca)
 })

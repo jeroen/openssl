@@ -9,12 +9,15 @@
 #' @param key a private key
 #' @param cert certificate that matches `key`
 #' @param ca a list of certificates stores in as the ca chain
-#' @param name a friendly name
+#' @param name a friendly title for the bundle
 #' @param password a password to protect the content. Recommended if `key` is not `NULL`.
 #' @param path a file where to write the output to. If `NULL` the output is returned
 #' as a raw vector.
 #' @useDynLib openssl R_write_pkcs12
 write_pkcs12 <- function(key = NULL, cert = NULL, ca = NULL, name = NULL, password = NULL, path = NULL){
+  if(!length(key) && !length(cert) && !length(ca)){
+    stop("Either 'key' or 'cert' or 'ca' must be given")
+  }
   if(length(key)) key <- read_key(key)
   if(length(cert)) cert <- read_cert(cert)
   if(length(name)) stopifnot(is.character(name))

@@ -17,7 +17,7 @@ read_pkcs12(file, password = askpass)
 
 \item{ca}{a list of certificates stores in as the ca chain}
 
-\item{name}{a friendly name}
+\item{name}{a friendly title for the bundle}
 
 \item{password}{a password to protect the content. Recommended if `key` is not `NULL`.}
 

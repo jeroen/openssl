@@ -2,15 +2,11 @@
 % Please edit documentation in R/rand.R
 \name{rand_bytes}
 \alias{rand_bytes}
-\alias{pseudo_rand_bytes}
 \alias{rand_num}
-\alias{pseudo_rand_bytes}
 \alias{rand_num}
 \title{Generate random bytes and numbers with OpenSSL}
 \usage{
 rand_bytes(n = 1)
-
-pseudo_rand_bytes(n = 1)
 
 rand_num(n = 1)
 }
@@ -20,10 +16,7 @@ rand_num(n = 1)
 \description{
 this set of functions generates random bytes or numbers from OpenSSL. This
 provides a cryptographically secure alternative to R's default random number generator.
-\code{rand_bytes} generates \code{n} random, cryptographically secure bytes, while
-\code{pseudo_rand_bytes} generates \code{n} pseudo-random bytes, with no guarantee
-of cryptographic security. \code{rand_num} uses \code{rand_bytes} to generate cryptographically
-secure random numbers, rather than bytes.
+\code{rand_bytes} generates \code{n} random cryptographically secure bytes
 }
 \examples{
 rnd <- rand_bytes(10)

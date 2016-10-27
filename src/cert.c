@@ -5,6 +5,7 @@
 #include <openssl/bn.h>
 #include <openssl/x509v3.h>
 #include "utils.h"
+#include "compatibility.h"
 
 SEXP R_cert_info(SEXP bin){
   X509 *cert = X509_new();
@@ -42,24 +43,27 @@ SEXP R_cert_info(SEXP bin){
   X509_NAME_free(name);
 
   //sign algorithm
-  OBJ_obj2txt(buf, sizeof(buf), cert->sig_alg->algorithm, 0);
+  const ASN1_BIT_STRING *signature;
+  const X509_ALGOR *sig_alg;
+  MY_X509_get0_signature(&signature, &sig_alg, cert);
+  OBJ_obj2txt(buf, sizeof(buf), sig_alg->algorithm, 0);
   SET_VECTOR_ELT(out, 2, mkString(buf));
 
   //signature
-  SET_VECTOR_ELT(out, 3, allocVector(RAWSXP, cert->signature->length));
-  memcpy(RAW(VECTOR_ELT(out, 3)), cert->signature->data, cert->signature->length);
+  SET_VECTOR_ELT(out, 3, allocVector(RAWSXP, signature->length));
+  memcpy(RAW(VECTOR_ELT(out, 3)), signature->data, signature->length);
 
   //start date
   SET_VECTOR_ELT(out, 4, allocVector(STRSXP, 2));
   b = BIO_new(BIO_s_mem());
-  bail(ASN1_TIME_print(b, cert->cert_info->validity->notBefore));
+  bail(ASN1_TIME_print(b, X509_get_notBefore(cert)));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
   SET_STRING_ELT(VECTOR_ELT(out, 4), 0, mkCharLen(buf, len));
 
   //expiration date
   b = BIO_new(BIO_s_mem());
-  bail(ASN1_TIME_print(b, cert->cert_info->validity->notAfter));
+  bail(ASN1_TIME_print(b, X509_get_notAfter(cert)));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
   SET_STRING_ELT(VECTOR_ELT(out, 4), 1, mkCharLen(buf, len));

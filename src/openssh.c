@@ -3,13 +3,14 @@
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 #include "utils.h"
+#include "compatibility.h"
 
 #ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
 #endif
 
 /* BN_bn2bin() drops leading zeros which can alter openssh fingerprint */
-SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
+SEXP bignum_to_r_size(const BIGNUM *bn, int bytes){
   int bits = BN_num_bits(bn);
   if(bytes == 0)
     bytes = (bits/8) + 1;
@@ -25,7 +26,7 @@ SEXP bignum_to_r_size(BIGNUM *bn, int bytes){
   return res;
 }
 
-SEXP bignum_to_r(BIGNUM *bn){
+SEXP bignum_to_r(const BIGNUM *bn){
   return bignum_to_r_size(bn, 0);
 }
 
@@ -38,8 +39,7 @@ BIGNUM* new_bignum_from_r(SEXP input){
 /* Manuall compose public keys from bignum values */
 SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   RSA *rsa = RSA_new();
-  rsa->e = new_bignum_from_r(expdata);
-  rsa->n = new_bignum_from_r(moddata);
+  MY_RSA_set0_key(rsa, new_bignum_from_r(moddata), new_bignum_from_r(expdata), NULL);
   unsigned char *buf = NULL;
   int len = i2d_RSA_PUBKEY(rsa, &buf);
   bail(len);
@@ -52,14 +52,9 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
 
 SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d, SEXP dp, SEXP dq, SEXP qi){
   RSA *rsa = RSA_new();
-  rsa->e = new_bignum_from_r(e);
-  rsa->n = new_bignum_from_r(n);
-  rsa->p = new_bignum_from_r(p);
-  rsa->q = new_bignum_from_r(q);
-  rsa->d = new_bignum_from_r(d);
-  rsa->dmp1 = new_bignum_from_r(dp);
-  rsa->dmq1 = new_bignum_from_r(dq);
-  rsa->iqmp = new_bignum_from_r(qi);
+  MY_RSA_set0_key(rsa, new_bignum_from_r(n), new_bignum_from_r(e), new_bignum_from_r(d));
+  MY_RSA_set0_factors(rsa, new_bignum_from_r(p), new_bignum_from_r(q));
+  MY_RSA_set0_crt_params(rsa, new_bignum_from_r(dp), new_bignum_from_r(dq), new_bignum_from_r(qi));
   bail(RSA_check_key(rsa));
   unsigned char *buf = NULL;
   int len = i2d_RSAPrivateKey(rsa, &buf);
@@ -76,8 +71,10 @@ SEXP R_rsa_pubkey_decompose(SEXP bin){
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin)));
   SEXP res = PROTECT(allocVector(VECSXP, 2));
-  SET_VECTOR_ELT(res, 0, bignum_to_r(rsa->e));
-  SET_VECTOR_ELT(res, 1, bignum_to_r(rsa->n));
+  const BIGNUM *e, *n;
+  MY_RSA_get0_key(rsa, &n, &e, NULL);
+  SET_VECTOR_ELT(res, 0, bignum_to_r(e));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(n));
   UNPROTECT(1);
   return res;
 }
@@ -86,15 +83,19 @@ SEXP R_rsa_priv_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSAPrivateKey(&rsa, &ptr, LENGTH(bin)));
+  const BIGNUM *e, *n, *p, *q, *d, *dmp1, *dmq1, *iqmp;
+  MY_RSA_get0_key(rsa, &n, &e, &d);
+  MY_RSA_get0_factors(rsa, &p, &q);
+  MY_RSA_get0_crt_params(rsa, &dmp1, &dmq1, &iqmp);
   SEXP res = PROTECT(allocVector(VECSXP, 8));
-  SET_VECTOR_ELT(res, 0, bignum_to_r(rsa->e));
-  SET_VECTOR_ELT(res, 1, bignum_to_r(rsa->n));
-  SET_VECTOR_ELT(res, 2, bignum_to_r(rsa->p));
-  SET_VECTOR_ELT(res, 3, bignum_to_r(rsa->q));
-  SET_VECTOR_ELT(res, 4, bignum_to_r(rsa->d));
-  SET_VECTOR_ELT(res, 5, bignum_to_r(rsa->dmp1));
-  SET_VECTOR_ELT(res, 6, bignum_to_r(rsa->dmq1));
-  SET_VECTOR_ELT(res, 7, bignum_to_r(rsa->iqmp));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(e));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(n));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(p));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(q));
+  SET_VECTOR_ELT(res, 4, bignum_to_r(d));
+  SET_VECTOR_ELT(res, 5, bignum_to_r(dmp1));
+  SET_VECTOR_ELT(res, 6, bignum_to_r(dmq1));
+  SET_VECTOR_ELT(res, 7, bignum_to_r(iqmp));
   UNPROTECT(1);
   return res;
 }
@@ -102,10 +103,8 @@ SEXP R_rsa_priv_decompose(SEXP bin){
 // See https://tools.ietf.org/html/rfc4253: ... the "ssh-dss" key format has ...
 SEXP R_dsa_pubkey_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA *dsa = DSA_new();
-  dsa->p = new_bignum_from_r(p);
-  dsa->q = new_bignum_from_r(q);
-  dsa->g = new_bignum_from_r(g);
-  dsa->pub_key = new_bignum_from_r(y);
+  MY_DSA_set0_pqg(dsa, new_bignum_from_r(p), new_bignum_from_r(q), new_bignum_from_r(g));
+  MY_DSA_set0_key(dsa, new_bignum_from_r(y), NULL);
   unsigned char *buf = NULL;
   int len = i2d_DSA_PUBKEY(dsa, &buf);
   bail(len);
@@ -120,11 +119,14 @@ SEXP R_dsa_pubkey_decompose(SEXP bin){
   DSA *dsa = DSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_DSA_PUBKEY(&dsa, &ptr, LENGTH(bin)));
+  const BIGNUM *p, *q, *g, *pub_key;
+  MY_DSA_get0_pqg(dsa, &p, &q, &g);
+  MY_DSA_get0_key(dsa, &pub_key, NULL);
   SEXP res = PROTECT(allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, bignum_to_r(dsa->p));
-  SET_VECTOR_ELT(res, 1, bignum_to_r(dsa->q));
-  SET_VECTOR_ELT(res, 2, bignum_to_r(dsa->g));
-  SET_VECTOR_ELT(res, 3, bignum_to_r(dsa->pub_key));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(p));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(q));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(g));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(pub_key));
   UNPROTECT(1);
   return res;
 }
@@ -133,12 +135,15 @@ SEXP R_dsa_priv_decompose(SEXP bin){
   DSA *dsa = DSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_DSAPrivateKey(&dsa, &ptr, LENGTH(bin)));
+  const BIGNUM *p, *q, *g, *pub_key, *priv_key;
+  MY_DSA_get0_pqg(dsa, &p, &q, &g);
+  MY_DSA_get0_key(dsa, &pub_key, &priv_key);
   SEXP res = PROTECT(allocVector(VECSXP, 5));
-  SET_VECTOR_ELT(res, 0, bignum_to_r(dsa->p));
-  SET_VECTOR_ELT(res, 1, bignum_to_r(dsa->q));
-  SET_VECTOR_ELT(res, 2, bignum_to_r(dsa->g));
-  SET_VECTOR_ELT(res, 3, bignum_to_r(dsa->pub_key));
-  SET_VECTOR_ELT(res, 4, bignum_to_r(dsa->priv_key));
+  SET_VECTOR_ELT(res, 0, bignum_to_r(p));
+  SET_VECTOR_ELT(res, 1, bignum_to_r(q));
+  SET_VECTOR_ELT(res, 2, bignum_to_r(g));
+  SET_VECTOR_ELT(res, 3, bignum_to_r(pub_key));
+  SET_VECTOR_ELT(res, 4, bignum_to_r(priv_key));
   UNPROTECT(1);
   return res;
 }

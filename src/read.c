@@ -6,6 +6,7 @@
 #include <openssl/pkcs12.h>
 #include <openssl/err.h>
 #include "utils.h"
+#include "compatibility.h"
 
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
@@ -269,7 +270,7 @@ SEXP R_pubkey_type(SEXP input){
   if(!pkey)
     return R_NilValue;
   char *keytype;
-  switch(EVP_PKEY_type(pkey->type)){
+  switch(EVP_PKEY_base_id(pkey)){
   case EVP_PKEY_RSA:
     keytype = "rsa";
     break;
@@ -280,7 +281,7 @@ SEXP R_pubkey_type(SEXP input){
     keytype = "ecdsa";
     break;
   default:
-    Rf_error("Unsupported key type: %d", EVP_PKEY_type(pkey->type));
+    Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }
   EVP_PKEY_free(pkey);
   return mkString(keytype);
@@ -305,12 +306,15 @@ SEXP R_pubkey_bitsize(SEXP input){
   if(!pkey)
     return R_NilValue;
   int size = 0;
-  switch(EVP_PKEY_type(pkey->type)){
+  const BIGNUM * val;
+  switch(EVP_PKEY_base_id(pkey)){
   case EVP_PKEY_RSA:
-    size = BN_num_bits(EVP_PKEY_get1_RSA(pkey)->n);
+    MY_RSA_get0_key(EVP_PKEY_get1_RSA(pkey), &val, NULL, NULL);
+    size = BN_num_bits(val);
     break;
   case EVP_PKEY_DSA:
-    size = BN_num_bits(EVP_PKEY_get1_DSA(pkey)->p);
+    MY_DSA_get0_pqg(EVP_PKEY_get1_DSA(pkey), &val, NULL, NULL);
+    size = BN_num_bits(val);
     break;
 #ifndef OPENSSL_NO_EC
   case EVP_PKEY_EC:
@@ -318,7 +322,7 @@ SEXP R_pubkey_bitsize(SEXP input){
     break;
 #endif //OPENSSL_NO_EC
   default:
-    Rf_error("Unsupported key type: %d", EVP_PKEY_type(pkey->type));
+    Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }
   EVP_PKEY_free(pkey);
   return ScalarInteger(size);

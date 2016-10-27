@@ -4,14 +4,11 @@
 # can generate crypto secure random numbers in R.
 #
 #' @title Generate random bytes and numbers with OpenSSL
-#' @aliases pseudo_rand_bytes rand_num
+#' @aliases rand_num
 #' @rdname rand_bytes
 #' @description this set of functions generates random bytes or numbers from OpenSSL. This
 #' provides a cryptographically secure alternative to R's default random number generator.
-#' \code{rand_bytes} generates \code{n} random, cryptographically secure bytes, while
-#' \code{pseudo_rand_bytes} generates \code{n} pseudo-random bytes, with no guarantee
-#' of cryptographic security. \code{rand_num} uses \code{rand_bytes} to generate cryptographically
-#' secure random numbers, rather than bytes.
+#' \code{rand_bytes} generates \code{n} random cryptographically secure bytes
 #' @useDynLib openssl R_RAND_bytes
 #' @param n number of random bytes or numbers to generate
 #' @references OpenSSL manual: \url{https://www.openssl.org/docs/crypto/RAND_bytes.html}
@@ -38,16 +35,7 @@ rand_bytes <- function(n = 1){
   if(!is.numeric(n)){
     stop("Please provide a numeric value for n")
   }
-  .Call(R_RAND_bytes, n, FALSE)
-}
-
-#' @rdname rand_bytes
-#' @export
-pseudo_rand_bytes <- function(n = 1){
-  if(!is.numeric(n)){
-    stop("Please provide a numeric value for n")
-  }
-  .Call(R_RAND_bytes, n, TRUE)
+  .Call(R_RAND_bytes, n)
 }
 
 #' @rdname rand_bytes

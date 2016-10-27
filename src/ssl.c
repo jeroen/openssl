@@ -15,6 +15,7 @@
 #include <ws2tcpip.h>
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #else
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>

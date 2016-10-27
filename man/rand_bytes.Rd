@@ -39,6 +39,6 @@ y <- qbinom(rand_num(1000), size=10, prob=0.3)
 hist(y)
 }
 \references{
-OpenSSL manual: \url{https://www.openssl.org/docs/crypto/RAND_bytes.html}
+OpenSSL manual: \url{https://www.openssl.org/docs/manmaster/man3/RAND_bytes.html}
 }
 

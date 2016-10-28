@@ -1,5 +1,6 @@
 0.9.6
- - Add read_pkcs7() and write_pkcs7() for certificate bundles
+ - Add read_p7b() and write_p7b() for certificate bundles
+ - Rename read_pkcs12 / write_pkcs12 to read_p12 / write_p12
  - More unit test for rountripping certs
  - Workaround for PEM files with "RSA PUBLIC KEY" instead of "PUBLIC KEY" header
 

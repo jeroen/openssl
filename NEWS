@@ -4,6 +4,7 @@
  - More unit test for rountripping certs
  - Workaround for PEM files with "RSA PUBLIC KEY" instead of "PUBLIC KEY" header
  - Fix example in bignum vignette for OpenSSL 1.1.0 (increase RSA key size)
+ - Sync bundled cacert.pem with Mozilla as of: Wed Sep 14 03:12:05 2016
 
 0.9.5
  - Support for new API in OpenSSL 1.1.0

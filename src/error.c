@@ -3,8 +3,8 @@
 #include "utils.h"
 
 void raise_error(){
-  unsigned long err = ERR_get_error();
-  ERR_clear_error();
+  unsigned long err = ERR_get_error(); //Pops earliest error from the queue
+  ERR_clear_error(); //Removes additional errors (if any) from the queue
   stop("OpenSSL error in %s: %s", ERR_func_error_string(err), ERR_reason_error_string(err));
 }
 

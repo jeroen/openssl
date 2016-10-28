@@ -1,15 +1,25 @@
-#' PKCS12 bundles
+#' PKCS7 / PKCS12 bundles
 #'
-#' PKCS12 is a format for bundling a private key, a certificate and a certificate chain
-#' in a single password-protected file. At least one of `key`, `cert` or `ca` must
-#' be non-NULL.
+#' PKCS7 and PKCS12 are container formats for storing multiple certificates and/or keys.
+#'
+#' The PKCS#7 or P7B format is a container for one or more certificates. It can either
+#' be stored in binary form or in a PEM file. P7B files are typically used to import
+#' and export public certificates.
+#'
+#' The PKCS#12 or PFX format is a binary-only format for storing the server certificate,
+#' any intermediate certificates, and the private key into a single encryptable file.
+#' PFX files are usually found with the extensions .pfx and .p12. PFX files are typically
+#' used to import and export certificates with their private keys.
+#'
+#' The PKCS formats also allow for including signatures and CRLs but this is quite rare
+#' and these are currently ignored.
 #'
 #' @export
 #' @rdname pkcs12
-#' @aliases pkcs12
+#' @aliases pkcs12 pfx
 #' @param key a private key
 #' @param cert certificate that matches `key`
-#' @param ca a list of certificates stores in as the ca chain
+#' @param ca a list of certificates (the CA chain)
 #' @param name a friendly title for the bundle
 #' @param password string or function to set/get the password.
 #' @param path a file where to write the output to. If `NULL` the output is returned

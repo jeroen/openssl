@@ -1,3 +1,8 @@
+0.9.6
+ - Add read_pkcs7() and write_pkcs7() for certificate bundles
+ - More unit test for rountripping certs
+ - Workaround for PEM files with "RSA PUBLIC KEY" instead of "PUBLIC KEY" header
+
 0.9.5
  - Support for new API in OpenSSL 1.1.0
  - Remove 'pseudo_rand_bytes()' (deprecated in libssl)

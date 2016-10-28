@@ -50,7 +50,7 @@ An RSA key-pair is generated as follows (adapted from [wikipedia](https://en.wik
 OpenSSL has a key generator that does these things for us. 
 
 ```{r}
-(key <- rsa_keygen(256))
+(key <- rsa_keygen(512))
 (pubkey <- key$pubkey)
 ```
 

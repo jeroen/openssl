@@ -3,6 +3,7 @@
  - Rename read_pkcs12 / write_pkcs12 to read_p12 / write_p12
  - More unit test for rountripping certs
  - Workaround for PEM files with "RSA PUBLIC KEY" instead of "PUBLIC KEY" header
+ - Fix example in bignum vignette for OpenSSL 1.1.0 (increase RSA key size)
 
 0.9.5
  - Support for new API in OpenSSL 1.1.0

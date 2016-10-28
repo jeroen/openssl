@@ -180,7 +180,13 @@ parse_pem_pubkey <- function(buf){
 
 #' @useDynLib openssl R_parse_pem_pkcs1
 parse_legacy_pubkey <- function(buf){
-  .Call(R_parse_pem_pkcs1, buf)
+  # It is a common problem that clients add the wrong header
+  tryCatch({
+    .Call(R_parse_pem_pkcs1, buf)
+  }, error = function(e){
+    out <- gsub("RSA PUBLIC", "PUBLIC", rawToChar(buf), fixed = TRUE)
+    parse_pem_pubkey(charToRaw(out))
+  })
 }
 
 #' @useDynLib openssl R_parse_der_pubkey

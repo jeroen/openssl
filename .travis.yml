@@ -16,8 +16,8 @@ matrix:
       brew_packages: openssl
       latex: false
     - os: osx
+      osx_image: xcode8.1
       disable_homebrew: true
-      brew_packages: openssl
       latex: false
     - os: osx
       osx_image: beta-xcode6.1

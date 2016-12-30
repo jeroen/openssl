@@ -6,6 +6,7 @@
  - Fix example in bignum vignette for OpenSSL 1.1.0 (increase RSA key size)
  - Sync bundled cacert.pem with Mozilla as of: Wed Sep 14 03:12:05 2016
  - Added blake2b and blake2s hash functions (only available in libssl 1.1)
+ - Fix support for LibreSSL
 
 0.9.5
  - Support for new API in OpenSSL 1.1.0

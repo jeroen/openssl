@@ -17,6 +17,10 @@ matrix:
       latex: false
     - os: osx
       osx_image: xcode8.1
+      brew_packages: libressl
+      latex: false
+    - os: osx
+      osx_image: xcode8.1
       disable_homebrew: true
       latex: false
     - os: osx

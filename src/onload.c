@@ -5,6 +5,11 @@
 #include <openssl/engine.h>
 #include <openssl/hmac.h>
 
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+
+
 void R_init_openssl(DllInfo *info) {
 #ifdef _WIN32
   WSADATA wsaData;

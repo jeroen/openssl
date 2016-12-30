@@ -1,11 +1,11 @@
-PKG_CPPFLAGS= -I../windows/openssl-1.0.2h/include
-PKG_LIBS= $(WIN32FIX) -L../windows/openssl-1.0.2h/lib${R_ARCH} -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
+PKG_CPPFLAGS= -I../windows/openssl-1.1.0c/include
+PKG_LIBS= $(WIN32FIX) -L../windows/openssl-1.1.0c/lib${R_ARCH} -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 WIN32FIX=win32/ipv6.o
 
 all: clean winlibs $(WIN32FIX)
 
 clean:
-	rm -f openssl.dll $(OBJECTS) $(WIN32FIX)
+	rm -f $(SHLIB) $(OBJECTS) $(WIN32FIX)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"

@@ -12,6 +12,8 @@
 \alias{sha2}
 \alias{md4}
 \alias{md5}
+\alias{blake2b}
+\alias{blake2s}
 \alias{ripemd160}
 \title{Vectorized hash/hmac functions}
 \usage{
@@ -30,6 +32,10 @@ sha2(x, size = 256, key = NULL)
 md4(x, key = NULL)
 
 md5(x, key = NULL)
+
+blake2b(x, key = NULL)
+
+blake2s(x, key = NULL)
 
 ripemd160(x, key = NULL)
 }
@@ -61,6 +67,9 @@ often recommended to use a random \emph{key} for HMAC hashing. This prevents att
 we can lookup hashes of common and/or short strings. See examples. A common special case
 is adding a random salt to a large number of records to test for uniqueness within the
 dataset, while simultaneously rendering the results incomparable to other datasets.
+
+The \code{blake2b} and \code{blake2s} algorithms are only available if your system has
+libssl 1.1 or newer.
 }
 \examples{
 # Support both strings and binary

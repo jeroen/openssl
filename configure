@@ -9,7 +9,7 @@ PKG_CONFIG_NAME="openssl"
 PKG_DEB_NAME="libssl-dev"
 PKG_RPM_NAME="openssl-devel"
 PKG_CSW_NAME="libssl_dev"
-PKG_BREW_NAME="openssl"
+PKG_BREW_NAME="openssl@1.1"
 PKG_TEST_FILE="tools/version.c"
 PKG_LIBS="-lssl -lcrypto"
 PKG_CFLAGS=""
@@ -44,8 +44,8 @@ else
     HOMEBREW_CACHE="/tmp" $BREWDIR/bin/brew install --force-bottle $PKG_BREW_NAME 2>&1 | perl -pe 's/Warning/Note/gi'
     rm -f $BREWDIR/opt/$PKG_BREW_NAME/lib/*.dylib
   fi
-  PKG_CFLAGS="-I$BREWDIR/opt/$PKG_BREW_NAME/include"
-  PKG_LIBS="-L$BREWDIR/opt/$PKG_BREW_NAME/lib $PKG_LIBS"
+  PKG_CFLAGS="-I$BREWDIR/opt/openssl@1.1/include"
+  PKG_LIBS="-L$BREWDIR/opt/openssl@1.1/lib $PKG_LIBS"
   ;;
   esac
 fi

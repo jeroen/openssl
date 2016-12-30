@@ -20,6 +20,9 @@
 #' is adding a random salt to a large number of records to test for uniqueness within the
 #' dataset, while simultaneously rendering the results incomparable to other datasets.
 #'
+#' The \code{blake2b} and \code{blake2s} algorithms are only available if your system has
+#' libssl 1.1 or newer.
+#'
 #' @param x character vector, raw vector or connection object.
 #' @param key string or raw vector used as the key for HMAC hashing
 #' @param size must be equal to 224 256 384 or 512
@@ -102,6 +105,18 @@ md4 <- function(x, key = NULL){
 #' @export
 md5 <- function(x, key = NULL){
   rawstringhash(x, "md5", key)
+}
+
+#' @rdname hash
+#' @export
+blake2b <- function(x, key = NULL){
+  rawstringhash(x, "blake2b512", key)
+}
+
+#' @rdname hash
+#' @export
+blake2s <- function(x, key = NULL){
+  rawstringhash(x, "blake2s256", key)
 }
 
 #' @rdname hash

@@ -1,6 +1,6 @@
 /* Compatibility stuff for API changes in OpenSSL 1.1 */
 #include <openssl/opensslv.h>
-#if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100001L
+#if !defined(LIBRESSL_VERSION_NUMBER) && defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 0x10100001L
 #define HAS_OPENSSL11 1
 #else
 #define HAS_OPENSSL11 0

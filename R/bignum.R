@@ -69,6 +69,18 @@ as.character.bignum <- function(x, hex = FALSE, ...){
 }
 
 #' @export
+as.double.bignum <- function(x, ...){
+  if(any(x > bignum("9007199254740992")))
+    warning("loss of precision for coersing bignum to double")
+  as.numeric(as.character(x))
+}
+
+#' @export
+as.integer.bignum <- function(x, ...){
+  as.integer(as.character(x))
+}
+
+#' @export
 #' @useDynLib openssl R_bignum_add
 `+.bignum` <- function(x, y){
   .Call(R_bignum_add, bn(x), bn(y))

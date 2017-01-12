@@ -48,6 +48,12 @@ SEXP R_bignum_as_character(SEXP x, SEXP hex){
   return res;
 }
 
+SEXP R_bignum_as_integer(SEXP x){
+  BIGNUM *val = r2bignum(x);
+  int res = BN_div_word(val, INT_MAX);
+  return ScalarInteger(BN_num_bits(val) ? NA_INTEGER : res);
+}
+
 SEXP R_bignum_add(SEXP x, SEXP y){
   BIGNUM *val1 = r2bignum(x);
   BIGNUM *val2 = r2bignum(y);

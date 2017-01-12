@@ -40,3 +40,10 @@ test_that("Bignum arithmetic", {
   expect_equal(z2, z)
   expect_true(div < z)
 })
+
+test_that("Bignum to integer", {
+  for(x in c(0, 123, .Machine$integer.max-1)){
+    expect_equal(x, as.integer(bignum(x)))
+  }
+  expect_equal(as.integer(bignum(.Machine$integer.max)), NA_integer_)
+})

@@ -76,8 +76,9 @@ as.double.bignum <- function(x, ...){
 }
 
 #' @export
+#' @useDynLib openssl R_bignum_as_integer
 as.integer.bignum <- function(x, ...){
-  as.integer(as.character(x))
+  .Call(R_bignum_as_integer, x)
 }
 
 #' @export

@@ -23,7 +23,7 @@ void R_init_openssl(DllInfo *info) {
   SSL_library_init();
 }
 
-void R_unload_curl(DllInfo *info) {
+void R_unload_openssl(DllInfo *info) {
   ERR_free_strings();
   EVP_cleanup();
 }

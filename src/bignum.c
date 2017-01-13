@@ -50,7 +50,7 @@ SEXP R_bignum_as_character(SEXP x, SEXP hex){
 
 SEXP R_bignum_as_integer(SEXP x){
   BIGNUM *val = r2bignum(x);
-  int res = BN_div_word(val, INT_MAX);
+  int res = BN_div_word(val, INT_MAX + 1);
   return ScalarInteger(BN_num_bits(val) ? NA_INTEGER : res);
 }
 

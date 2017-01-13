@@ -42,8 +42,8 @@ test_that("Bignum arithmetic", {
 })
 
 test_that("Bignum to integer", {
-  for(x in c(0, 123, .Machine$integer.max-1)){
+  for(x in c(0, 123, .Machine$integer.max)){
     expect_equal(x, as.integer(bignum(x)))
   }
-  expect_equal(as.integer(bignum(.Machine$integer.max)), NA_integer_)
+  expect_equal(as.integer(bignum(.Machine$integer.max + 1)), NA_integer_)
 })

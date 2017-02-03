@@ -12,4 +12,4 @@ tools/benchmark.R
 ^src/Makevars$
 ^src/openssl.dll$
 ^appveyor.yml$
-^LICENSE.md$
+^COPYING$

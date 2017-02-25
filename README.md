@@ -75,11 +75,10 @@ On __Fedora__, __CentOS or RHEL__ use [openssl-devel](https://apps.fedoraproject
 sudo yum install openssl-devel
 ````
 
-On __OS-X__ we need [openssl](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb) from homebrew. Because OSX used to include an old version of openssl, brew does automatically link openssl. You need to do:
+On __OS-X__ we need [openssl](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb) from homebrew, which may be installed as:
 
 ```
 brew install openssl
-brew link openssl
 ```
 
 To check which version you are running (run in a fresh terminal):

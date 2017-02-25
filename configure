@@ -58,15 +58,25 @@ CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 # Try to link against the proper libssl version (some systems have multiple)
 ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} src/tests/soname.c -o src/tests/soname.exe 2>/dev/null
 if [ $? -eq 0 ]; then
-  SHLIB_VERSION_NUMBER=`src/tests/soname.exe`
+  SONAME=`src/tests/soname.exe`
   PKG_LIBS_VERSIONED="${PKG_LIBS}"
-  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lssl/-lssl.${SHLIB_VERSION_NUMBER}/"`
-  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lcrypto/-lcrypto.${SHLIB_VERSION_NUMBER}/"`
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lssl/-lssl.${SONAME}/"`
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
 
   # Test if linking works
   ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} 2>/dev/null
   if [ $? -eq 0 ]; then
     PKG_LIBS="${PKG_LIBS_VERSIONED}"
+  else
+    # Try to link 'in situ'
+    PKG_LIBS_VERSIONED="${PKG_LIBS}"
+    PKG_LIBS_SSL=`locate libssl.so.${SONAME} | grep /libssl.so.${SONAME}$`
+    PKG_LIBS_CRYPTO=`locate libcrypto.so.${SONAME} | grep /libcrypto.so.${SONAME}$`
+    PKG_LIBS_VERSIONED="${PKG_LIBS_SSL} ${PKG_LIBS_CRYPTO}"
+    ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED}
+    if [ $? -eq 0 ]; then
+      PKG_LIBS="${PKG_LIBS_VERSIONED}"
+    fi
   fi
   rm -Rf src/tests/soname.exe src/tests/soname.exe.dSYM a.out
 fi

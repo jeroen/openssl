@@ -1,3 +1,6 @@
+0.9.7
+ - Configure script checks SHLIB_VERSION_NUMBER to find matching lib.
+
 0.9.6
  - Add read_p7b() and write_p7b() for certificate bundles
  - Rename read_pkcs12 / write_pkcs12 to read_p12 / write_p12

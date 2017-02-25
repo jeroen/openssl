@@ -58,14 +58,15 @@ CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 # Try to link against the proper libssl version (some systems have multiple)
 ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} src/tests/soname.c -o src/tests/soname.exe 2>/dev/null
 if [ $? -eq 0 ]; then
-  SHLIB_VERSION_NUMBER=$(src/tests/soname.exe)
-  PKG_LIBS_VERSIONED=${PKG_LIBS/-lssl/-lssl.${SHLIB_VERSION_NUMBER}}
-  PKG_LIBS_VERSIONED=${PKG_LIBS_VERSIONED/-lcrypto/-lcrypto.${SHLIB_VERSION_NUMBER}}
+  SHLIB_VERSION_NUMBER=`src/tests/soname.exe`
+  PKG_LIBS_VERSIONED="${PKG_LIBS}"
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lssl/-lssl.${SHLIB_VERSION_NUMBER}/"`
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lcrypto/-lcrypto.${SHLIB_VERSION_NUMBER}/"`
 
   # Test if linking works
   ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} 2>/dev/null
   if [ $? -eq 0 ]; then
-    PKG_LIBS=${PKG_LIBS_VERSIONED}
+    PKG_LIBS="${PKG_LIBS_VERSIONED}"
   fi
   rm -Rf src/tests/soname.exe src/tests/soname.exe.dSYM a.out
 fi

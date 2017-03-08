@@ -76,13 +76,28 @@ SEXP R_parse_pem_cert(SEXP input){
 }
 
 /* Legacy pubkey format */
-SEXP R_parse_pem_pkcs1(SEXP input){
+SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
   RSA *rsa = PEM_read_bio_RSAPublicKey(mem, NULL, password_cb, NULL);
   bail(!!rsa);
   unsigned char *buf = NULL;
   int len = i2d_RSA_PUBKEY(rsa, &buf);
   bail(len);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  free(buf);
+  return res;
+}
+
+/* Legacy rsa key format */
+SEXP R_parse_pem_key_pkcs1(SEXP input){
+  BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
+  RSA *rsa = PEM_read_bio_RSAPrivateKey(mem, NULL, password_cb, NULL);
+  bail(!!rsa);
+  unsigned char *buf = NULL;
+  int len = i2d_RSAPrivateKey(rsa, &buf);
+  bail(len);
+  RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   free(buf);

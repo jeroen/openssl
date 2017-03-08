@@ -79,7 +79,7 @@ fi
 
 # On OSX, try to link against the correct OpenSSL version
 case "$OSTYPE" in "darwin"*)
-if [ "$BREWDIR" = "/tmp/homebrew" ]; then
+if [ "$BREWDIR" != "/tmp/homebrew" ]; then
   ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} src/tests/soname.c -o ${TMPDIR}/soname.exe 2>/dev/null
   SONAME=`${TMPDIR}/soname.exe`
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/"`

@@ -78,7 +78,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # On OSX, try to link against the correct OpenSSL version
-if [ "$OSTYPE" == "darwin"* ] && [ "$BREWDIR" != "/tmp/homebrew" ]; then
+case "$OSTYPE" in "darwin"*)
+if [ "$BREWDIR" = "/tmp/homebrew" ]; then
   ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} src/tests/soname.c -o ${TMPDIR}/soname.exe 2>/dev/null
   SONAME=`${TMPDIR}/soname.exe`
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/"`
@@ -88,6 +89,8 @@ if [ "$OSTYPE" == "darwin"* ] && [ "$BREWDIR" != "/tmp/homebrew" ]; then
   ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "${TMPDIR}/main.exe" 2>/dev/null
   if [ $? -eq 0 ]; then PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
 fi
+;;
+esac
 
 echo "Using PKG_LIBS=$PKG_LIBS"
 

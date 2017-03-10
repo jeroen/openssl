@@ -23,7 +23,7 @@ static const EVP_MD* guess_hashfun(int length){
   case 64:
     return EVP_sha512();
   }
-  return EVP_md_null();
+  return NULL;
 }
 
 SEXP R_hash_sign(SEXP md, SEXP key){
@@ -35,7 +35,9 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   bail(!!ctx);
   bail(EVP_PKEY_sign_init(ctx) > 0);
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
-  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) > 0);
+  const EVP_MD *md_func = guess_hashfun(LENGTH(md));
+  bail(!!md_func);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, md_func) > 0);
 
   //detemine buffer length (this is really required, over/under estimate can crash)
   size_t siglen;
@@ -60,7 +62,9 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   bail(!!ctx);
   bail(EVP_PKEY_verify_init(ctx) > 0);
   //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
-  bail(EVP_PKEY_CTX_set_signature_md(ctx, guess_hashfun(LENGTH(md))) > 0);
+  const EVP_MD *md_func = guess_hashfun(LENGTH(md));
+  bail(!!md_func);
+  bail(EVP_PKEY_CTX_set_signature_md(ctx, md_func) > 0);
   int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
   bail(res >= 0);
   if(res == 0)

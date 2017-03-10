@@ -1,11 +1,14 @@
 #include <Rinternals.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/crypto.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/hmac.h>
 #include "utils.h"
 
-const EVP_MD* guess_hashfun(int length){
+static const EVP_MD* guess_hashfun(int length){
   switch(length){
   case 16:
     return EVP_md5();

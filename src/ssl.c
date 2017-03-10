@@ -27,6 +27,7 @@ const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #include <arpa/inet.h>
 #endif
 
+#include <openssl/x509.h>
 #include <openssl/ssl.h>
 #include "utils.h"
 

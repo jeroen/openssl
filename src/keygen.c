@@ -1,5 +1,6 @@
 #include <Rinternals.h>
 #include <string.h>
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
@@ -23,7 +24,7 @@ SEXP R_keygen_rsa(SEXP bits){
   EVP_PKEY_CTX_free(ctx);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -37,7 +38,7 @@ SEXP R_keygen_dsa(SEXP bits){
   DSA_free(dsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -57,7 +58,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   EVP_PKEY_free(pkey);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 #else //OPENSSL_NO_EC
   Rf_error("OpenSSL has been configured without EC support");

@@ -1,6 +1,7 @@
 #include <Rinternals.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/crypto.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
 #include "utils.h"
@@ -45,7 +46,7 @@ SEXP R_parse_pem_key(SEXP input, SEXP password){
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -59,7 +60,7 @@ SEXP R_parse_pem_pubkey(SEXP input){
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -71,7 +72,7 @@ SEXP R_parse_pem_cert(SEXP input){
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -85,7 +86,7 @@ SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -100,6 +101,6 @@ SEXP R_parse_pem_key_pkcs1(SEXP input){
   RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }

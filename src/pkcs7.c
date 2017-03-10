@@ -4,6 +4,7 @@
 #include <Rinternals.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/crypto.h>
 #include <openssl/pem.h>
 #include <openssl/pkcs7.h>
 #include "utils.h"
@@ -17,7 +18,7 @@ SEXP R_parse_pem_pkcs7(SEXP input){
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -39,7 +40,7 @@ SEXP R_write_pkcs7(SEXP cadata){
   PKCS7_free(p7);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -79,7 +80,7 @@ SEXP R_parse_der_pkcs7(SEXP input){
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
-      free(buf);
+      OPENSSL_free(buf);
       buf = NULL;
     }
     SET_VECTOR_ELT(out, 0, bundle);
@@ -95,7 +96,7 @@ SEXP R_parse_der_pkcs7(SEXP input){
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
-      free(buf);
+      OPENSSL_free(buf);
       buf = NULL;
     }
     SET_VECTOR_ELT(out, 1, bundle);

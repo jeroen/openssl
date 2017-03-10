@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <Rinternals.h>
+#include <openssl/crypto.h>
 #include <openssl/pkcs12.h>
 #include "utils.h"
 
@@ -54,7 +55,7 @@ SEXP R_write_pkcs12(SEXP keydata, SEXP certdata, SEXP cadata, SEXP namedata, SEX
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -89,7 +90,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     bail(len);
     SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, len));
     memcpy(RAW(VECTOR_ELT(res, 0)), buf, len);
-    free(buf);
+    OPENSSL_free(buf);
     buf = NULL;
   }
   if(pkey != NULL){
@@ -98,7 +99,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     bail(len);
     SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, len));
     memcpy(RAW(VECTOR_ELT(res, 1)), buf, len);
-    free(buf);
+    OPENSSL_free(buf);
     buf = NULL;
   }
   if(ca && sk_X509_num(ca)){
@@ -110,7 +111,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
-      free(buf);
+      OPENSSL_free(buf);
       buf = NULL;
     }
     sk_X509_pop_free(ca, X509_free);

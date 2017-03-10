@@ -1,5 +1,6 @@
 #include <Rinternals.h>
 #include <string.h>
+#include <openssl/crypto.h>
 #include <openssl/pem.h>
 #include <openssl/bn.h>
 #include "utils.h"
@@ -46,7 +47,7 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -62,7 +63,7 @@ SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d, SEXP dp, SEXP dq, S
   RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -111,7 +112,7 @@ SEXP R_dsa_pubkey_build(SEXP p, SEXP q, SEXP g, SEXP y){
   DSA_free(dsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 }
 
@@ -198,7 +199,7 @@ SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
   EC_KEY_free(pubkey);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 #else //OPENSSL_NO_EC
   Rf_error("OpenSSL has been configured without EC support");
@@ -220,7 +221,7 @@ SEXP R_ecdsa_key_build(SEXP x, SEXP y, SEXP d, SEXP nist){
   EC_KEY_free(key);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
-  free(buf);
+  OPENSSL_free(buf);
   return res;
 #else //OPENSSL_NO_EC
   Rf_error("OpenSSL has been configured without EC support");

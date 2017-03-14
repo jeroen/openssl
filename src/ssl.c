@@ -3,7 +3,7 @@
 #define _POSIX_C_SOURCE 200112L
 #endif
 
-//see https://github.com/jeroenooms/openssl/issues/41
+//see https://github.com/jeroen/openssl/issues/41
 #if defined(__FreeBSD__) && !defined(__BSD_VISIBLE)
 #define __BSD_VISIBLE 1
 #endif

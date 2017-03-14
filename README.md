@@ -2,9 +2,9 @@
 
 ##### *Toolkit for Encryption, Signatures and Certificates Based on OpenSSL*
 
-[![Build Status](https://travis-ci.org/jeroenooms/openssl.svg?branch=master)](https://travis-ci.org/jeroenooms/openssl)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroenooms/openssl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroenooms/openssl)
-[![Coverage Status](https://codecov.io/github/jeroenooms/openssl/coverage.svg?branch=master)](https://codecov.io/github/jeroenooms/openssl?branch=master)
+[![Build Status](https://travis-ci.org/jeroen/openssl.svg?branch=master)](https://travis-ci.org/jeroen/openssl)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroen/openssl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroen/openssl)
+[![Coverage Status](https://codecov.io/github/jeroen/openssl/coverage.svg?branch=master)](https://codecov.io/github/jeroen/openssl?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/openssl)](http://cran.r-project.org/package=openssl)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/openssl)](http://cran.r-project.org/web/packages/openssl/index.html)
 

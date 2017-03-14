@@ -3,7 +3,7 @@ Type: Package
 Title: Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
 Version: 0.9.6.9000
 Authors@R: c(
-    person("Jeroen", "Ooms", , "jeroen.ooms@stat.ucla.edu", role = c("cre", "aut")),
+    person("Jeroen", "Ooms", , "jeroen@berkeley.edu", role = c("cre", "aut")),
     person("Oliver", "Keyes", role = "ctb"))
 Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH pubkey parsers.
     Supports RSA, DSA and EC curves P-256, P-384 and P-521. Cryptographic signatures
@@ -15,8 +15,8 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH pubkey pa
     random number generator, and 'bignum' math methods for manually performing
     crypto calculations on large multibyte integers.
 License: MIT + file LICENSE
-URL: https://github.com/jeroenooms/openssl#readme
-BugReports: https://github.com/jeroenooms/openssl/issues
+URL: https://github.com/jeroen/openssl#readme
+BugReports: https://github.com/jeroen/openssl/issues
 SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr
 Suggests:

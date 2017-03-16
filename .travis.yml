@@ -24,7 +24,7 @@ matrix:
       disable_homebrew: true
       latex: false
     - os: osx
-      osx_image: beta-xcode6.1
+      osx_image: beta-xcode6.4
       disable_homebrew: true
       latex: false
 

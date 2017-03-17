@@ -36,8 +36,8 @@ else
   if [ $? -eq 0 ]; then
     BREWDIR=`brew --prefix`
   else
-    curl -OL https://jeroen.github.io/autobrew/openssl.sh
-    source openssl.sh
+    curl -sOL https://jeroen.github.io/autobrew/openssl
+    source openssl
   fi
   PKG_CFLAGS="-I$BREWDIR/opt/openssl@1.1/include -I$BREWDIR/opt/openssl/include"
   PKG_LIBS="-L$BREWDIR/opt/openssl@1.1/lib -L$BREWDIR/opt/openssl/lib $PKG_LIBS"

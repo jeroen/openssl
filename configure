@@ -46,9 +46,9 @@ else
 fi
 
 # Find compiler
-CC=`${R_HOME}/bin/R CMD config CC`
-CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
-CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
+CC=`${R_HOME}/bin/R CMD config CC | grep -v WARNING`
+CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS | grep -v WARNING`
+CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS | grep -v WARNING`
 
 # For debugging
 echo "Using PKG_CFLAGS=$PKG_CFLAGS"

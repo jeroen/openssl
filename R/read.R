@@ -122,9 +122,16 @@ read_cert_bundle <- function(file){
 }
 
 read_input <- function(x){
+  if(is.character(x) && grepl("^https?://", x)){
+    x <- url(x)
+  }
   if(is.raw(x)){
     x
   } else if(inherits(x, "connection")){
+    if(!isOpen(x)){
+      open(x, "rb")
+      on.exit(close(x))
+    }
     if(summary(x)$text == "text") {
       charToRaw(paste(readLines(x), collapse = "\n"))
     } else {

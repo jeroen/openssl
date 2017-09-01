@@ -19,9 +19,10 @@ test_that("google certs validate", {
   ca <- read_cert('https://pki.goog/gtsr4/GTSR4.crt')
   expect_true(cert_verify(cert, ca))
 
-  cert <- download_ssl_cert('2021.globalsign.com')
-  ca <- read_cert('https://pki.goog/gsr2/GSR2.crt')
-  expect_true(cert_verify(cert, ca))
+  # Google messed up, server doesn't work
+  #cert <- download_ssl_cert('2021.globalsign.com')
+  #ca <- read_cert('https://pki.goog/gsr2/GSR2.crt')
+  #expect_true(cert_verify(cert, ca))
 
   cert <- download_ssl_cert('2038r4.globalsign.com')
   ca <- read_cert('https://pki.goog/gsr4/GSR4.crt')

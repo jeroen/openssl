@@ -24,6 +24,10 @@ matrix:
       brew_packages: libressl
       latex: false
     - os: osx
+      osx_image: xcode8.3
+      brew_packages: domt4/crypto/boringssl
+      latex: false
+    - os: osx
       osx_image: xcode7.3
       disable_homebrew: true
       latex: false

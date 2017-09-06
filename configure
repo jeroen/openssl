@@ -74,7 +74,7 @@ fi
 
 # Try to link against the correct OpenSSL version
 if [ -z "$AUTOBREW" ]; then
-SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs` 2>/dev/null
+SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
 if [ "$SONAME" ]; then
 case "$OSTYPE" in
   "darwin"*)

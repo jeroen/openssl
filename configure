@@ -79,7 +79,7 @@ case "$OSTYPE" in
   "darwin"*)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
   ;;
-  "linux*")
+  *)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-l:libssl.so.${SONAME}/" | sed "s/-lcrypto/-l:libcrypto.so.${SONAME}/"`
   ;;
 esac

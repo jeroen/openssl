@@ -9,6 +9,7 @@
  - Reject empty digests when signing (#44)
  - Use OPENSSL_free to free OpenSSL's allocations (#44)
  - Cleanups for ec_keygen() (#44)
+ - Windows: update OpenSSL to 1.1.0f
 
 0.9.6
  - Add read_p7b() and write_p7b() for certificate bundles

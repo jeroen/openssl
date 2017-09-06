@@ -47,6 +47,7 @@ fi
 
 # Find compiler
 CC=`${R_HOME}/bin/R CMD config CC`
+CPP=`${R_HOME}/bin/R CMD config CPP`
 CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
 CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 
@@ -72,20 +73,15 @@ if [ $? -ne 0 ]; then
   exit 1;
 fi
 
-# On OSX, try to link against the correct OpenSSL version
-case "$OSTYPE" in "darwin"*)
-if [ "$BREWDIR" != "$TMPDIR/homebrew" ]; then
-  ${CC} ${CPPFLAGS} ${PKG_CFLAGS} ${CFLAGS} src/tests/soname.c -o ${TMPDIR}/soname.exe 2>/dev/null
-  SONAME=`${TMPDIR}/soname.exe`
-  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/"`
-  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS_VERSIONED}" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
+# Try to link against the correct OpenSSL version
+SONAME=`${CPP} ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
+PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
 
-  # Test if linking works
-  ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "${TMPDIR}/main.exe" 2>/dev/null
-  if [ $? -eq 0 ]; then PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
+# Test if linking works
+${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "${TMPDIR}/main.exe"
+if [ $? -eq 0 ]; then
+  PKG_LIBS="${PKG_LIBS_VERSIONED}";
 fi
-;;
-esac
 
 echo "Using PKG_LIBS=$PKG_LIBS"
 

@@ -78,7 +78,7 @@ SONAME=`${CPP} ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
 PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
 
 # Test if linking works
-${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "${TMPDIR}/main.exe"
+${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "src/test/main.exe"
 if [ $? -eq 0 ]; then
   PKG_LIBS="${PKG_LIBS_VERSIONED}";
 fi

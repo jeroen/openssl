@@ -1,5 +1,14 @@
 0.9.7
- - Configure script checks SHLIB_VERSION_NUMBER to find matching lib.
+ - Configure script checks SHLIB_VERSION_NUMBER to find matching lib
+ - Added internal stopifnot() replacement to give more helpful error mesasges
+ - Add live SSL unit tests from https://pki.goog
+ - Fix for OpenBSD/FreeBSD (#41)
+ - Added as.integer.bignum() method
+ - Update maintainer email address
+ - Add symbol registration call in R_init_openssl
+ - Reject empty digests when signing (#44)
+ - Use OPENSSL_free to free OpenSSL's allocations (#44)
+ - Cleanups for ec_keygen() (#44)
 
 0.9.6
  - Add read_p7b() and write_p7b() for certificate bundles

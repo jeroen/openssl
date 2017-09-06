@@ -47,7 +47,6 @@ fi
 
 # Find compiler
 CC=`${R_HOME}/bin/R CMD config CC`
-CPP=`${R_HOME}/bin/R CMD config CPP`
 CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
 CPPFLAGS=`${R_HOME}/bin/R CMD config CPPFLAGS`
 
@@ -74,7 +73,8 @@ if [ $? -ne 0 ]; then
 fi
 
 # Try to link against the correct OpenSSL version
-SONAME=`${CPP} ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
+if [ -z "$AUTOBREW" ]; then
+SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
 case "$OSTYPE" in
   "darwin"*)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
@@ -83,6 +83,7 @@ case "$OSTYPE" in
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-l:libssl.so.${SONAME}/" | sed "s/-lcrypto/-l:libcrypto.so.${SONAME}/"`
   ;;
 esac
+fi
 
 # Test if versioned linking works
 ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe

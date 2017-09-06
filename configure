@@ -85,7 +85,7 @@ case "$OSTYPE" in
 esac
 
 # Test if versioned linking works
-${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/tests/main.exe
+${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe
 if [ $? -eq 0 ]; then
   PKG_LIBS="${PKG_LIBS_VERSIONED}";
 fi

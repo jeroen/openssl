@@ -74,7 +74,8 @@ fi
 
 # Try to link against the correct OpenSSL version
 if [ -z "$AUTOBREW" ]; then
-SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
+SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs` 2>/dev/null
+if [ "$SONAME" ]; then
 case "$OSTYPE" in
   "darwin"*)
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
@@ -88,8 +89,9 @@ esac
 ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe
 if [ $? -eq 0 ]; then
   PKG_LIBS="${PKG_LIBS_VERSIONED}";
-fi
-fi
+fi #PKG_LIBS_VERSIONED
+fi #SONAME
+fi #AUTOBREW
 
 echo "Using PKG_LIBS=$PKG_LIBS"
 

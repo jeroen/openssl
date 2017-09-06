@@ -75,10 +75,17 @@ fi
 
 # Try to link against the correct OpenSSL version
 SONAME=`${CPP} ${PKG_CFLAGS} src/tests/soname.h | sh -E | xargs`
-PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
+case "$OSTYPE" in
+  "darwin"*)
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`
+  ;;
+  "linux*")
+  PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-l:libssl.so.${SONAME}/" | sed "s/-lcrypto/-l:libcrypto.so.${SONAME}/"`
+  ;;
+esac
 
-# Test if linking works
-${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o "src/test/main.exe"
+# Test if versioned linking works
+${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/tests/main.exe
 if [ $? -eq 0 ]; then
   PKG_LIBS="${PKG_LIBS_VERSIONED}";
 fi

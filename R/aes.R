@@ -3,7 +3,7 @@
 #' Low-level symmetric encryption/decryption using the AES block cipher in CBC mode.
 #' The key is a raw vector, for example a hash of some secret. When no shared
 #' secret is available, a random key can be used which is exchanged via an
-#' asymettric protocol such as RSA. See \code{\link{rsa_encrypt}} for a worked example
+#' asymmetric protocol such as RSA. See \code{\link{rsa_encrypt}} for a worked example
 #' or \code{\link{encrypt_envelope}} for a high-level wrapper combining AES and RSA.
 #'
 #' @export

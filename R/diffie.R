@@ -1,7 +1,7 @@
 #' Diffie-Hellman Key Agreement
 #'
 #' Key agreement is one-step method of creating a shared secret between two
-#' peers. Both peers can indendently derive the joined secret by combining
+#' peers. Both peers can independently derive the joined secret by combining
 #' his or her private key with the public key from the peer.
 #'
 #' Currently only Elliptic Curve Diffie Hellman (ECDH) is implemented.

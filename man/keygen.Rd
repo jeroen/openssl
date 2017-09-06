@@ -32,4 +32,3 @@ pubkey <- as.list(key)$pubkey
 write_pem(key, "id_rsa", password = "supersecret")
 read_key("id_rsa", password = "supersecret")
 }
-

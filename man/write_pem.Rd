@@ -36,4 +36,3 @@ write_ssh(pubkey)
 write_pem(pubkey)
 write_pem(key, password = "super secret")
 }
-

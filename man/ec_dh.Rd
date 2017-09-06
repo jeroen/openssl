@@ -15,7 +15,7 @@ ec_dh(key = my_key(), peerkey, password = askpass)
 }
 \description{
 Key agreement is one-step method of creating a shared secret between two
-peers. Both peers can indendently derive the joined secret by combining
+peers. Both peers can independently derive the joined secret by combining
 his or her private key with the public key from the peer.
 }
 \details{
@@ -40,4 +40,3 @@ ec_dh(bob_key, alice_pub)
 \url{https://wiki.openssl.org/index.php/EVP_Key_Agreement},
 \url{https://wiki.openssl.org/index.php/Elliptic_Curve_Diffie_Hellman}
 }
-

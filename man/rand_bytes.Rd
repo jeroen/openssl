@@ -41,4 +41,3 @@ hist(y)
 \references{
 OpenSSL manual: \url{https://www.openssl.org/docs/manmaster/man3/RAND_bytes.html}
 }
-

@@ -25,12 +25,12 @@ bignum_mod_inv(a, m)
 }
 \description{
 Basic operations for working with large integers. The \code{bignum}
-funtion converts a positive integer, string or raw vector into a bignum type.
+function converts a positive integer, string or raw vector into a bignum type.
 All basic \link{Arithmetic} and \link{Comparison} operators such as
 \code{+}, \code{-}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{==},
 \code{!=}, \code{<}, \code{<=}, \code{>} and \code{>=} are implemented for
 bignum objects. The
-\href{https://en.wikipedia.org/wiki/Modular_exponentiation}{Modular exponenent}
+\href{https://en.wikipedia.org/wiki/Modular_exponentiation}{Modular exponent}
 (\code{a^b \%\% m}) can be calculated using \code{\link{bignum_mod_exp}}
 when \code{b} is too large for calculating \code{a^b} directly.
 }
@@ -47,4 +47,3 @@ z2 <- div * y + mod
 stopifnot(z2 == z)
 stopifnot(div < z)
 }
-

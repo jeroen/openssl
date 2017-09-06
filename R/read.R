@@ -10,7 +10,7 @@
 #' conform to the X509 standard.
 #'
 #' The \code{password} argument is needed when reading keys that are protected with a
-#' passphrase. It can either be a string containing the passphrase, or a custom calback
+#' passphrase. It can either be a string containing the passphrase, or a custom callback
 #' function that will be called by OpenSSL to read the passphrase. The function should
 #' take one argument (a string with a message) and return a string. The default is to
 #' use \code{readline} which will prompt the user in an interactive R session.

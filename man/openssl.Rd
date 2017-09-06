@@ -24,4 +24,3 @@ calculations on large multibyte integers.
 \author{
 Jeroen Ooms, Oliver Keyes
 }
-

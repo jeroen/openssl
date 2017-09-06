@@ -105,4 +105,3 @@ sha256(c("john", "mary", "john"), key = "random_salt_value")
 \references{
 Digest types: \url{https://www.openssl.org/docs/manmaster/man1/dgst.html}
 }
-

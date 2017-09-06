@@ -9,4 +9,3 @@ openssl_config()
 \description{
 Shows libssl version and configuration information.
 }
-

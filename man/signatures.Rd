@@ -48,4 +48,3 @@ md <- md5(data)
 sig <- signature_create(md, hash = NULL, key = key)
 stopifnot(signature_verify(md, sig, hash = NULL, pubkey = pubkey))
 }
-

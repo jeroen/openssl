@@ -14,4 +14,3 @@ Function to prompt the user for a password to read a protected private key.
 Frontends can provide a custom password entry widget by setting the \code{askpass}
 option. If no such option is specified we default to \code{\link{readline}}.
 }
-

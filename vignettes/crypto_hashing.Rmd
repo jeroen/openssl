@@ -28,7 +28,7 @@ Functions are fully vectorized for the case of character vectors: a vector with 
 md5(c("foo", "bar", "baz"))
 ```
 
-Besides character and raw vectors we can pass a connection object (e.g. a file, socket or url). In this case the function will stream-hash the binary contents of the conection.
+Besides character and raw vectors we can pass a connection object (e.g. a file, socket or url). In this case the function will stream-hash the binary contents of the connection.
 
 ```{r}
 # Stream-hash a file

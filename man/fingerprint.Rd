@@ -30,4 +30,3 @@ fingerprint(pubkey, sha256)
 # Other key types
 fingerprint(dsa_keygen())
 }
-

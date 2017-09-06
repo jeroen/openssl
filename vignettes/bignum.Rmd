@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Primitive types such as `int` or `double` store numbers in exactly one or two bytes, with finite precision. This suffices for most applications, but cryptographic methods require arithmetic on much larger numbers and without loss of precision. Therefore OpenSSL provides a __bignum__ data type which holds arbitrary sized integers and implements all basic arithmetic and comparison operators such as `+`, `-`, `*`, `^`, `%%`, `%/%`, `==`, `!=`, `<`, `<=`, `>` and `>=`.
 
-One special case, the [__modular exponenent__](https://en.wikipedia.org/wiki/Modular_exponentiation) `a^b %% m` can be calculated using `bignum_mod_exp` when `b` is too large for calculating `a^b`.
+One special case, the [__modular exponent__](https://en.wikipedia.org/wiki/Modular_exponentiation) `a^b %% m` can be calculated using `bignum_mod_exp` when `b` is too large for calculating `a^b`.
 
 ```{r}
 # create a bignum

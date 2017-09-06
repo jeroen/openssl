@@ -13,7 +13,7 @@ download_ssl_cert(host = "localhost", port = 443)
 ca_bundle()
 }
 \arguments{
-\item{cert}{certficate (or certificate-chain) to be verified. Must be cert or list or path.}
+\item{cert}{certificate (or certificate-chain) to be verified. Must be cert or list or path.}
 
 \item{root}{trusted pubkey or certificate(s) e.g. CA bundle.}
 
@@ -22,7 +22,7 @@ ca_bundle()
 \item{port}{string or integer: port or protocol to use, e.g: \code{443} or \code{"https"}}
 }
 \description{
-Read, download, analyize and verify X.509 certificates.
+Read, download, analyze and verify X.509 certificates.
 }
 \details{
 If https verification fails and you can't figure out why, have a look
@@ -46,4 +46,3 @@ write_pem(ocpu)
 \seealso{
 \link{read_cert}
 }
-

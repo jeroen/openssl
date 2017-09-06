@@ -26,4 +26,3 @@ message <- base64_encode(input)
 output <- base64_decode(message)
 identical(output, input)
 }
-

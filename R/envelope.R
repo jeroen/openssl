@@ -1,7 +1,7 @@
 #' Envelope encryption
 #'
 #' An \href{https://wiki.openssl.org/index.php/EVP_Asymmetric_Encryption_and_Decryption_of_an_Envelope}{envelope}
-#' contains ciphertext along with an encrypted session key and optionally and initialiation
+#' contains ciphertext along with an encrypted session key and optionally and initialization
 #' vector. The \code{\link{encrypt_envelope}} generates a random IV and session-key which is
 #' used to encrypt the \code{data} with \code{\link[openssl:aes_cbc]{AES}} stream cipher. The
 #' session key itself is encrypted using the given RSA key (see \code{\link{rsa_encrypt}}) and

@@ -47,7 +47,7 @@ aes_cbc_decrypt <- function(data, key, iv = attr(data, "iv")){
 
 #' @export
 #' @rdname aes_cbc
-aes_gcm_encrypt <- function(data, key, iv = rand_bytes(16)){
+aes_gcm_encrypt <- function(data, key, iv = rand_bytes(12)){
   aes_encrypt(data, key, iv, "gcm")
 }
 

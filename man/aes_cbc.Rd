@@ -19,7 +19,7 @@ aes_cbc_encrypt(data, key, iv = rand_bytes(16))
 
 aes_cbc_decrypt(data, key, iv = attr(data, "iv"))
 
-aes_gcm_encrypt(data, key, iv = rand_bytes(16))
+aes_gcm_encrypt(data, key, iv = rand_bytes(12))
 
 aes_gcm_decrypt(data, key, iv = attr(data, "iv"))
 

@@ -1,3 +1,6 @@
+0.9.8
+ - Fix build on OSX Mavericks
+
 0.9.7
  - Configure script checks SHLIB_VERSION_NUMBER to find matching lib
  - Added internal stopifnot() replacement to give more helpful error mesasges

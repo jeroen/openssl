@@ -58,7 +58,8 @@ download_ssl_cert <- function(host = "localhost", port = 443){
   if(grepl("https?://", host))
     stop("Argument 'host' must be a hostname, not url. Take out the https:// prefix.")
   stopifnot(is.character(host))
-  .Call(R_download_cert, host, as.character(port))
+  ipv4_only <- isTRUE(getOption("ipv4_only"))
+  .Call(R_download_cert, host, as.character(port), ipv4_only)
 }
 
 #' @useDynLib openssl R_cert_verify_cert

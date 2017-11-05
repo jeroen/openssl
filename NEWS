@@ -1,3 +1,6 @@
+0.9.9
+ - Workaround failing test on Mavericks due to IPv6 firewall issue
+
 0.9.8
  - Fix build on OSX Mavericks
 

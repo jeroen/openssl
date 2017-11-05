@@ -40,12 +40,12 @@ int pending_interrupt() {
   return !(R_ToplevelExec(check_interrupt_fn, NULL));
 }
 
-SEXP R_download_cert(SEXP hostname, SEXP service) {
+SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   /* The 'hints' arg is only needed for solaris */
   struct addrinfo hints;
   memset(&hints,0,sizeof(hints));
   hints.ai_socktype = SOCK_STREAM;
-  hints.ai_family = PF_UNSPEC;
+  hints.ai_family = asLogical(ipv4_only) ? AF_INET : PF_UNSPEC;
 
   /* Because gethostbyname() is deprecated */
   struct addrinfo *addr;

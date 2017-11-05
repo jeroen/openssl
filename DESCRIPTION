@@ -1,7 +1,7 @@
 Package: openssl
 Type: Package
 Title: Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
-Version: 0.9.8
+Version: 0.9.8.9000
 Authors@R: c(
     person("Jeroen", "Ooms", , "jeroen@berkeley.edu", role = c("cre", "aut")),
     person("Oliver", "Keyes", role = "ctb"))
@@ -26,4 +26,4 @@ Suggests:
     rmarkdown,
     jsonlite,
     jose
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000

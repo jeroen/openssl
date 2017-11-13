@@ -12,6 +12,7 @@
 #' @param cert certificate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
 #' @examples # Verify the r-project HTTPS cert
+#' options(ipv4_only = TRUE)
 #' chain <- download_ssl_cert("www.r-project.org", 443)
 #' print(chain)
 #' print(as.list(chain[[1]])$pubkey)

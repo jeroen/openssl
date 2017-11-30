@@ -5,6 +5,8 @@
 #include <openssl/pkcs12.h>
 #include "utils.h"
 
+static char *find_friendly_name(PKCS12 *p12);
+
 SEXP R_write_pkcs12(SEXP keydata, SEXP certdata, SEXP cadata, SEXP namedata, SEXP pwdata){
   EVP_PKEY * pkey = NULL;
   X509 * cert = NULL;
@@ -78,12 +80,13 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
       Rf_errorcall(R_NilValue, "PKCS12 read failure: invalid password");
     success = PKCS12_parse(p12, passwd, &pkey, &cert, &ca);
   }
+  char * friendly_name = find_friendly_name(p12);
   PKCS12_free(p12);
   bail(success);
 
   unsigned char *buf = NULL;
   int len = 0;
-  SEXP res = PROTECT(allocVector(VECSXP, 3));
+  SEXP res = PROTECT(allocVector(VECSXP, 4));
   if (cert != NULL) {
     len = i2d_X509(cert, &buf);
     X509_free(cert);
@@ -118,6 +121,38 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     SET_VECTOR_ELT(res, 2, bundle);
     UNPROTECT(1);
   }
+  if(friendly_name)
+    SET_VECTOR_ELT(res, 3, mkString(friendly_name));
   UNPROTECT(1);
   return res;
+}
+
+//https://github.com/openssl/openssl/issues/1796
+static char *find_friendly_name(PKCS12 *p12){
+  STACK_OF(PKCS7) *safes = PKCS12_unpack_authsafes(p12);
+  int n, m;
+  char *name = NULL;
+  PKCS7 *safe;
+  STACK_OF(PKCS12_SAFEBAG) *bags;
+  PKCS12_SAFEBAG *bag;
+
+  if ((safes = PKCS12_unpack_authsafes(p12)) == NULL)
+    return NULL;
+
+  for (n = 0; n < sk_PKCS7_num(safes) && name == NULL; n++) {
+    safe = sk_PKCS7_value(safes, n);
+    if (OBJ_obj2nid(safe->type) != NID_pkcs7_data
+          || (bags = PKCS12_unpack_p7data(safe)) == NULL)
+      continue;
+
+    for (m = 0; m < sk_PKCS12_SAFEBAG_num(bags) && name == NULL; m++) {
+      bag = sk_PKCS12_SAFEBAG_value(bags, m);
+      name = PKCS12_get_friendlyname(bag);
+    }
+    sk_PKCS12_SAFEBAG_pop_free(bags, PKCS12_SAFEBAG_free);
+  }
+
+  sk_PKCS7_pop_free(safes, PKCS7_free);
+
+  return name;
 }

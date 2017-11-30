@@ -50,7 +50,7 @@ test_that("roundtrip p12 key and cert", {
     b3 <- read_p12("../certigo/example-elliptic-sha1.p12", password = "password")
     c3 <- read_cert("../certigo/example-elliptic-sha1.crt")
     k3 <- read_key("../certigo/example-elliptic-sha1.key")
-    buf <- write_p12(key = k3, cert = c3)
+    buf <- write_p12(key = k3, cert = c3, name = "example-elliptic-sha1")
     expect_identical(b3, read_p12(buf))
   }
 })

@@ -62,7 +62,7 @@ write_p7b <- function(ca, path = NULL){
 read_p12 <- function(file, password = askpass){
   buf <- read_input(file)
   data <- parse_pkcs12(buf, password)
-  out <- list(cert = NULL, key = NULL, ca = NULL)
+  out <- list(name = data[[4]], cert = NULL, key = NULL, ca = NULL)
   if(length(data[[1]]))
     out$cert <- read_cert(data[[1]], der = TRUE)
   if(length(data[[2]]))

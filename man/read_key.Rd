@@ -36,9 +36,6 @@ support both SSH pubkey format and OpenSSL PEM format (base64 data with a \code{
 and \code{---END} header), and automatically convert where necessary. The functions assume
 a single key per file except for \code{read_cert_bundle} which supports PEM files
 with multiple certificates.
-
-The `read_pem` function parses the PEM file into a header and a data payload. It
-is mostly useful for debugging.
 }
 \details{
 Most versions of OpenSSL support at least RSA, DSA and ECDSA keys. Certificates must

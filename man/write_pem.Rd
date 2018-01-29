@@ -3,12 +3,15 @@
 \name{write_pem}
 \alias{write_pem}
 \alias{write_der}
+\alias{write_pkcs1}
 \alias{write_ssh}
 \title{Export key or certificate}
 \usage{
 write_pem(x, path = NULL, password = NULL)
 
 write_der(x, path = NULL)
+
+write_pkcs1(x, password = NULL)
 
 write_ssh(pubkey, path = NULL)
 }
@@ -25,6 +28,12 @@ private keys).}
 \description{
 The \code{write_pem} functions exports a key or certificate to the standard
 base64 PEM format. For private keys it is possible to set a password.
+}
+\details{
+The pkcs1 format is a legacy format which only supports RSA keys and should
+not be used anymore. It is only provided for compatibility with some old SSH
+clients. Simply use \code{write_pem} to export keys and certs to the recommended
+format.
 }
 \examples{
 # Generate RSA keypair

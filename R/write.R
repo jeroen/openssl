@@ -3,6 +3,11 @@
 #' The \code{write_pem} functions exports a key or certificate to the standard
 #' base64 PEM format. For private keys it is possible to set a password.
 #'
+#' The pkcs1 format is a legacy format which only supports RSA keys and should
+#' not be used anymore. It is only provided for compatibility with some old SSH
+#' clients. Simply use \code{write_pem} to export keys and certs to the recommended
+#' format.
+#'
 #' @export
 #' @param x a public/private key or certificate object
 #' @param password string or callback function to set password (only applicable for
@@ -23,6 +28,18 @@ write_der <- function(x, path = NULL){
   if(is.null(path)) return(bin)
   writeBin(unclass(bin), path)
   invisible(path)
+}
+
+#' @export
+#' @rdname write_pem
+#' @useDynLib openssl R_pem_write_pkcs1_privkey R_pem_write_pkcs1_pubkey
+write_pkcs1 <- function(x, password = NULL){
+  if(!inherits(x, "rsa"))
+    stop("PKCS1 only supports RSA keys")
+  if(inherits(x, "key"))
+    .Call(R_pem_write_pkcs1_privkey, x, password)
+  else
+    .Call(R_pem_write_pkcs1_pubkey, x)
 }
 
 pem_export <- function(x, ...){

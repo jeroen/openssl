@@ -33,13 +33,16 @@ write_der <- function(x, path = NULL){
 #' @export
 #' @rdname write_pem
 #' @useDynLib openssl R_pem_write_pkcs1_privkey R_pem_write_pkcs1_pubkey
-write_pkcs1 <- function(x, password = NULL){
+write_pkcs1 <- function(x, path = NULL, password = NULL){
   if(!inherits(x, "rsa"))
     stop("PKCS1 only supports RSA keys")
-  if(inherits(x, "key"))
+  str <- if(inherits(x, "key"))
     .Call(R_pem_write_pkcs1_privkey, x, password)
   else
     .Call(R_pem_write_pkcs1_pubkey, x)
+  if(is.null(path)) return(str)
+  writeLines(str, path)
+  invisible(path)
 }
 
 pem_export <- function(x, ...){

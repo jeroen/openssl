@@ -11,7 +11,7 @@ write_pem(x, path = NULL, password = NULL)
 
 write_der(x, path = NULL)
 
-write_pkcs1(x, password = NULL)
+write_pkcs1(x, path = NULL, password = NULL)
 
 write_ssh(pubkey, path = NULL)
 }

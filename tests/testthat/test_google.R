@@ -4,19 +4,19 @@ context("Google SSL tests")
 
 test_that("google certs validate", {
   cert <- download_ssl_cert('good.r1demo.pki.goog')
-  ca <- read_cert('https://pki.goog/gtsr1/GTSR1.crt')
+  ca <- read_cert('https://pki.goog/gtsr1/GTSR1.crt', der = TRUE)
   expect_true(cert_verify(cert, ca))
 
   cert <- download_ssl_cert('good.r2demo.pki.goog')
-  ca <- read_cert('https://pki.goog/gtsr2/GTSR2.crt')
+  ca <- read_cert('https://pki.goog/gtsr2/GTSR2.crt', der = TRUE)
   expect_true(cert_verify(cert, ca))
 
   cert <- download_ssl_cert('good.r3demo.pki.goog')
-  ca <- read_cert('https://pki.goog/gtsr3/GTSR3.crt')
+  ca <- read_cert('https://pki.goog/gtsr3/GTSR3.crt', der = TRUE)
   expect_true(cert_verify(cert, ca))
 
   cert <- download_ssl_cert('good.r4demo.pki.goog')
-  ca <- read_cert('https://pki.goog/gtsr4/GTSR4.crt')
+  ca <- read_cert('https://pki.goog/gtsr4/GTSR4.crt', der = TRUE)
   expect_true(cert_verify(cert, ca))
 
   # Google messed up, server doesn't work
@@ -25,6 +25,6 @@ test_that("google certs validate", {
   #expect_true(cert_verify(cert, ca))
 
   cert <- download_ssl_cert('2038r4.globalsign.com')
-  ca <- read_cert('https://pki.goog/gsr4/GSR4.crt')
+  ca <- read_cert('https://pki.goog/gsr4/GSR4.crt', der = TRUE)
   expect_true(cert_verify(cert, ca))
 })

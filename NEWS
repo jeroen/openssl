@@ -1,3 +1,6 @@
+1.0.1
+ - Fix a unit test from  http://pki.goog/ (google changed servers)
+
 1.0
  - Add the 'name' field to read_p12() output
  - Add write_pkcs1() for legacy OpenSSH keys

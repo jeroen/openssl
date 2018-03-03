@@ -16,8 +16,8 @@ test_that("google certs validate", {
   expect_true(cert_verify(download_ssl_cert('good.r2demo.pki.goog'), gtsr2))
   expect_true(cert_verify(download_ssl_cert('good.r3demo.pki.goog'), gtsr3))
   expect_true(cert_verify(download_ssl_cert('good.r4demo.pki.goog'), gtsr4))
-  #expect_true(cert_verify(download_ssl_cert('2021.globalsign.com'), gsr2))
-  expect_true(cert_verify(download_ssl_cert('2038r4.globalsign.com'), gsr4))
+  expect_true(cert_verify(download_ssl_cert('good.gsr2demo.pki.goog'), gsr2))
+  expect_true(cert_verify(download_ssl_cert('good.gsr4demo.pki.goog'), gsr4))
 
   # Test expired servers
   expect_error(cert_verify(download_ssl_cert('expired.r1demo.pki.goog'), gtsr1), 'expired')

@@ -10,6 +10,11 @@ init:
 install:
   ps: Bootstrap
 
+environment:
+  matrix:
+    - R_VERSION: stable
+    - R_VERSION: patched
+
 # Adapt as necessary starting from here
 
 build_script:

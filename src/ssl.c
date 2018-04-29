@@ -32,6 +32,48 @@ const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #include <openssl/ssl.h>
 #include "utils.h"
 
+#ifdef _WIN32
+#define NONBLOCK_OK (WSAGetLastError() == WSAEWOULDBLOCK)
+void set_nonblocking(int sockfd){
+  u_long nonblocking = 1;
+  ioctlsocket(sockfd, FIONBIO, &nonblocking);
+}
+
+void set_blocking(int sockfd){
+  u_long nonblocking = 0;
+  ioctlsocket(sockfd, FIONBIO, &nonblocking);
+}
+
+const char *formatError(DWORD res){
+  static char buf[1000], *p;
+  FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL, res,
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                buf, 1000, NULL);
+  p = buf+strlen(buf) -1;
+  if(*p == '\n') *p = '\0';
+  p = buf+strlen(buf) -1;
+  if(*p == '\r') *p = '\0';
+  p = buf+strlen(buf) -1;
+  if(*p == '.') *p = '\0';
+  return buf;
+}
+#define getsyserror() formatError(GetLastError())
+#else
+#define NONBLOCK_OK (errno == EINPROGRESS)
+void set_nonblocking(int sockfd){
+  long arg = fcntl(sockfd, F_GETFL, NULL);
+  arg |= O_NONBLOCK;
+  fcntl(sockfd, F_SETFL, arg);
+}
+void set_blocking(int sockfd){
+  long arg = fcntl(sockfd, F_GETFL, NULL);
+  arg &= ~O_NONBLOCK;
+  fcntl(sockfd, F_SETFL, arg);
+}
+#define getsyserror() strerror(errno)
+#endif
+
 void check_interrupt_fn(void *dummy) {
   R_CheckUserInterrupt();
 }
@@ -69,19 +111,10 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
     inet_ntop(AF_INET6, &(sa_in->sin6_addr), ip, INET6_ADDRSTRLEN);
   }
 
-  /* Set to non-blocking mode */
-#ifdef _WIN32
-  u_long nonblocking = 1;
-  ioctlsocket(sockfd, FIONBIO, &nonblocking);
-#define NONBLOCK_OK (WSAGetLastError() == WSAEWOULDBLOCK)
-#else
-  long arg = fcntl(sockfd, F_GETFL, NULL);
-  arg |= O_NONBLOCK;
-  fcntl(sockfd, F_SETFL, arg);
-#define NONBLOCK_OK (errno == EINPROGRESS)
-#endif
+  /* Set temporary to non blocking */
+  set_blocking(sockfd);
 
-  /* Connect */
+  /* Connect data*/
   struct timeval tv;
   fd_set myset;
   tv.tv_sec = 5; // 5 sec timeout
@@ -90,22 +123,19 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   FD_SET(sockfd, &myset);
 
   /* Try to connect */
-  connect(sockfd, addr->ai_addr, (int)addr->ai_addrlen);
-  if(!NONBLOCK_OK || select(FD_SETSIZE, NULL, &myset, NULL, &tv) < 1){
+  if(connect(sockfd, addr->ai_addr, (int)addr->ai_addrlen) < 0 && !NONBLOCK_OK){
     close(sockfd);
-    error("Failed to connect to %s on port %d", ip, port);
+    Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
+  }
+
+  if(select(FD_SETSIZE, NULL, &myset, NULL, &tv) < 1){
+    close(sockfd);
+    Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
   }
   freeaddrinfo(addr);
 
-  /* Set back in blocking mode */
-#ifdef _WIN32
-  nonblocking = 0;
-  ioctlsocket(sockfd, FIONBIO, &nonblocking);
-#else
-  arg = fcntl(sockfd, F_GETFL, NULL);
-  arg &= (~O_NONBLOCK);
-  fcntl(sockfd, F_SETFL, arg);
-#endif
+  /* Connection OK. Set back in blocking mode */
+  set_blocking(sockfd);
 
   int err = 0;
   socklen_t errbuf = sizeof (err);
@@ -127,7 +157,15 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   SSL_set_fd(ssl, sockfd);
   int con = SSL_connect(ssl);
   close(sockfd);
-  bail(con > 0);
+  if(con != 1){
+    switch(SSL_get_error(ssl, con)){
+    case SSL_ERROR_SYSCALL:
+      Rf_error("Failure to perform SSH handshake: %s", strerror(errno));
+      break;
+    default:
+      raise_error();
+    }
+  }
 
   /* Convert certs to RAW. Not sure if I should free these */
   STACK_OF(X509) *chain = SSL_get_peer_cert_chain(ssl);

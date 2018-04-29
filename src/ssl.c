@@ -113,11 +113,11 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
 
   /* Connect data*/
   struct timeval tv;
-  fd_set myset;
+  fd_set writefds;
   tv.tv_sec = 5; // 5 sec timeout
   tv.tv_usec = 0;
-  FD_ZERO(&myset);
-  FD_SET(sockfd, &myset);
+  FD_ZERO(&writefds);
+  FD_SET(sockfd, &writefds);
 
   /* Try to connect, but don't block. We block with timeout in select() below*/
   set_nonblocking(sockfd);
@@ -128,8 +128,8 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
 
   /* Block with timeout */
   set_blocking(sockfd);
-  int ready = select(FD_SETSIZE, NULL, &myset, NULL, &tv);
-  if(ready < 1){
+  int ready = select(sockfd + 1, NULL, &writefds, NULL, &tv);
+  if(ready < 1 || !FD_ISSET(sockfd, &writefds)){
     close(sockfd);
     Rf_error("Failed to connect to %s on port %d (%s)", ip, port, ready ? getsyserror() : "Timeout reached");
   }

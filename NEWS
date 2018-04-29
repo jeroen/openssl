@@ -1,3 +1,6 @@
+1.0.2
+ - Improve system error messages in download_ssl_cert()
+
 1.0.1
  - Fix a unit test from  http://pki.goog/ (google changed servers)
 

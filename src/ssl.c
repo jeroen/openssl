@@ -125,12 +125,13 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
     close(sockfd);
     Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
   }
-  set_blocking(sockfd);
 
   /* Block with timeout */
-  if(select(FD_SETSIZE, NULL, &myset, NULL, &tv) < 1){
+  set_blocking(sockfd);
+  int ready = select(FD_SETSIZE, NULL, &myset, NULL, &tv);
+  if(ready < 1){
     close(sockfd);
-    Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
+    Rf_error("Failed to connect to %s on port %d (%s)", ip, port, ready ? getsyserror() : "Timeout reached");
   }
   freeaddrinfo(addr);
 

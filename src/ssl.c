@@ -158,7 +158,7 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   if(con != 1){
     switch(SSL_get_error(ssl, con)){
     case SSL_ERROR_SYSCALL:
-      Rf_error("Failure to perform SSH handshake: %s", strerror(errno));
+      Rf_error("Failure to perform TLS handshake: %s", strerror(errno));
       break;
     default:
       raise_error();

@@ -111,9 +111,6 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
     inet_ntop(AF_INET6, &(sa_in->sin6_addr), ip, INET6_ADDRSTRLEN);
   }
 
-  /* Set temporary to non blocking */
-  set_blocking(sockfd);
-
   /* Connect data*/
   struct timeval tv;
   fd_set myset;
@@ -122,20 +119,20 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   FD_ZERO(&myset);
   FD_SET(sockfd, &myset);
 
-  /* Try to connect */
+  /* Try to connect, but don't block. We block with timeout in select() below*/
+  set_nonblocking(sockfd);
   if(connect(sockfd, addr->ai_addr, (int)addr->ai_addrlen) < 0 && !NONBLOCK_OK){
     close(sockfd);
     Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
   }
+  set_blocking(sockfd);
 
+  /* Block with timeout */
   if(select(FD_SETSIZE, NULL, &myset, NULL, &tv) < 1){
     close(sockfd);
     Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
   }
   freeaddrinfo(addr);
-
-  /* Connection OK. Set back in blocking mode */
-  set_blocking(sockfd);
 
   int err = 0;
   socklen_t errbuf = sizeof (err);

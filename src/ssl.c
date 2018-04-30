@@ -122,12 +122,13 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   /* Try to connect, but don't block forever */
   set_nonblocking(sockfd);
   int err = connect(sockfd, addr->ai_addr, (int)addr->ai_addrlen);
+  int in_progress = NONBLOCK_OK;
   set_blocking(sockfd);
   freeaddrinfo(addr);
 
   /* Non-zero can either mean error or non-block in-progress */
   if(err < 0){
-    if(NONBLOCK_OK){
+    if(in_progress){
       int ready = select(sockfd + 1, NULL, &writefds, NULL, &tv);
       if(ready < 1 || !FD_ISSET(sockfd, &writefds)){
         close(sockfd);

@@ -8,7 +8,7 @@
 \usage{
 cert_verify(cert, root = ca_bundle())
 
-download_ssl_cert(host = "localhost", port = 443)
+download_ssl_cert(host = "localhost", port = 443, ipv4_only = FALSE)
 
 ca_bundle()
 }
@@ -20,6 +20,8 @@ ca_bundle()
 \item{host}{string: hostname of the server to connect to}
 
 \item{port}{string or integer: port or protocol to use, e.g: \code{443} or \code{"https"}}
+
+\item{ipv4_only}{do not use IPv6 connections}
 }
 \description{
 Read, download, analyze and verify X.509 certificates.

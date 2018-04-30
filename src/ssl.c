@@ -119,23 +119,27 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   FD_ZERO(&writefds);
   FD_SET(sockfd, &writefds);
 
-  /* Try to connect, but don't block. We block with timeout in select() below*/
+  /* Try to connect, but don't block forever */
   set_nonblocking(sockfd);
   int err = connect(sockfd, addr->ai_addr, (int)addr->ai_addrlen);
   set_blocking(sockfd);
-  if(err < 0 && !NONBLOCK_OK){
-    close(sockfd);
-    Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
-  } else if (err < 0){
-    int ready = select(sockfd + 1, NULL, &writefds, NULL, &tv);
-    if(ready < 1 || !FD_ISSET(sockfd, &writefds)){
+  freeaddrinfo(addr);
+
+  /* Non-zero can either mean error or non-block in-progress */
+  if(err < 0){
+    if(NONBLOCK_OK){
+      int ready = select(sockfd + 1, NULL, &writefds, NULL, &tv);
+      if(ready < 1 || !FD_ISSET(sockfd, &writefds)){
+        close(sockfd);
+        Rf_error("Failed to connect to %s on port %d (%s)", ip, port, ready ? getsyserror() : "Timeout reached");
+      }
+    } else {
       close(sockfd);
-      Rf_error("Failed to connect to %s on port %d (%s)", ip, port, ready ? getsyserror() : "Timeout reached");
+      Rf_error("Failed to connect to %s on port %d (%s)", ip, port, getsyserror());
     }
   }
 
   /* test connection is ready */
-  freeaddrinfo(addr);
   socklen_t errbuf = sizeof (err);
   if(getsockopt (sockfd, SOL_SOCKET, SO_ERROR, (char*) &err, &errbuf) || err){
     close(sockfd);

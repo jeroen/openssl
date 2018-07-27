@@ -9,7 +9,7 @@ pk1 <- read_pubkey("../keys/id_ecdsa521.pub")
 test_that("reading protected keys", {
   sk2 <- read_key("../keys/id_ecdsa521.pw", password = "test")
   expect_equal(sk1, sk2)
-  expect_error(read_key("../keys/id_ecdsa521.pw", password = NULL), "bad password")
+  expect_error(read_key("../keys/id_ecdsa521.pw", password = NULL), "bad")
 })
 
 test_that("reading public key formats", {

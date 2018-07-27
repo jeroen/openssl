@@ -14,3 +14,4 @@ tools/benchmark.R
 ^src/main.exe$
 ^appveyor.yml$
 ^COPYING$
+^LICENSE\.md$

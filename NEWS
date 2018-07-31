@@ -1,10 +1,5 @@
 1.0.2
  - Improve system error messages in download_ssl_cert()
-
-1.0.1
- - Fix a unit test from  http://pki.goog/ (google changed servers)
-
-1.0.2
  - Fix unit test (password error message) for libcrypto 1.1.1
 
 1.0.1

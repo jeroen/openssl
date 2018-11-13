@@ -50,7 +50,7 @@ SEXP R_md_final(SEXP md){
 
 void fin_hmac(SEXP ptr){
   if(!R_ExternalPtrAddr(ptr)) return;
-#if HAS_OPENSSL11
+#ifdef HAS_OPENSSL11_API
   HMAC_CTX_free(R_ExternalPtrAddr(ptr));
 #else
   HMAC_CTX_cleanup(R_ExternalPtrAddr(ptr));
@@ -63,7 +63,7 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
   const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
   if(!md)
     error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
-#if HAS_OPENSSL11
+#ifdef HAS_OPENSSL11_API
   HMAC_CTX* ctx = HMAC_CTX_new();
 #else
   HMAC_CTX* ctx = malloc(sizeof(HMAC_CTX));

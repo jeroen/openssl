@@ -4,7 +4,7 @@
 
 #include "compatibility.h"
 
-#if ! HAS_OPENSSL11
+#ifndef HAS_OPENSSL11_API
 
 int MY_RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d){
   if(n) r->n = n;

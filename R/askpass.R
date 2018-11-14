@@ -22,7 +22,7 @@ promt_pass <- function(prompt){
 readline_silent <- function(prompt){
   if(is_unix() && isatty(stdin())){
     if(system('stty -echo') == 0){
-      on.exit(system('stty echo'))
+      on.exit({system('stty echo'); cat("\n")})
     }
   }
   base::readline(prompt)
@@ -30,7 +30,7 @@ readline_silent <- function(prompt){
 
 readline_bash <- function(prompt){
   args <- sprintf('-s -p "%s" password && echo $password', prompt)
-  on.exit(cat('\n'))
+  on.exit({system('stty echo'); cat("\n")})
   system2('read', args, stdout = TRUE)
 }
 

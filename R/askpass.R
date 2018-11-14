@@ -14,11 +14,13 @@ askpass <- function(prompt = "Please enter your password: "){
 readline_silent <- function(prompt){
   if(is_unix() && isatty(stdin())){
     if(system('stty -echo') == 0){
-      on.exit({system('stty echo'); cat("\n")})
+      on.exit(system('stty echo'))
     }
   }
   cat(prompt, "\n")
-  base::readline("\U0001f511")
+  out <- base::readline("\U0001f511 ")
+  cat(" OK\n")
+  out
 }
 
 readline_bash <- function(prompt){

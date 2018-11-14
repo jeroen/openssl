@@ -7,6 +7,8 @@
 #' @export
 #' @param prompt the string printed when prompting the user for input.
 askpass <- function(prompt = "Please enter your password: "){
+  if(!interactive())
+    return(NULL)
   FUN <- getOption("askpass", readline_silent)
   FUN(prompt)
 }

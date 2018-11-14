@@ -3,7 +3,6 @@
 \name{rand_bytes}
 \alias{rand_bytes}
 \alias{rand_num}
-\alias{rand_num}
 \title{Generate random bytes and numbers with OpenSSL}
 \usage{
 rand_bytes(n = 1)

@@ -4,7 +4,6 @@
 \name{openssl}
 \alias{openssl}
 \alias{openssl-package}
-\alias{openssl-package}
 \title{Toolkit for Encryption, Signatures and Certificates based on OpenSSL}
 \description{
 Bindings to OpenSSL libssl and libcrypto, plus custom SSH \link[openssl:read_key]{pubkey}

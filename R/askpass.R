@@ -7,16 +7,8 @@
 #' @export
 #' @param prompt the string printed when prompting the user for input.
 askpass <- function(prompt = "Please enter your password: "){
-  FUN <- getOption("askpass", promt_pass)
+  FUN <- getOption("askpass", readline_silent)
   FUN(prompt)
-}
-
-promt_pass <- function(prompt){
-  if(is_macos() && isatty(stdin())){
-    readline_bash(prompt)
-  } else {
-    readline_silent(prompt)
-  }
 }
 
 readline_silent <- function(prompt){
@@ -25,7 +17,8 @@ readline_silent <- function(prompt){
       on.exit({system('stty echo'); cat("\n")})
     }
   }
-  base::readline(prompt)
+  cat(prompt, "\n")
+  base::readline("\U0001f511")
 }
 
 readline_bash <- function(prompt){

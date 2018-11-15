@@ -14,14 +14,4 @@ test_that("reading protected keys", {
   Sys.setenv("USER_KEY" = tmp_key)
   expect_equal(sk1, my_key())
   expect_equal(pk1, my_pubkey())
-
-  # Test default pubkey key
-  Sys.setenv("USER_PUBKEY" = tmp_pubkey)
-  expect_equal(pk1, my_pubkey())
-
-  Sys.unsetenv("USER_KEY")
-  expect_equal(pk1, my_pubkey())
-
-  # Clean up to prevent side effects
-  Sys.unsetenv("USER_PUBKEY")
 })

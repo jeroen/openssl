@@ -1,4 +1,7 @@
-1.0.3
+1.1
+ - Windows (breaking): my_key() and my_pubkey() now interpret ~/ as windows
+   home dir instead of documents dir, for compatibility with other software.
+ - My pubkey
  - Use the OpenSSL 1.1 API in LibreSSL 2.7
  - Suppress echo in askpass if stdin is a tty
 

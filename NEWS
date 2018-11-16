@@ -1,5 +1,6 @@
 1.1.1
  - MacOS: askpass() on R.app now uses applescript for password entry
+ - Windows: askpass() now defaults to a native credential entry box
 
 1.1
  - MacOS and Windows binaries now ship with libssl 1.1.1 (TLS 1.3 support)

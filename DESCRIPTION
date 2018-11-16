@@ -28,3 +28,4 @@ Suggests:
     jsonlite,
     jose
 RoxygenNote: 6.1.1
+Encoding: UTF-8

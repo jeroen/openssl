@@ -14,7 +14,9 @@ askpass <- function(prompt = "Please enter your password: "){
 }
 
 ask_password_default <- function(prompt){
-  if(is_macos() && !isatty(stdin())){
+  if(is_windows()){
+    native_password_entry(prompt, "R")
+  } else if(is_macos() && !isatty(stdin())){
     applescript_password(prompt)
   } else {
     readline_silent(prompt)
@@ -55,4 +57,10 @@ is_macos <- function(){
 
 out_without_eol <- function(x){
   sub("\n$", "", rawToChar(x))
+}
+
+#' @useDynLib openssl pw_entry_dialog
+native_password_entry <- function(x, user = NULL){
+  stopifnot(is.character(x) && length(x))
+  .Call(pw_entry_dialog, x, user)
 }

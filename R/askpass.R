@@ -23,11 +23,11 @@ ask_password_default <- function(prompt){
   }
 }
 
-windows_askpass <- function(prompt){
+windows_askpass <- function(prompt, user = "NA"){
   arch <- .Machine$sizeof.pointer * 8;
-  win_askpass <- system.file(paste0('win-askpass', arch),
+  win_askpass <- system.file(sprintf('win-askpass%d.exe', arch),
                              package = 'openssl', mustWork = TRUE)
-  res <- sys::exec_internal(win_askpass, prompt)
+  res <- sys::exec_internal(win_askpass, c(prompt, user))
   out_without_eol(res$stdout)
 }
 

@@ -1,18 +1,13 @@
 VERSION=1.1.1
 PKG_CPPFLAGS= -I../windows/openssl-$(VERSION)/include
 PKG_LIBS= $(WIN32FIX) -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
-	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32 -lcredui
+	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 WIN32FIX=win32/ipv6.o
-ASKPASS=../inst/win-askpass$(WIN).exe
-ASKPASSOBJ=win32/win-askpass.o
 
-all: clean winlibs $(WIN32FIX) $(ASKPASS)
+all: clean winlibs $(WIN32FIX)
 
 clean:
-	rm -f $(SHLIB) $(OBJECTS) $(WIN32FIX) $(ASKPASS)
+	rm -f $(SHLIB) $(OBJECTS) $(WIN32FIX)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
-
-$(ASKPASS): $(ASKPASSOBJ)
-	$(CC) $(CFLAGS) -o $(ASKPASS) $(ASKPASSOBJ) -lcredui

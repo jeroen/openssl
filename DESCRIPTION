@@ -19,7 +19,7 @@ URL: https://github.com/jeroen/openssl#readme
 BugReports: https://github.com/jeroen/openssl/issues
 SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr
-Imports: sys
+Imports: askpass
 Suggests:
     testthat,
     digest,

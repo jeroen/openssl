@@ -26,7 +26,7 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   if(isFunction(cb)){
     int err;
     SEXP prompt = PROTECT(mkString("Please enter private key passphrase: "));
-    Rf_setAttrib(prompt, R_NameSymbol, mkString("PRIVATE KEY"));
+    Rf_setAttrib(prompt, R_NamesSymbol, mkString("PRIVATE KEY"));
     SEXP call = PROTECT(LCONS(cb, LCONS(prompt, R_NilValue)));
     SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
     if(err || !isString(res)){

@@ -25,15 +25,16 @@ int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   /* case where password is an R function */
   if(isFunction(cb)){
     int err;
-    SEXP call = PROTECT(LCONS(cb, LCONS(mkString("Please enter private key passphrase: "), R_NilValue)));
+    SEXP prompt = PROTECT(mkString("Please enter private key passphrase: "));
+    Rf_setAttrib(prompt, R_NameSymbol, mkString("PRIVATE KEY"));
+    SEXP call = PROTECT(LCONS(cb, LCONS(prompt, R_NilValue)));
     SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
     if(err || !isString(res)){
-      UNPROTECT(2);
       error("Password callback did not return a string value");
     }
     strncpy(buf, CHAR(STRING_ELT(res, 0)), max_size);
     buf[max_size-1] = '\0';
-    UNPROTECT(2);
+    UNPROTECT(3);
     return strlen(buf);
   }
   error("Callback must be string or function");

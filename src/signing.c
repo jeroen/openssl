@@ -77,22 +77,34 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
 }
 
 SEXP R_parse_sig(SEXP buf){
-  const char *names[] = {"r", "s", ""};
+  const char *dsanames[] = {"r", "s", ""};
+  const char *rsanames[] = {"s", ""};
   const unsigned char *p = RAW(buf);
-  SEXP out = PROTECT(Rf_mkNamed(VECSXP, names));
   if(Rf_inherits(buf, "ecdsa")){
     ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
     bail(!!sig);
+    SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
     SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
     SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+    UNPROTECT(1);
+    return out;
   } else if(Rf_inherits(buf, "dsa")){
     DSA_SIG *sig = d2i_DSA_SIG(NULL, &p, Rf_length(buf));
     bail(!!sig);
+    SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
     SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
     SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+    UNPROTECT(1);
+    return out;
+  } else if(Rf_inherits(buf, "rsa")){
+    // I think for RSA the signature itself is just a single bignum?
+    SEXP out = PROTECT(Rf_mkNamed(VECSXP, rsanames));
+    SEXP val = PROTECT(Rf_duplicate(buf));
+    Rf_setAttrib(val, R_ClassSymbol, mkString("bignum"));
+    SET_VECTOR_ELT(out, 0, val);
+    UNPROTECT(2);
+    return out;
   } else {
-    Rf_error("Signature must have class 'dsa' or 'ecdsa'");
+    Rf_error("Signature must have class 'rsa', 'dsa' or 'ecdsa'");
   }
-  UNPROTECT(1);
-  return out;
 }

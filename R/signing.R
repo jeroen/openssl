@@ -74,6 +74,6 @@ as.list.sig <- function(x, ...){
 
 #' @export
 print.sig <- function(x, sep = ":", ...){
-  data <- as.list(x)
-  cat(sprintf("[%d-bit %s signature]\n", length(data$r) * 2, class(x)[2]))
+  size <- ifelse(inherits(x, 'rsa'), length(x), 2 * length(as.list(x)$r))
+  cat(sprintf("[%d-bit %s signature]\n", size, class(x)[2]))
 }

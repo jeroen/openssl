@@ -7,6 +7,10 @@
 #include <openssl/pem.h>
 #include <openssl/hmac.h>
 #include "utils.h"
+#include "compatibility.h"
+
+SEXP bignum2r(const BIGNUM *val);
+BIGNUM *r2bignum(SEXP x);
 
 static const EVP_MD* guess_hashfun(int length){
   switch(length){
@@ -72,4 +76,33 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   return ScalarLogical(1);
+}
+
+/* Note: DSA and ECDSA signatures have the same ASN.1 structure */
+SEXP R_parse_ecdsa(SEXP buf){
+  const char *dsanames[] = {"r", "s", ""};
+  const unsigned char *p = RAW(buf);
+  ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
+  bail(!!sig);
+  SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
+  const BIGNUM *r = NULL;
+  const BIGNUM *s = NULL;
+  MY_ECDSA_SIG_get0(sig, &r, &s);
+  SET_VECTOR_ELT(out, 0, bignum2r(r));
+  SET_VECTOR_ELT(out, 1, bignum2r(s));
+  UNPROTECT(1);
+  return out;
+}
+
+SEXP R_write_ecdsa(SEXP r, SEXP s){
+  ECDSA_SIG *sig = ECDSA_SIG_new();
+  bail(MY_ECDSA_SIG_set0(sig, r2bignum(r), r2bignum(s)));
+  unsigned char *buf;
+  int siglen = i2d_ECDSA_SIG(sig, &buf);
+  bail(siglen > 0);
+  SEXP res = allocVector(RAWSXP, siglen);
+  memcpy(RAW(res), buf, siglen);
+  //Free'ing crashes some old openssl, don't know why
+  //ECDSA_SIG_free(sig);
+  return res;
 }

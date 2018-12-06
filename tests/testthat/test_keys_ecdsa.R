@@ -37,16 +37,20 @@ test_that("signatures", {
   # SHA1 signature
   sig <- readBin("../keys/message.sig.ecdsa.sha1", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha1, pk1))
+  expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
 
   sig <- signature_create(msg, sha1, sk1)
   expect_true(signature_verify(msg, sig, sha1, pk1))
+  expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
 
   # SHA256 signature
   sig <- readBin("../keys/message.sig.ecdsa.sha256", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha256, pk1))
+  expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
 
   sig <- signature_create(msg, sha256, sk1)
   expect_true(signature_verify(msg, sig, sha256, pk1))
+  expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
 })
 
 test_that("roundtrip pem format", {
@@ -67,6 +71,7 @@ test_that("signature path interface", {
   sig <- signature_create("../keys/message", sha256, "../keys/id_ecdsa")
   writeBin(sig, tmp <- tempfile())
   expect_true(signature_verify("../keys/message", tmp, sha256, "../keys/id_ecdsa.pub"))
+  expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
 })
 
 test_that("ec_keygen works", {

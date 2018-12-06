@@ -3,12 +3,18 @@
 \name{signature_create}
 \alias{signature_create}
 \alias{signature_verify}
+\alias{ecdsa_parse}
+\alias{ecdsa_write}
 \title{Signatures}
 \usage{
 signature_create(data, hash = sha1, key = my_key(),
   password = askpass)
 
 signature_verify(data, sig, hash = sha1, pubkey = my_pubkey())
+
+ecdsa_parse(sig)
+
+ecdsa_write(r, s)
 }
 \arguments{
 \item{data}{raw data vector or file path for message to be signed.
@@ -24,10 +30,19 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \item{sig}{raw vector or file path for the signature data.}
 
 \item{pubkey}{public key or file path. See \code{\link{read_pubkey}}.}
+
+\item{r}{bignum value for r parameter}
+
+\item{s}{bignum value for s parameter}
 }
 \description{
 Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 whereas DSA and EC keys only support SHA.
+}
+\details{
+The \code{signature_parse} function can only be used for DSA and ECDSA signatures.
+It returns a list with the \code{r} and \code{s} bignums, which are needed
+by JWT.
 }
 \examples{
 # Generate a keypair
@@ -48,4 +63,16 @@ stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
 md <- md5(data)
 sig <- signature_create(md, hash = NULL, key = key)
 stopifnot(signature_verify(md, sig, hash = NULL, pubkey = pubkey))
+#
+# ECDSA example
+data <- serialize(iris, NULL)
+key <- ec_keygen()
+pubkey <- key$pubkey
+sig <- signature_create(data, sha256, key = key)
+stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+
+# Parse the signature into the r and s parameter
+params <- ecdsa_parse(sig)
+out <- ecdsa_write(params$r, params$s)
+identical(sig, out)
 }

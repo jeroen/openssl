@@ -19,6 +19,8 @@
 #define MY_DSA_get0_pqg DSA_get0_pqg
 #define MY_DSA_get0_key DSA_get0_key
 #define MY_X509_get0_signature X509_get0_signature
+#define MY_ECDSA_SIG_get0 ECDSA_SIG_get0
+#define MY_ECDSA_SIG_set0 ECDSA_SIG_set0
 
 #else
 
@@ -33,5 +35,7 @@ int MY_DSA_set0_key(DSA *d, BIGNUM *pub_key, BIGNUM *priv_key);
 void MY_DSA_get0_pqg(const DSA *d, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g);
 void MY_DSA_get0_key(const DSA *d, const BIGNUM **pub_key, const BIGNUM **priv_key);
 void MY_X509_get0_signature(const ASN1_BIT_STRING **psig, const X509_ALGOR **palg, const X509 *x);
+void MY_ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
+int MY_ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s);
 
 #endif

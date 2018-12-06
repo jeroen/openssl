@@ -54,7 +54,7 @@ as.environment.pubkey <- as.environment.cert
   x <- as.list(x)
   matches <- grep(pattern, names(x), value = TRUE)
   structure(matches,
-    types = vapply(x[matches], typeof, character(1), USE.NAMES = FALSE))
+            types = vapply(x[matches], typeof, character(1), USE.NAMES = FALSE))
 }
 
 #' @export

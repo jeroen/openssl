@@ -3,6 +3,7 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include <openssl/pem.h>
 #include "utils.h"
 #include "compatibility.h"
 

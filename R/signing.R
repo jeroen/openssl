@@ -3,6 +3,10 @@
 #' Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 #' whereas DSA and EC keys only support SHA.
 #'
+#' The \code{signature_parse} function can only be used for DSA and ECDSA signatures.
+#' It returns a list with the \code{r} and \code{s} bignums, which are needed
+#' by JWT.
+#'
 #' @export
 #' @rdname signatures
 #' @param data raw data vector or file path for message to be signed.
@@ -37,7 +41,7 @@ signature_create <- function(data, hash = sha1, key = my_key(), password = askpa
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
   if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
     stop("data must be md5, sha1, or sha2 digest")
-  structure(hash_sign(md, sk), class = c("sig", pubkey_type(derive_pubkey(key))))
+  hash_sign(md, sk)
 }
 
 #' @export
@@ -52,6 +56,15 @@ signature_verify <- function(data, sig, hash = sha1, pubkey = my_pubkey()){
   hash_verify(md, sig, pk)
 }
 
+#' @export
+#' @rdname signatures
+#' @useDynLib openssl R_parse_ecdsa
+ecdsa_parse <- function(sig){
+  if(length(sig) > 150)
+    warning("You can only parse DSA and ECDSA signatures. This looks like an RSA signature.")
+  .Call(R_parse_ecdsa, sig)
+}
+
 #' @useDynLib openssl R_hash_sign
 hash_sign <- function(hash, key){
   .Call(R_hash_sign, hash, key)
@@ -60,20 +73,4 @@ hash_sign <- function(hash, key){
 #' @useDynLib openssl R_hash_verify
 hash_verify <- function(hash, sig, pubkey){
   .Call(R_hash_verify, hash, sig, pubkey)
-}
-
-#' @useDynLib openssl R_parse_sig
-parse_sig <- function(buf){
-  .Call(R_parse_sig, buf)
-}
-
-#' @export
-as.list.sig <- function(x, ...){
-  parse_sig(x)
-}
-
-#' @export
-print.sig <- function(x, sep = ":", ...){
-  size <- ifelse(inherits(x, 'rsa'), length(x), 2 * length(as.list(x)$r))
-  cat(sprintf("[%d-bit %s signature]\n", size, class(x)[2]))
 }

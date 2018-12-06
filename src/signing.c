@@ -77,41 +77,18 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   return ScalarLogical(1);
 }
 
-SEXP R_parse_sig(SEXP buf){
+/* Note: DSA and ECDSA signatures have the same ASN.1 structure */
+SEXP R_parse_ecdsa(SEXP buf){
   const char *dsanames[] = {"r", "s", ""};
-  const char *rsanames[] = {"s", ""};
   const unsigned char *p = RAW(buf);
-  if(Rf_inherits(buf, "ecdsa")){
-    ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
-    bail(!!sig);
-    SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
-    const BIGNUM *r = NULL;
-    const BIGNUM *s = NULL;
-    MY_ECDSA_SIG_get0(sig, &r, &s);
-    SET_VECTOR_ELT(out, 0, bignum2r(r));
-    SET_VECTOR_ELT(out, 1, bignum2r(s));
-    UNPROTECT(1);
-    return out;
-  } else if(Rf_inherits(buf, "dsa")){
-    DSA_SIG *sig = d2i_DSA_SIG(NULL, &p, Rf_length(buf));
-    bail(!!sig);
-    SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
-    const BIGNUM *r = NULL;
-    const BIGNUM *s = NULL;
-    MY_DSA_SIG_get0(sig, &r, &s);
-    SET_VECTOR_ELT(out, 0, bignum2r(r));
-    SET_VECTOR_ELT(out, 1, bignum2r(s));
-    UNPROTECT(1);
-    return out;
-  } else if(Rf_inherits(buf, "rsa")){
-    // I think for RSA the signature itself is just a single bignum?
-    SEXP out = PROTECT(Rf_mkNamed(VECSXP, rsanames));
-    SEXP val = PROTECT(Rf_duplicate(buf));
-    Rf_setAttrib(val, R_ClassSymbol, mkString("bignum"));
-    SET_VECTOR_ELT(out, 0, val);
-    UNPROTECT(2);
-    return out;
-  } else {
-    Rf_error("Signature must have class 'rsa', 'dsa' or 'ecdsa'");
-  }
+  ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
+  bail(!!sig);
+  SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
+  const BIGNUM *r = NULL;
+  const BIGNUM *s = NULL;
+  MY_ECDSA_SIG_get0(sig, &r, &s);
+  SET_VECTOR_ELT(out, 0, bignum2r(r));
+  SET_VECTOR_ELT(out, 1, bignum2r(s));
+  UNPROTECT(1);
+  return out;
 }

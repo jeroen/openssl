@@ -7,9 +7,6 @@
 #' @export
 `[[.pubkey` <- `[[.cert`
 
-#' @export
-`[[.sig` <- `[[.cert`
-
 
 #' @export
 `$.cert` <- `[[.cert`
@@ -19,9 +16,6 @@
 
 #' @export
 `$.pubkey` <- `[[.cert`
-
-#' @export
-`$.sig` <- `[[.cert`
 
 
 #' @export
@@ -33,9 +27,6 @@
 #' @export
 `[.pubkey` <- `[.cert`
 
-#' @export
-`[.sig` <- `[.cert`
-
 
 #' @export
 names.cert <- function(x) names(as.list(x))
@@ -45,9 +36,6 @@ names.key <- names.cert
 
 #' @export
 names.pubkey <- names.cert
-
-#' @export
-names.sig <- names.cert
 
 
 #' @export
@@ -59,9 +47,6 @@ as.environment.key <- as.environment.cert
 #' @export
 as.environment.pubkey <- as.environment.cert
 
-#' @export
-as.environment.sig <- as.environment.cert
-
 
 #' @export
 #' @importFrom utils .DollarNames
@@ -69,7 +54,7 @@ as.environment.sig <- as.environment.cert
   x <- as.list(x)
   matches <- grep(pattern, names(x), value = TRUE)
   structure(matches,
-    types = vapply(x[matches], typeof, character(1), USE.NAMES = FALSE))
+            types = vapply(x[matches], typeof, character(1), USE.NAMES = FALSE))
 }
 
 #' @export
@@ -78,17 +63,12 @@ as.environment.sig <- as.environment.cert
 #' @export
 .DollarNames.pubkey <- .DollarNames.cert
 
-#' @export
-.DollarNames.sig <- .DollarNames.cert
 
 #' @export
 str.cert <- function(object, ...) utils::str(as.list(object), ...)
 
 #' @export
 str.key <- str.cert
-
-#' @export
-str.sig <- str.cert
 
 #' @export
 str.pubkey <- function(object, ...){
@@ -112,9 +92,6 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 `[<-.pubkey` <- stopfun
 
 #' @export
-`[<-.sig` <- stopfun
-
-#' @export
 `[[<-.cert` <- stopfun
 
 #' @export
@@ -124,9 +101,6 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 `[[<-.pubkey` <- stopfun
 
 #' @export
-`[[<-.sig` <- stopfun
-
-#' @export
 `$<-.cert` <- stopfun
 
 #' @export
@@ -134,6 +108,3 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 
 #' @export
 `$<-.pubkey` <- stopfun
-
-#' @export
-`$<-.sig` <- stopfun

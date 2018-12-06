@@ -3,12 +3,15 @@
 \name{signature_create}
 \alias{signature_create}
 \alias{signature_verify}
+\alias{ecdsa_parse}
 \title{Signatures}
 \usage{
 signature_create(data, hash = sha1, key = my_key(),
   password = askpass)
 
 signature_verify(data, sig, hash = sha1, pubkey = my_pubkey())
+
+ecdsa_parse(sig)
 }
 \arguments{
 \item{data}{raw data vector or file path for message to be signed.
@@ -28,6 +31,11 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \description{
 Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 whereas DSA and EC keys only support SHA.
+}
+\details{
+The \code{signature_parse} function can only be used for DSA and ECDSA signatures.
+It returns a list with the \code{r} and \code{s} bignums, which are needed
+by JWT.
 }
 \examples{
 # Generate a keypair

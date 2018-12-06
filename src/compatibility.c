@@ -77,4 +77,10 @@ void MY_ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **p
   if(ps) *ps = sig->s;
 }
 
+int MY_ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s){
+  sig->r = r;
+  sig->s = s;
+  return 1;
+}
+
 #endif

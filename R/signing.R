@@ -59,10 +59,34 @@ signature_verify <- function(data, sig, hash = sha1, pubkey = my_pubkey()){
 #' @export
 #' @rdname signatures
 #' @useDynLib openssl R_parse_ecdsa
+#' @examples #
+#' # ECDSA example
+#' data <- serialize(iris, NULL)
+#' key <- ec_keygen()
+#' pubkey <- key$pubkey
+#' sig <- signature_create(data, sha256, key = key)
+#' stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+#'
+#' # Convert signature to (r, s) parameters and then back
+#' params <- ecdsa_parse(sig)
+#' out <- ecdsa_write(params$r, params$s)
+#' identical(sig, out)
 ecdsa_parse <- function(sig){
   if(length(sig) > 150)
     warning("You can only parse DSA and ECDSA signatures. This looks like an RSA signature.")
   .Call(R_parse_ecdsa, sig)
+}
+
+#' @export
+#' @rdname signatures
+#' @useDynLib openssl R_write_ecdsa
+#' @param r bignum value for r parameter
+#' @param s bignum value for s parameter
+ecdsa_write <- function(r, s){
+  stopifnot(is.raw(r), is.raw(s))
+  class(r) <- "bignum"
+  class(s) <- "bignum"
+  .Call(R_write_ecdsa, r, s)
 }
 
 #' @useDynLib openssl R_hash_sign

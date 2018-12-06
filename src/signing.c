@@ -10,6 +10,7 @@
 #include "compatibility.h"
 
 SEXP bignum2r(const BIGNUM *val);
+BIGNUM *r2bignum(SEXP x);
 
 static const EVP_MD* guess_hashfun(int length){
   switch(length){
@@ -91,4 +92,16 @@ SEXP R_parse_ecdsa(SEXP buf){
   SET_VECTOR_ELT(out, 1, bignum2r(s));
   UNPROTECT(1);
   return out;
+}
+
+SEXP R_write_ecdsa(SEXP r, SEXP s){
+  ECDSA_SIG *sig = ECDSA_SIG_new();
+  bail(MY_ECDSA_SIG_set0(sig, r2bignum(r), r2bignum(s)));
+  unsigned char *buf;
+  int siglen = i2d_ECDSA_SIG(sig, &buf);
+  bail(siglen > 0);
+  SEXP res = allocVector(RAWSXP, siglen);
+  memcpy(RAW(res), buf, siglen);
+  ECDSA_SIG_free(sig);
+  return res;
 }

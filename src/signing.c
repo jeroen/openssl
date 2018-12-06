@@ -7,8 +7,9 @@
 #include <openssl/pem.h>
 #include <openssl/hmac.h>
 #include "utils.h"
+#include "compatibility.h"
 
-SEXP bignum2r(BIGNUM *val);
+SEXP bignum2r(const BIGNUM *val);
 
 static const EVP_MD* guess_hashfun(int length){
   switch(length){
@@ -84,16 +85,22 @@ SEXP R_parse_sig(SEXP buf){
     ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
     bail(!!sig);
     SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
-    SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
-    SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+    const BIGNUM *r = NULL;
+    const BIGNUM *s = NULL;
+    MY_ECDSA_SIG_get0(sig, &r, &s);
+    SET_VECTOR_ELT(out, 0, bignum2r(r));
+    SET_VECTOR_ELT(out, 1, bignum2r(s));
     UNPROTECT(1);
     return out;
   } else if(Rf_inherits(buf, "dsa")){
     DSA_SIG *sig = d2i_DSA_SIG(NULL, &p, Rf_length(buf));
     bail(!!sig);
     SEXP out = PROTECT(Rf_mkNamed(VECSXP, dsanames));
-    SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
-    SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+    const BIGNUM *r = NULL;
+    const BIGNUM *s = NULL;
+    MY_DSA_SIG_get0(sig, &r, &s);
+    SET_VECTOR_ELT(out, 0, bignum2r(r));
+    SET_VECTOR_ELT(out, 1, bignum2r(s));
     UNPROTECT(1);
     return out;
   } else if(Rf_inherits(buf, "rsa")){

@@ -72,4 +72,14 @@ void MY_X509_get0_signature(const ASN1_BIT_STRING **psig, const X509_ALGOR **pal
   if(palg) *palg = x->sig_alg;
 }
 
+void MY_ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps){
+  if(pr) *pr = sig->r;
+  if(ps) *ps = sig->s;
+}
+
+void MY_DSA_SIG_get0(const DSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps){
+  if(pr) *pr = sig->r;
+  if(ps) *ps = sig->s;
+}
+
 #endif

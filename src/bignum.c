@@ -13,7 +13,7 @@ BIGNUM *r2bignum(SEXP x){
   return val;
 }
 
-SEXP bignum2r(BIGNUM *val){
+SEXP bignum2r(const BIGNUM *val){
   SEXP out = PROTECT(allocVector(RAWSXP, BN_num_bytes(val)));
   bail(BN_bn2bin(val, RAW(out)) >= 0);
   setAttrib(out, R_ClassSymbol, mkString("bignum"));

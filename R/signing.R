@@ -37,7 +37,7 @@ signature_create <- function(data, hash = sha1, key = my_key(), password = askpa
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
   if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
     stop("data must be md5, sha1, or sha2 digest")
-  hash_sign(md, sk)
+  structure(hash_sign(md, sk), class = c("signature", pubkey_type(derive_pubkey(key))))
 }
 
 #' @export
@@ -60,4 +60,14 @@ hash_sign <- function(hash, key){
 #' @useDynLib openssl R_hash_verify
 hash_verify <- function(hash, sig, pubkey){
   .Call(R_hash_verify, hash, sig, pubkey)
+}
+
+#' @useDynLib openssl R_parse_sig
+parse_sig <- function(buf){
+  .Call(R_parse_sig, buf)
+}
+
+#' @export
+as.list.signature <- function(x, ...){
+  parse_sig(x)
 }

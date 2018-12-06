@@ -8,6 +8,8 @@
 #include <openssl/hmac.h>
 #include "utils.h"
 
+SEXP bignum2r(BIGNUM *val);
+
 static const EVP_MD* guess_hashfun(int length){
   switch(length){
   case 16:
@@ -72,4 +74,25 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   return ScalarLogical(1);
+}
+
+SEXP R_parse_sig(SEXP buf){
+  const char *names[] = {"r", "s", ""};
+  const unsigned char *p = RAW(buf);
+  SEXP out = PROTECT(Rf_mkNamed(VECSXP, names));
+  if(Rf_inherits(buf, "ecdsa")){
+    ECDSA_SIG *sig = d2i_ECDSA_SIG(NULL, &p, Rf_length(buf));
+    bail(!!sig);
+    SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
+    SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+  } else if(Rf_inherits(buf, "dsa")){
+    DSA_SIG *sig = d2i_DSA_SIG(NULL, &p, Rf_length(buf));
+    bail(!!sig);
+    SET_VECTOR_ELT(out, 0, bignum2r(sig->r));
+    SET_VECTOR_ELT(out, 1, bignum2r(sig->s));
+  } else {
+    Rf_error("Signature must have class 'dsa' or 'ecdsa'");
+  }
+  UNPROTECT(1);
+  return out;
 }

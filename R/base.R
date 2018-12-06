@@ -7,6 +7,9 @@
 #' @export
 `[[.pubkey` <- `[[.cert`
 
+#' @export
+`[[.signature` <- `[[.cert`
+
 
 #' @export
 `$.cert` <- `[[.cert`
@@ -16,6 +19,9 @@
 
 #' @export
 `$.pubkey` <- `[[.cert`
+
+#' @export
+`$.signature` <- `[[.cert`
 
 
 #' @export
@@ -27,6 +33,9 @@
 #' @export
 `[.pubkey` <- `[.cert`
 
+#' @export
+`[.signature` <- `[.cert`
+
 
 #' @export
 names.cert <- function(x) names(as.list(x))
@@ -37,6 +46,9 @@ names.key <- names.cert
 #' @export
 names.pubkey <- names.cert
 
+#' @export
+names.signature <- names.cert
+
 
 #' @export
 as.environment.cert <- function(x) as.environment(as.list(x))
@@ -46,6 +58,9 @@ as.environment.key <- as.environment.cert
 
 #' @export
 as.environment.pubkey <- as.environment.cert
+
+#' @export
+as.environment.signature <- as.environment.cert
 
 
 #' @export
@@ -63,12 +78,17 @@ as.environment.pubkey <- as.environment.cert
 #' @export
 .DollarNames.pubkey <- .DollarNames.cert
 
+#' @export
+.DollarNames.signature <- .DollarNames.cert
 
 #' @export
 str.cert <- function(object, ...) utils::str(as.list(object), ...)
 
 #' @export
 str.key <- str.cert
+
+#' @export
+str.signature <- str.cert
 
 #' @export
 str.pubkey <- function(object, ...){
@@ -92,6 +112,9 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 `[<-.pubkey` <- stopfun
 
 #' @export
+`[<-.signature` <- stopfun
+
+#' @export
 `[[<-.cert` <- stopfun
 
 #' @export
@@ -101,6 +124,9 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 `[[<-.pubkey` <- stopfun
 
 #' @export
+`[[<-.signature` <- stopfun
+
+#' @export
 `$<-.cert` <- stopfun
 
 #' @export
@@ -108,3 +134,6 @@ stopfun <- function(..., value){ stop("object cannot be modified", call. = FALSE
 
 #' @export
 `$<-.pubkey` <- stopfun
+
+#' @export
+`$<-.signature` <- stopfun

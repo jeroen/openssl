@@ -40,9 +40,10 @@ Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 whereas DSA and EC keys only support SHA.
 }
 \details{
-The \code{signature_parse} function can only be used for DSA and ECDSA signatures.
-It returns a list with the \code{r} and \code{s} bignums, which are needed
-by JWT.
+The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures
+between the conventional DER format and the raw \code{(r,s)} bignum pair. Most
+users won't need this, it is mostly here to support the JWT format (which does not
+use DER).
 }
 \examples{
 # Generate a keypair
@@ -71,7 +72,7 @@ pubkey <- key$pubkey
 sig <- signature_create(data, sha256, key = key)
 stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
 
-# Parse the signature into the r and s parameter
+# Convert signature to (r, s) parameters and then back
 params <- ecdsa_parse(sig)
 out <- ecdsa_write(params$r, params$s)
 identical(sig, out)

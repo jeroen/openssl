@@ -3,9 +3,10 @@
 #' Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 #' whereas DSA and EC keys only support SHA.
 #'
-#' The \code{signature_parse} function can only be used for DSA and ECDSA signatures.
-#' It returns a list with the \code{r} and \code{s} bignums, which are needed
-#' by JWT.
+#' The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures
+#' between the conventional DER format and the raw \code{(r,s)} bignum pair. Most
+#' users won't need this, it is mostly here to support the JWT format (which does not
+#' use DER).
 #'
 #' @export
 #' @rdname signatures

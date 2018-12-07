@@ -1,6 +1,7 @@
-1.1.1
+1.2
  - askpass() has been moved into its own package and gains native programs
    for MacOS and Windows.
+ - Added ecdsa_parse() and ecdsa_write() to support JWT signatures (jose pkg)
 
 1.1
  - MacOS and Windows binaries now ship with libssl 1.1.1 (TLS 1.3 support)

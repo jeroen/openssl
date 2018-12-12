@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   if(!ctx)
     error("No password callback supplied.");

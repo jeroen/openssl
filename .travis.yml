@@ -6,7 +6,9 @@ fortran: false
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: precise
+      r: 3.2
+    - os: linux
       env: R_CODECOV=true
       r_check_args: '--use-valgrind'
     - os: osx

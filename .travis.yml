@@ -33,9 +33,7 @@ addons:
     - libssl-dev
     - valgrind
 
-r_github_packages:
-  - jeroenooms/jsonlite
-  - jimhester/covr
+r_packages: covr
 
 warnings_are_errors: true
 #r_check_revdep: true

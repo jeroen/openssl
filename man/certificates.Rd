@@ -32,18 +32,15 @@ at \url{https://ssldecoder.org}.
 }
 \examples{
 # Verify the r-project HTTPS cert
-chain <- download_ssl_cert("www.r-project.org", 443)
+chain <- download_ssl_cert("cloud.r-project.org", 443)
 print(chain)
-print(as.list(chain[[1]])$pubkey)
+cert_data <- as.list(chain[[1]])
+print(cert_data$pubkey)
+print(cert_data$alt_names)
 cert_verify(chain, ca_bundle())
 
-# Another example
-chain <- download_ssl_cert("public.opencpu.org")
-ocpu <- chain[[1]]
-as.list(ocpu)$subject
-
-# Write PEM format
-write_pem(ocpu)
+# Write cert in PEM format
+cat(write_pem(chain[[1]]))
 }
 \seealso{
 \link{read_cert}

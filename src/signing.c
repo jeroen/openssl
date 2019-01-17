@@ -102,7 +102,7 @@ SEXP R_write_ecdsa(SEXP r, SEXP s){
   bail(siglen > 0);
   SEXP res = allocVector(RAWSXP, siglen);
   memcpy(RAW(res), buf, siglen);
-  //Free'ing crashes some old openssl, don't know why
-  //ECDSA_SIG_free(sig);
+  free(buf);
+  ECDSA_SIG_free(sig);
   return res;
 }

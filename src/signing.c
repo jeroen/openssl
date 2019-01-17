@@ -97,7 +97,7 @@ SEXP R_parse_ecdsa(SEXP buf){
 SEXP R_write_ecdsa(SEXP r, SEXP s){
   ECDSA_SIG *sig = ECDSA_SIG_new();
   bail(MY_ECDSA_SIG_set0(sig, r2bignum(r), r2bignum(s)));
-  unsigned char *buf;
+  unsigned char *buf = NULL;
   int siglen = i2d_ECDSA_SIG(sig, &buf);
   bail(siglen > 0);
   SEXP res = allocVector(RAWSXP, siglen);

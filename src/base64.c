@@ -29,7 +29,6 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
 
   //Cleanup and return
   BIO_free_all(bio);
-  BUF_MEM_free(buf);
   return out;
 }
 

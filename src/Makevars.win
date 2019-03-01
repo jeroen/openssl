@@ -4,10 +4,16 @@ PKG_LIBS= $(WIN32FIX) -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 WIN32FIX=win32/ipv6.o
 
-all: clean winlibs $(WIN32FIX)
+#all: clean
 
-clean:
-	rm -f $(SHLIB) $(OBJECTS) $(WIN32FIX)
+$(SHLIB): $(WIN32FIX)
+
+$(OBJECTS): winlibs
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)
+
+.PHONY: all clean winlibs

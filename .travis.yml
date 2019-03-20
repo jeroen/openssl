@@ -10,7 +10,7 @@ matrix:
       r: 3.2
     - os: linux
       dist: xenial
-      r_check_args: '--use-valgrind'
+#      r_check_args: '--use-valgrind'
     - os: osx
       brew_packages: openssl
       after_success: R -e 'covr::codecov()'

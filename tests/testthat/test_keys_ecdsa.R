@@ -15,10 +15,12 @@ test_that("reading protected keys", {
 test_that("reading public key formats", {
   pk2 <- read_pubkey("../keys/id_ecdsa.pem")
   pk3 <- read_pubkey("../keys/id_ecdsa.pub")
-  pk4 <- as.list(sk1)$pubkey
+  pk4 <- read_pubkey("../keys/id_ecdsa.sshpub")
+  pk5 <- as.list(sk1)$pubkey
   expect_equal(pk1, pk2)
   expect_equal(pk1, pk3)
   expect_equal(pk1, pk4)
+  expect_equal(pk1, pk5)
 })
 
 test_that("pubkey ssh fingerprint", {

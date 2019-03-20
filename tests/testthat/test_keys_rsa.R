@@ -13,7 +13,7 @@ test_that("reading protected keys", {
 test_that("reading public key formats", {
   pk2 <- read_pubkey("../keys/id_rsa.pem")
   pk3 <- read_pubkey("../keys/id_rsa.pub")
-  pk4 <- read_pubkey("../keys/id_rsa.sshpem1")
+  pk4 <- read_pubkey("../keys/id_rsa.sshpub")
   pk5 <- read_pubkey("../keys/id_rsa.sshpem2")
   pk6 <- as.list(sk1)$pubkey
   expect_equal(pk1, pk2)

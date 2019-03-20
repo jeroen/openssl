@@ -98,11 +98,6 @@ ed25519_build_priv <- function(keydata){
   stop("unimplemented")
 }
 
-ecdsa_build_priv <- function(keydata){
-  browser()
-  stop("unimplemented")
-}
-
 rsa_build <- function(keydata){
   exp <- keydata[[2]]
   mod <- keydata[[3]]
@@ -133,6 +128,25 @@ ecdsa_build <- function(keydata){
   x <- utils::head(ec_point, curve_size)
   y <- utils::tail(ec_point, curve_size)
   structure(ecdsa_pubkey_build(x, y, nist_name), class = c("pubkey", "ecdsa"))
+}
+
+ecdsa_build_priv <- function(keydata){
+  curve_name <- rawToChar(keydata[[2]])
+  nist_name <- switch(curve_name,
+    "nistp256" = "P-256",
+    "nistp384" = "P-384",
+    "nistp521" = "P-521",
+    stop("Unsupported curve type: ", curve_name)
+  );
+  ec_point <- keydata[[3]]
+  if(ec_point[1] != 0x04)
+    stop("Invalid ecdsa format (not uncompressed?)")
+  ec_point <- ec_point[-1];
+  curve_size <- length(ec_point)/2
+  x <- utils::head(ec_point, curve_size)
+  y <- utils::tail(ec_point, curve_size)
+  secret <- keydata[[4]]
+  ecdsa_key_build(x, y, secret, nist_name)
 }
 
 ed25519_build <- function(keydata){

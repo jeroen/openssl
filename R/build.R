@@ -29,6 +29,6 @@ ecdsa_pubkey_build <- function(x, y, nist_name){
 }
 
 #' @useDynLib openssl R_ecdsa_key_build
-ecdsa_key_build <- function(x, y, d, nist_name){
-  .Call(R_ecdsa_key_build, x, y, d, nist_name)
+ecdsa_key_build <- function(x, y, secret, nist_name){
+  .Call(R_ecdsa_key_build, x, y, secret, nist_name)
 }

@@ -164,9 +164,16 @@ parse_openssh_key_private <- function(input){
   data <- parse_openssh_key_data(input)
   ciphername <- data$ciphername
   kdfname <- data$kdfname
-  if(ciphername != "none" || kdfname != "none")
-    stop("Encrypted openssh keys not yet implemented")
-  kdfoptions <- parse_openssh_kdfoptions(data$kdfoptions)
+  if(kdfname == "bcrypt"){
+    kdfoptions <- parse_openssh_kdfoptions(data$kdfoptions)
+    salt <- bcrypt::gensalt(kdfoptions$rounds, kdfoptions$salt)
+    pass <- bcrypt::hashpw('test', salt)
+    # TODO: encrypt this with ciphername??
+    stop("bcrypt not fully implemented ")
+
+  } else if(ciphername != "none" || kdfname != "none"){
+    stop(sprintf("Unsupported key encryption: %s (%s)", kdfname, ciphername))
+  }
   input <- data$privdata
   if(!identical(input[1:4], input[5:8]))
     stop("Check failed, invalid passphrase?")

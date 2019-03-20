@@ -13,7 +13,7 @@ parse_ssh_pem <- function(buf){
   text <- sub("Comment(.*?)\\n", "", text)
 
   # construct the actual key
-  ssh_build_from_string(text)
+  ssh_pubkey_from_string(text)
 }
 
 validate_openssh <- function(str){
@@ -28,11 +28,11 @@ parse_openssh <- function(buf){
   # Extract the base64 part
   text <- sub("^\\S+\\s+", "", text)
   text <- regmatches(text, regexpr("^\\S*", text))
-  ssh_build_from_string(text)
+  ssh_pubkey_from_string(text)
 }
 
 # parse ssh binary format
-ssh_build_from_string <- function(b64text){
+ssh_pubkey_from_string <- function(b64text){
   ssh_build_pubkey(base64_decode(b64text))
 }
 

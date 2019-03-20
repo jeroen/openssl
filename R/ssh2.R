@@ -36,13 +36,18 @@ ssh_build <- function(b64text){
   ssh_build_raw(base64_decode(b64text))
 }
 
-ssh_build_raw <- function(data){
+ssh_parse_data <- function(data){
   con <- rawConnection(data, open = "rb")
   on.exit(close(con))
   out <- list()
   while(length(buf <- read_con_buf(con))){
     out <- c(out, list(buf))
   }
+  return(out)
+}
+
+ssh_build_raw <- function(data){
+  out <- ssh_parse_data(data)
 
   # extract key format
   header <- rawToChar(out[[1]])
@@ -95,7 +100,7 @@ ed25519_build <- function(keydata){
 
 parse_openssh_key_pubkey <- function(input){
   keydata <- parse_openssh_key_data(input)
-  ssh_build_raw(keydata$pubkeys[[1]])
+  ssh_build_raw(keydata$pubdata[[1]])
 }
 
 parse_openssh_key_data <- function(input){
@@ -108,7 +113,7 @@ parse_openssh_key_data <- function(input){
   kdfname <- read_con_string(con)
   kdfoptions <- read_con_buf(con)
   number <- readBin(con, 1L, endian = "big")
-  pubkeys <- lapply(seq_len(number), function(i){read_con_buf(con)})
+  pubdata <- lapply(seq_len(number), function(i){read_con_buf(con)})
   privdata <- read_con_buf(con)
   stopifnot(is.null(read_con_buf(con)))
   list (
@@ -116,7 +121,7 @@ parse_openssh_key_data <- function(input){
     ciphername = ciphername,
     kdfname = kdfname,
     kdfoptions = kdfoptions,
-    pubkeys = pubkeys,
+    pubdata = pubdata,
     privdata = privdata
   )
 }

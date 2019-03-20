@@ -93,8 +93,7 @@ ed25519_build <- function(keydata){
   structure(keydata[[2]], class = c("pubkey", "ed25519"))
 }
 
-parse_openssh_key_pubkey <- function(file = "~/.ssh/id_rsa"){
-  input <- readBin(file, raw(), 1e6)
+parse_openssh_key_pubkey <- function(input){
   pemdata <- parse_pem(input)
   data <- pemdata[[1]]$data
   con <- rawConnection(data, open = "rb")
@@ -104,10 +103,10 @@ parse_openssh_key_pubkey <- function(file = "~/.ssh/id_rsa"){
   kdfname <- read_con_string(con)
   kdfoptions <- read_con_buf(con)
   number <- readBin(con, 1L, endian = "big")
-  pubkey <- read_con_buf(con)
-  privkey <- read_con_buf(con)
+  pubkeys <- lapply(seq_len(number), function(i){read_con_buf(con)})
+  privkdata <- read_con_buf(con)
   stopifnot(is.null(read_con_buf(con)))
-  ssh_build_raw(pubkey)
+  ssh_build_raw(pubkeys[[1]])
 }
 
 read_con_buf <- function(con){

@@ -94,19 +94,31 @@ ed25519_build <- function(keydata){
 }
 
 parse_openssh_key_pubkey <- function(input){
+  keydata <- parse_openssh_key_data(input)
+  ssh_build_raw(keydata$pubkeys[[1]])
+}
+
+parse_openssh_key_data <- function(input){
   pemdata <- parse_pem(input)
   data <- pemdata[[1]]$data
   con <- rawConnection(data, open = "rb")
   on.exit(close(con))
-  magic <- readBin(con, "")
+  header <- readBin(con, "")
   ciphername <- read_con_string(con)
   kdfname <- read_con_string(con)
   kdfoptions <- read_con_buf(con)
   number <- readBin(con, 1L, endian = "big")
   pubkeys <- lapply(seq_len(number), function(i){read_con_buf(con)})
-  privkdata <- read_con_buf(con)
+  privdata <- read_con_buf(con)
   stopifnot(is.null(read_con_buf(con)))
-  ssh_build_raw(pubkeys[[1]])
+  list (
+    header = header,
+    ciphername = ciphername,
+    kdfname = kdfname,
+    kdfoptions = kdfoptions,
+    pubkeys = pubkeys,
+    privdata = privdata
+  )
 }
 
 read_con_buf <- function(con){

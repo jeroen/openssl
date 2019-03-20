@@ -213,8 +213,24 @@ read_con_buf <- function(con){
   if(size == 0)
     return(raw())
   buf <- readBin(con, raw(), size)
-  stopifnot(length(buf) == size)
+  # see padding_start() below for 16909060L
+  # padding spec: https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD
+  if(length(buf) < size){
+    if(size == 16909060L){
+      return(NULL)
+    } else {
+      stop("Trailing trash found in buffer")
+    }
+  }
   return(buf)
+}
+
+# Proof that 16909060L equals padding
+padding_start <- function(){
+  data <- as.raw(1:4)
+  con <- rawConnection(data, open = "rb")
+  on.exit(close(con))
+  readBin(con, integer(), endian = 'big')
 }
 
 read_con_string <- function(con){

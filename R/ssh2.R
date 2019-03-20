@@ -98,9 +98,38 @@ ed25519_build <- function(keydata){
   structure(keydata[[2]], class = c("pubkey", "ed25519"))
 }
 
+# Assume we can just take the first key
 parse_openssh_key_pubkey <- function(input){
   keydata <- parse_openssh_key_data(input)
   ssh_build_raw(keydata$pubdata[[1]])
+}
+
+# Assume we can just take the first key
+parse_openssh_key_private <- function(input){
+  data <- parse_openssh_key_data(input)
+  ciphername <- data$ciphername
+  kdfname <- data$kdfname
+  if(ciphername != "none" || kdfname != "none")
+    stop("Encrypted openssh keys not yet implemented")
+  kdfoptions <- parse_openssh_kdfoptions(data$kdfoptions)
+  input <- data$privdata
+  if(!identical(input[1:4], input[5:8]))
+    stop("Check failed, invalid passphrase?")
+
+
+  privkey <- ssh_parse_data(input[-seq_len(8)])
+  print(privkey)
+  browser()
+
+}
+
+parse_openssh_kdfoptions <- function(input){
+  con <- rawConnection(input, open = "rb")
+  on.exit(close(con))
+  list(
+    salt = read_con_buf(con),
+    rounds = readBin(con, 1L, endian = 'big')
+  )
 }
 
 parse_openssh_key_data <- function(input){
@@ -112,8 +141,8 @@ parse_openssh_key_data <- function(input){
   ciphername <- read_con_string(con)
   kdfname <- read_con_string(con)
   kdfoptions <- read_con_buf(con)
-  number <- readBin(con, 1L, endian = "big")
-  pubdata <- lapply(seq_len(number), function(i){read_con_buf(con)})
+  count <- readBin(con, 1L, endian = "big")
+  pubdata <- lapply(seq_len(count), function(i){read_con_buf(con)})
   privdata <- read_con_buf(con)
   stopifnot(is.null(read_con_buf(con)))
   list (
@@ -121,6 +150,7 @@ parse_openssh_key_data <- function(input){
     ciphername = ciphername,
     kdfname = kdfname,
     kdfoptions = kdfoptions,
+    count = count,
     pubdata = pubdata,
     privdata = privdata
   )

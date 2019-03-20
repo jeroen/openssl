@@ -33,13 +33,14 @@ parse_openssh <- function(buf){
 
 # parse ssh binary format
 ssh_build <- function(b64text){
-  con <- rawConnection(base64_decode(b64text), open = "rb")
+  ssh_build_raw(base64_decode(b64text))
+}
+
+ssh_build_raw <- function(data){
+  con <- rawConnection(data, open = "rb")
   on.exit(close(con))
-  out <- list();
-  while(length(size <- readBin(con, 1L, endian = "big"))){
-    if(size == 0) break
-    buf <- readBin(con, raw(), size)
-    stopifnot(length(buf) == size)
+  out <- list()
+  while(length(buf <- read_con_buf(con))){
     out <- c(out, list(buf))
   }
 
@@ -59,7 +60,7 @@ ssh_build <- function(b64text){
 rsa_build <- function(keydata){
   exp <- keydata[[2]]
   mod <- keydata[[3]]
-  rsa_pubkey_build(exp, mod)
+  structure(rsa_pubkey_build(exp, mod), class = c("pubkey", "rsa"))
 }
 
 dsa_build <- function(keydata){
@@ -67,7 +68,7 @@ dsa_build <- function(keydata){
   q <- keydata[[3]]
   g <- keydata[[4]]
   y <- keydata[[5]]
-  dsa_pubkey_build(p, q, g, y)
+  structure(dsa_pubkey_build(p, q, g, y), class = c("pubkey", "dsa"))
 }
 
 ecdsa_build <- function(keydata){
@@ -85,9 +86,41 @@ ecdsa_build <- function(keydata){
   curve_size <- length(ec_point)/2
   x <- utils::head(ec_point, curve_size)
   y <- utils::tail(ec_point, curve_size)
-  ecdsa_pubkey_build(x, y, nist_name)
+  structure(ecdsa_pubkey_build(x, y, nist_name), class = c("pubkey", "ecdsa"))
 }
 
 ed25519_build <- function(keydata){
   structure(keydata[[2]], class = c("pubkey", "ed25519"))
+}
+
+parse_openssh_key_pubkey <- function(file = "~/.ssh/id_rsa"){
+  input <- readBin(file, raw(), 1e6)
+  pemdata <- parse_pem(input)
+  data <- pemdata[[1]]$data
+  con <- rawConnection(data, open = "rb")
+  on.exit(close(con))
+  magic <- readBin(con, "")
+  ciphername <- read_con_string(con)
+  kdfname <- read_con_string(con)
+  kdfoptions <- read_con_buf(con)
+  number <- readBin(con, 1L, endian = "big")
+  pubkey <- read_con_buf(con)
+  privkey <- read_con_buf(con)
+  stopifnot(is.null(read_con_buf(con)))
+  ssh_build_raw(pubkey)
+}
+
+read_con_buf <- function(con){
+  size <- readBin(con, 1L, endian = "big")
+  if(!length(size))
+    return(NULL)
+  if(size == 0)
+    return(raw())
+  buf <- readBin(con, raw(), size)
+  stopifnot(length(buf) == size)
+  return(buf)
+}
+
+read_con_string <- function(con){
+  rawToChar(read_con_buf(con))
 }

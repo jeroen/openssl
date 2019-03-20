@@ -51,7 +51,7 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   return res;
 }
 
-SEXP R_rsa_key_build(SEXP e, SEXP n, SEXP p, SEXP q, SEXP d, SEXP dp, SEXP dq, SEXP qi){
+SEXP R_rsa_key_build(SEXP n, SEXP e, SEXP d, SEXP qi, SEXP p, SEXP q, SEXP dp, SEXP dq){
   RSA *rsa = RSA_new();
   MY_RSA_set0_key(rsa, new_bignum_from_r(n), new_bignum_from_r(e), new_bignum_from_r(d));
   MY_RSA_set0_factors(rsa, new_bignum_from_r(p), new_bignum_from_r(q));
@@ -108,6 +108,20 @@ SEXP R_dsa_pubkey_build(SEXP p, SEXP q, SEXP g, SEXP y){
   MY_DSA_set0_key(dsa, new_bignum_from_r(y), NULL);
   unsigned char *buf = NULL;
   int len = i2d_DSA_PUBKEY(dsa, &buf);
+  bail(len);
+  DSA_free(dsa);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  OPENSSL_free(buf);
+  return res;
+}
+
+SEXP R_dsa_key_build(SEXP p, SEXP q, SEXP g, SEXP y, SEXP x){
+  DSA *dsa = DSA_new();
+  MY_DSA_set0_pqg(dsa, new_bignum_from_r(p), new_bignum_from_r(q), new_bignum_from_r(g));
+  MY_DSA_set0_key(dsa, new_bignum_from_r(y), new_bignum_from_r(x));
+  unsigned char *buf = NULL;
+  int len = i2d_DSAPrivateKey(dsa, &buf);
   bail(len);
   DSA_free(dsa);
   SEXP res = allocVector(RAWSXP, len);

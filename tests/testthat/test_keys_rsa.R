@@ -6,7 +6,9 @@ pk1 <- read_pubkey("../keys/id_rsa.pub")
 
 test_that("reading protected keys", {
   sk2 <- read_key("../keys/id_rsa.pw", password = "test")
+  sk3 <- read_key("../keys/id_rsa.openssh")
   expect_equal(sk1, sk2)
+  expect_equal(sk1, sk3)
   expect_error(read_key("../keys/id_rsa.pw", password = ""), "bad")
 })
 

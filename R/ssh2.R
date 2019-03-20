@@ -46,18 +46,61 @@ ssh_parse_data <- function(data){
   return(out)
 }
 
-ssh_build_pubkey <- function(data){
-  out <- ssh_parse_data(data)
+ssh_build_pubkey <- function(keydata){
+  out <- ssh_parse_data(keydata)
   header <- rawToChar(out[[1]])
   switch(header,
-    "ssh-dss" = dsa_build(out),
-    "ssh-rsa" = rsa_build(out),
-    "ssh-ed25519" = ed25519_build(out),
-    "ecdsa-sha2-nistp256" = ecdsa_build(out),
-    "ecdsa-sha2-nistp384" = ecdsa_build(out),
-    "ecdsa-sha2-nistp521" = ecdsa_build(out),
-    stop("Unsupported keytype: ", header)
+         "ssh-dss" = dsa_build(out),
+         "ssh-rsa" = rsa_build(out),
+         "ssh-ed25519" = ed25519_build(out),
+         "ecdsa-sha2-nistp256" = ecdsa_build(out),
+         "ecdsa-sha2-nistp384" = ecdsa_build(out),
+         "ecdsa-sha2-nistp521" = ecdsa_build(out),
+         stop("Unsupported keytype: ", header)
   )
+}
+
+ssh_build_privkey <- function(keydata){
+  out <- ssh_parse_data(keydata)
+  header <- rawToChar(out[[1]])
+  switch(header,
+         "ssh-dss" = dsa_build_priv(out),
+         "ssh-rsa" = rsa_build_priv(out),
+         "ssh-ed25519" = ed25519_build_priv(out),
+         "ecdsa-sha2-nistp256" = ecdsa_build_priv(out),
+         "ecdsa-sha2-nistp384" = ecdsa_build_priv(out),
+         "ecdsa-sha2-nistp521" = ecdsa_build_priv(out),
+         stop("Unsupported keytype: ", header)
+  )
+}
+
+dsa_build_priv <- function(keydata){
+  p <- keydata[[2]]
+  q <- keydata[[3]]
+  g <- keydata[[4]]
+  y <- keydata[[5]]
+  x <- keydata[[6]]
+  structure(dsa_key_build(p, q, g, y, x), class = c("key", "dsa"))
+}
+
+rsa_build_priv <- function(keydata){
+  n <- keydata[[2]]
+  e <- keydata[[3]]
+  d <- keydata[[4]]
+  qi <- keydata[[5]]
+  p <- keydata[[6]]
+  q <- keydata[[7]]
+  structure(rsa_key_build(n, e, d, qi, p, q), class = c("key", "rsa"))
+}
+
+ed25519_build_priv <- function(keydata){
+  browser()
+  stop("unimplemented")
+}
+
+ecdsa_build_priv <- function(keydata){
+  browser()
+  stop("unimplemented")
 }
 
 rsa_build <- function(keydata){
@@ -113,10 +156,7 @@ parse_openssh_key_private <- function(input){
   input <- data$privdata
   if(!identical(input[1:4], input[5:8]))
     stop("Check failed, invalid passphrase?")
-  privkey <- ssh_parse_data(input[-seq_len(8)])
-  print(privkey)
-  browser()
-
+  ssh_build_privkey(input[-seq_len(8)])
 }
 
 parse_openssh_kdfoptions <- function(input){

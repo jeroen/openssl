@@ -216,7 +216,7 @@ read_con_buf <- function(con){
   # see padding_start() below for 16909060L
   # padding spec: https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD
   if(length(buf) < size){
-    if(size == 16909060L){
+    if(size == 16909060L && identical(buf, as.raw(seq_len(length(buf)) + 4))){
       return(NULL)
     } else {
       stop("Trailing trash found in buffer")

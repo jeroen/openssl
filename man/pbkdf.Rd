@@ -16,5 +16,7 @@ bcrypt_pbkdf(password, salt, rounds = 16L, size = 32L)
 \item{size}{desired length of the output key}
 }
 \description{
-Password based key derivation function with bcrypt.
+Password based key derivation function with bcrypt. This is not
+part of openssl. It is needed to parse private key files which are
+encoded in the \href{https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD}{new openssh format}.
 }

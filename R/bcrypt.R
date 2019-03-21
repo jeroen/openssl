@@ -1,6 +1,8 @@
 #' Bcrypt PWKDF
 #'
-#' Password based key derivation function with bcrypt.
+#' Password based key derivation function with bcrypt. This is not
+#' part of openssl. It is needed to parse private key files which are
+#' encoded in the \href{https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD}{new openssh format}.
 #'
 #' @export
 #' @rdname pbkdf

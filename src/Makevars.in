@@ -1,7 +1,14 @@
-PKG_CPPFLAGS=@cflags@
-PKG_LIBS=@libs@
+PKG_CPPFLAGS = @cflags@
+PKG_LIBS = -Lbcrypt -lstatbcrypt @libs@
+STATLIB = bcrypt/libstatbcrypt.a
+LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
 
 all: clean
 
+$(SHLIB): $(OBJECTS) $(STATLIB)
+
+$(STATLIB): $(LIBBCRYPT)
+	$(AR) rcs $(STATLIB) $(LIBBCRYPT)
+
 clean:
-	rm -f $(OBJECTS) $(SHLIB)
+	rm -f $(OBJECTS) $(SHLIB) $(STATLIB) $(LIBBCRYPT)

@@ -1,19 +1,24 @@
-VERSION=1.1.1
-PKG_CPPFLAGS= -I../windows/openssl-$(VERSION)/include
-PKG_LIBS= $(WIN32FIX) -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
+VERSION = 1.1.1
+PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
+PKG_LIBS = $(WIN32FIX) -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
-WIN32FIX=win32/ipv6.o
+STATLIB = bcrypt/libstatbcrypt.a
+LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
+WIN32FIX = win32/ipv6.o
 
 #all: clean
 
-$(SHLIB): $(WIN32FIX)
-
 $(OBJECTS): winlibs
+
+$(SHLIB): $(WIN32FIX) $(OBJECTS) $(STATLIB)
+
+$(STATLIB): $(LIBBCRYPT)
+	$(AR) rcs $(STATLIB) $(LIBBCRYPT)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
 
 clean:
-	rm -f $(SHLIB) $(OBJECTS)
+	rm -f $(SHLIB) $(OBJECTS) $(STATLIB) $(LIBBCRYPT)
 
 .PHONY: all clean winlibs

@@ -21,7 +21,6 @@ SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr
 Imports: askpass
 Suggests:
-    bcrypt (>= 1.2),
     testthat,
     digest,
     knitr,

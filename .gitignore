@@ -1,6 +1,7 @@
 *.o
 *.so
 *.exe
+*.a
 src/Makevars
 src/main.exe
 .Rproj.user

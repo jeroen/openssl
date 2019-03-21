@@ -178,7 +178,7 @@ parse_openssh_key_private <- function(input, password){
     keysize <- as.integer(sub("aes-?", "", cipher[1])) / 8
     ivsize <- ifelse(identical(mode, "gcm"), 12, 16)
     kdfsize <- as.integer(keysize + ivsize)
-    key_iv <- bcrypt::pbkdf(password, salt = kdfopt$salt, rounds = kdfopt$rounds, size = kdfsize)
+    key_iv <- bcrypt_pbkdf(password, salt = kdfopt$salt, rounds = kdfopt$rounds, size = kdfsize)
     aes_decrypt(data$privdata, key = key_iv[seq_len(keysize)], iv = key_iv[-seq_len(keysize)], mode)
   } else {
     stop(sprintf("Unsupported key encryption: %s (%s)", kdfname, ciphername))

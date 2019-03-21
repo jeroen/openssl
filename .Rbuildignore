@@ -16,3 +16,6 @@ tools/benchmark.R
 ^COPYING$
 ^LICENSE\.md$
 ^.*\.exe$
+^.*\.a$
+^.*\.o$
+^.*\.so$

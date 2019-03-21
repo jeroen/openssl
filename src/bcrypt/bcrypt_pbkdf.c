@@ -22,13 +22,6 @@
 #include "blf.h"
 
 #define crypto_hash_sha512(out, input, inlen)  SHA512(input, inlen, out)
-
-#ifdef _WIN32
-#define explicit_bzero(s, n) memset(s, '\0', n)
-#else
-#define explicit_bzero bzero
-#endif
-
 #define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*
@@ -92,11 +85,6 @@ bcrypt_hash(u_int8_t *sha2pass, u_int8_t *sha2salt, u_int8_t *out)
 		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
 		out[4 * i + 0] = cdata[i] & 0xff;
 	}
-
-	/* zap */
-	explicit_bzero(ciphertext, sizeof(ciphertext));
-	explicit_bzero(cdata, sizeof(cdata));
-	explicit_bzero(&state, sizeof(state));
 }
 
 int
@@ -163,7 +151,6 @@ bcrypt_pbkdf(const char *pass, size_t passlen, const u_int8_t *salt, size_t salt
 	}
 
 	/* zap */
-	explicit_bzero(out, sizeof(out));
 	free(countsalt);
 
 	return 0;

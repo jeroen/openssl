@@ -42,7 +42,7 @@ read_key <- function(file, password = askpass, der = is.raw(file)){
   key <- if(isTRUE(der)){
     parse_der_key(buf)
   } else if(length(grepRaw("BEGIN OPENSSH PRIVATE KEY", buf, fixed = TRUE))){
-    parse_openssh_key_private(buf)
+    parse_openssh_key_private(buf, password = password)
   } else if(is_pubkey_str(buf)){
     stop("Input is a public key. Use read_pubkey() to read")
   } else {

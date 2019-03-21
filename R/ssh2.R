@@ -160,21 +160,29 @@ parse_openssh_key_pubkey <- function(input){
 }
 
 # Assume we can just take the first key
-parse_openssh_key_private <- function(input){
+parse_openssh_key_private <- function(input, password){
   data <- parse_openssh_key_data(input)
   ciphername <- data$ciphername
   kdfname <- data$kdfname
-  if(kdfname == "bcrypt"){
-    kdfoptions <- parse_openssh_kdfoptions(data$kdfoptions)
-    salt <- bcrypt::gensalt(kdfoptions$rounds, kdfoptions$salt)
-    pass <- bcrypt::hashpw('test', salt)
-    # TODO: encrypt this with ciphername??
-    stop("bcrypt not fully implemented ")
-
-  } else if(ciphername != "none" || kdfname != "none"){
+  input <- if(kdfname == "none") {
+    data$privdata
+  } else if(kdfname == "bcrypt") {
+    kdfopt <- parse_openssh_kdfoptions(data$kdfopt)
+    if(is.function(password)){
+      password <- password("Please enter your private key passphrase")
+    } else if(!is.character(password)){
+      stop("Password is not a string or function")
+    }
+    cipher <- strsplit(ciphername, '-', fixed = TRUE)[[1]]
+    mode <- cipher[2]
+    keysize <- as.integer(sub("aes-?", "", cipher[1])) / 8
+    ivsize <- ifelse(identical(mode, "gcm"), 12, 16)
+    kdfsize <- as.integer(keysize + ivsize)
+    key_iv <- bcrypt::pbkdf(password, salt = kdfopt$salt, rounds = kdfopt$rounds, size = kdfsize)
+    aes_decrypt(data$privdata, key = key_iv[seq_len(keysize)], iv = key_iv[-seq_len(keysize)], mode)
+  } else {
     stop(sprintf("Unsupported key encryption: %s (%s)", kdfname, ciphername))
   }
-  input <- data$privdata
   if(!identical(input[1:4], input[5:8]))
     stop("Check failed, invalid passphrase?")
   ssh_build_privkey(input[-seq_len(8)])

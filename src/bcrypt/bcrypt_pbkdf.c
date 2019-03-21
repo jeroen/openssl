@@ -15,16 +15,20 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <openssl/sha.h>
-#include <sys/types.h>
-#include <sys/param.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/sha.h>
+#include <sys/param.h>
 #include "blf.h"
 
 #define crypto_hash_sha512(out, input, inlen)  SHA512(input, inlen, out)
 
+#ifdef _WIN32
+#define explicit_bzero(s, n) memset(s, '\0', n)
+#else
 #define explicit_bzero bzero
+#endif
+
 #define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*

@@ -39,7 +39,6 @@
  * Bruce Schneier.
  */
 
-#include <sys/types.h>
 #include "blf.h"
 
 #undef inline

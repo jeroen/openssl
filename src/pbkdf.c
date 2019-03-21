@@ -1,5 +1,8 @@
 #include <Rinternals.h>
 #include <string.h>
+#include <stdint.h>
+
+typedef uint8_t u_int8_t;
 
 int bcrypt_pbkdf(const char *pass, size_t passlen, const u_int8_t *salt,
                  size_t saltlen, u_int8_t *key, size_t keylen, unsigned int rounds);

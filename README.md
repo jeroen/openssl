@@ -8,8 +8,8 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/openssl)](http://cran.r-project.org/package=openssl)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/openssl)](http://cran.r-project.org/web/packages/openssl/index.html)
 
-> Bindings to OpenSSL libssl and libcrypto, plus custom SSH
-  pubkey parsers. Supports RSA, DSA and NIST curves P-256, P-384 and P-521.
+> Bindings to OpenSSL libssl and libcrypto, plus custom SSH key
+  parsers. Supports RSA, DSA and NIST curves P-256, P-384 and P-521.
   Cryptographic signatures can either be created and verified manually or via x509
   certificates. AES block cipher is used in CBC mode for symmetric encryption; RSA
   for asymmetric (public key) encryption. High-level envelope functions combine

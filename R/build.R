@@ -14,12 +14,7 @@ rsa_pubkey_build <- function(exp, mod){
 }
 
 #' @useDynLib openssl R_rsa_key_build
-rsa_key_build <- function(n, e, d, qi, p, q) {
-  d <- bignum(d)
-  p <- bignum(p)
-  q <- bignum(q)
-  dp <- d %% (p-1)
-  dq <- d %% (q-1)
+rsa_key_build <- function(e, n, p, q, d, qi = bignum_mod_inv(q, p), dp = (d %% (p-1)), dq = (d %% (q-1))){
   .Call(R_rsa_key_build, n, e, d, qi, p, q, dp, dq)
 }
 

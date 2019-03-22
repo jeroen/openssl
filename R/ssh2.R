@@ -75,22 +75,22 @@ ssh_build_privkey <- function(keydata){
 }
 
 dsa_build_priv <- function(keydata){
-  p <- keydata[[2]]
-  q <- keydata[[3]]
-  g <- keydata[[4]]
-  y <- keydata[[5]]
-  x <- keydata[[6]]
+  p <- bignum(keydata[[2]])
+  q <- bignum(keydata[[3]])
+  g <- bignum(keydata[[4]])
+  y <- bignum(keydata[[5]])
+  x <- bignum(keydata[[6]])
   structure(dsa_key_build(p, q, g, y, x), class = c("key", "dsa"))
 }
 
 rsa_build_priv <- function(keydata){
-  n <- keydata[[2]]
-  e <- keydata[[3]]
-  d <- keydata[[4]]
-  qi <- keydata[[5]]
-  p <- keydata[[6]]
-  q <- keydata[[7]]
-  structure(rsa_key_build(n, e, d, qi, p, q), class = c("key", "rsa"))
+  n <- bignum(keydata[[2]])
+  e <- bignum(keydata[[3]])
+  d <- bignum(keydata[[4]])
+  qi <- bignum(keydata[[5]])
+  p <- bignum(keydata[[6]])
+  q <- bignum(keydata[[7]])
+  structure(rsa_key_build(e, n, p, q, d, qi), class = c("key", "rsa"))
 }
 
 ed25519_build_priv <- function(keydata){

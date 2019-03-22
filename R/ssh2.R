@@ -167,7 +167,7 @@ parse_openssh_key_private <- function(input, password){
   input <- if(kdfname == "none") {
     data$privdata
   } else if(kdfname == "bcrypt") {
-    kdfopt <- parse_openssh_kdfoptions(data$kdfopt)
+    kdfopt <- parse_openssh_kdfoptions(data$kdfoptions)
     if(is.function(password)){
       password <- password("Please enter your private key passphrase")
     } else if(!is.character(password)){

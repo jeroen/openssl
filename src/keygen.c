@@ -5,10 +5,13 @@
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
 #include "utils.h"
-#include "compatibility.h"
 
 #ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
+#endif
+
+#ifdef EVP_PKEY_ED25519
+#define HAS_ECX
 #endif
 
 SEXP R_keygen_rsa(SEXP bits){
@@ -67,7 +70,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
 }
 
 SEXP R_keygen_x25519(){
-#ifdef HAS_OPENSSL11_API
+#ifdef HAS_ECX
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_X25519, NULL);
   bail(!!ctx);
   bail(EVP_PKEY_keygen_init(ctx) > 0);
@@ -88,7 +91,7 @@ SEXP R_keygen_x25519(){
 }
 
 SEXP R_keygen_ed25519(){
-#ifdef HAS_OPENSSL11_API
+#ifdef HAS_ECX
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL);
   bail(!!ctx);
   bail(EVP_PKEY_keygen_init(ctx) > 0);

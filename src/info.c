@@ -3,13 +3,18 @@
 #include <openssl/opensslv.h>
 #include "compatibility.h"
 
+#include <openssl/evp.h>
+#ifdef EVP_PKEY_ED25519
+#define HAS_ECX
+#endif
+
 SEXP R_openssl_config() {
   int has_ec = 1;
   int has_openssl11 = 0;
   #ifdef OPENSSL_NO_EC
   has_ec = 0;
   #endif
-  #ifdef HAS_OPENSSL11_API
+  #ifdef HAS_ECX
   has_openssl11 = 1;
   #endif
   SEXP res = PROTECT(allocVector(VECSXP, 3));

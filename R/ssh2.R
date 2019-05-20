@@ -93,11 +93,6 @@ rsa_build_priv <- function(keydata){
   structure(rsa_key_build(e, n, p, q, d, qi), class = c("key", "rsa"))
 }
 
-ed25519_build_priv <- function(keydata){
-  browser()
-  stop("unimplemented")
-}
-
 rsa_build <- function(keydata){
   exp <- keydata[[2]]
   mod <- keydata[[3]]
@@ -110,6 +105,16 @@ dsa_build <- function(keydata){
   g <- keydata[[4]]
   y <- keydata[[5]]
   structure(dsa_pubkey_build(p, q, g, y), class = c("pubkey", "dsa"))
+}
+
+ed25519_build_priv <- function(keydata){
+  key <- read_raw_key_ed25519(keydata[[3]])
+  structure(key, class = c("key", "ed25519"))
+}
+
+ed25519_build <- function(keydata){
+  pubkey <- read_raw_pubkey_ed25519(keydata[[2]])
+  structure(pubkey, class = c("pubkey", "ed25519"))
 }
 
 ecdsa_build <- function(keydata){
@@ -147,10 +152,6 @@ ecdsa_build_priv <- function(keydata){
   y <- utils::tail(ec_point, curve_size)
   secret <- keydata[[4]]
   ecdsa_key_build(x, y, secret, nist_name)
-}
-
-ed25519_build <- function(keydata){
-  structure(keydata[[2]], class = c("pubkey", "ed25519"))
 }
 
 # Assume we can just take the first key

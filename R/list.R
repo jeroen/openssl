@@ -21,6 +21,7 @@ as.list.pubkey <- function(x, ...){
    "rsa" = "ssh-rsa",
    "dsa" = "ssh-dss",
    "ed25519" = "ssh-ed25519",
+   "x25519" = "(no-ssh)",
    "ecdsa" = paste0("ecdsa-sha2-nistp", substring(data$curve, 3)),
    stop("Unsupported keytype: ", type)
   )

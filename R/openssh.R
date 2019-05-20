@@ -69,8 +69,17 @@ fpdata.ecdsa <- function(pubkey){
   })
 }
 
+fpdata.x25519 <- function(pubkey){
+  buf <- write_raw_pubkey(pubkey)
+  input <- c(list(charToRaw("ssh-x25519")), list(buf))
+  lapply(input, function(x){
+    c(writeBin(length(x), raw(), endian = "big"), x)
+  })
+}
+
 fpdata.ed25519 <- function(pubkey){
-  input <- c(list(charToRaw("ssh-ed25519")), list(pubkey))
+  buf <- write_raw_pubkey(pubkey)
+  input <- c(list(charToRaw("ssh-ed25519")), list(buf))
   lapply(input, function(x){
     c(writeBin(length(x), raw(), endian = "big"), x)
   })
@@ -134,7 +143,10 @@ priv_decompose.ecdsa <- function(key){
   structure(out, names = c("curve", "x", "y", "secret"))
 }
 
+pubkey_decompose.x25519 <- pubkey_decompose.ed25519 <- function(x){
+  write_raw_pubkey(x)
+}
 
-pubkey_decompose.ed25519 <- function(key){
-  unclass(key)
+priv_decompose.ed25519 <- priv_decompose.x25519 <- function(x){
+  write_raw_key(x)
 }

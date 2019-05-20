@@ -37,3 +37,19 @@ ec_keygen <- function(curve = c("P-256", "P-384", "P-521")){
   key <- .Call(R_keygen_ecdsa, match.arg(curve))
   structure(key, class = c("key", "ecdsa"))
 }
+
+#' @export
+#' @rdname keygen
+#' @useDynLib openssl R_keygen_x25519
+x25519_keygen <- function(){
+  key <- .Call(R_keygen_x25519)
+  structure(key, class = c("key", "x25519"))
+}
+
+#' @export
+#' @rdname keygen
+#' @useDynLib openssl R_keygen_ed25519
+ed25519_keygen <- function(){
+  key <- .Call(R_keygen_ed25519)
+  structure(key, class = c("key", "ed25519"))
+}

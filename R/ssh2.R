@@ -108,7 +108,7 @@ dsa_build <- function(keydata){
 }
 
 ed25519_build_priv <- function(keydata){
-  key <- read_raw_key_ed25519(keydata[[3]])
+  key <- read_raw_key_ed25519(utils::head(keydata[[3]], 32))
   structure(key, class = c("key", "ed25519"))
 }
 

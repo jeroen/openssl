@@ -83,7 +83,7 @@ SEXP R_pubkey_type(SEXP input){
   BIO_free(mem);
   if(!pkey)
     return R_NilValue;
-  char *keytype;
+  const char *keytype;
   switch(EVP_PKEY_base_id(pkey)){
   case EVP_PKEY_RSA:
     keytype = "rsa";

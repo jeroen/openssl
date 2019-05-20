@@ -34,3 +34,6 @@ openssl dgst -sha256 -verify id_ecdsa384.pem -signature message.sig.ecdsa384.sha
 
 openssl dgst -sha256 -sign id_ecdsa521 -out message.sig.ecdsa521.sha256 message
 openssl dgst -sha256 -verify id_ecdsa521.pem -signature message.sig.ecdsa521.sha256 message
+
+openssl dgst -sha256 -sign id_ed25519 -out message.sig.ed25519.sha256 message
+openssl dgst -sha256 -verify id_ed25519.pem -signature message.sig.ed25519.sha256 message

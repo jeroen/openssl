@@ -31,7 +31,7 @@
 ec_dh <- function(key = my_key(), peerkey, password = askpass){
   key <- read_key(key, password = password)
   peerkey <- read_pubkey(peerkey)
-  stopifnot(inherits(key, "ecdsa"))
-  stopifnot(inherits(peerkey, "ecdsa"))
+  stopifnot(inherits(key, c('ecdsa', 'x25519')))
+  stopifnot(inherits(peerkey, c('ecdsa', 'x25519')))
   .Call(R_diffie_hellman, key, peerkey)
 }

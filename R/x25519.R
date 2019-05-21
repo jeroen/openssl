@@ -27,3 +27,13 @@ write_raw_key <- function(x){
 write_raw_pubkey <- function(x){
   .Call(R_write_raw_pubkey, x)
 }
+
+#' @useDynLib openssl R_data_sign
+data_sign <- function(data, key){
+  .Call(R_data_sign, data, key)
+}
+
+#' @useDynLib openssl R_data_verify
+data_verify <- function(data, sig, pubkey){
+  .Call(R_data_verify, data, sig, pubkey)
+}

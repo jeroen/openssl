@@ -33,8 +33,23 @@ test_that("pubkey ssh fingerprint", {
 })
 
 test_that("signatures", {
-  # TODO
+  msg <- readBin("../keys/message", raw(), 100)
+
+  # SHA1 signature
+  sig <- readBin("../keys/message.sig.ed25519.sha1", raw(), 1000)
+  expect_true(signature_verify(msg, sig, sha1, pk1))
+
+  sig <- signature_create(msg, sha1, sk1)
+  expect_true(signature_verify(msg, sig, sha1, pk1))
+
+  # Raw data signature
+  sig <- readBin("../keys/message.sig.ed25519.raw", raw(), 1000)
+  expect_true(signature_verify(msg, sig, NULL, pk1))
+
+  sig <- signature_create(msg, NULL, sk1)
+  expect_true(signature_verify(msg, sig, NULL, pk1))
 })
+
 
 test_that("roundtrip pem format", {
   expect_equal(pk1, read_pubkey(write_pem(pk1)))
@@ -51,7 +66,9 @@ test_that("roundtrip der format", {
 })
 
 test_that("signature path interface", {
-  #
+  sig <- signature_create("../keys/message", sha256, "../keys/id_ed25519")
+  writeBin(sig, tmp <- tempfile())
+  expect_true(signature_verify("../keys/message", tmp, sha256, "../keys/id_ed25519.pub"))
 })
 
 test_that("ec_keygen works", {

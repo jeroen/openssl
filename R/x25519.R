@@ -10,6 +10,36 @@
 #' @name curve25519
 #' @rdname curve25519
 #' @param x a 32 byte raw vector with (pub)key data
+#' @examples # Generate a keypair
+#' if(openssl_config()$x25519){
+#' key <- ed25519_keygen()
+#' pubkey <- as.list(key)$pubkey
+#'
+#' # Sign message
+#' msg <- serialize(iris, NULL)
+#' sig <- ed25519_sign(msg, key)
+#'
+#' # Verify the signature
+#' ed25519_verify(msg, sig, pubkey)
+#'
+#' # Diffie Hellman example:
+#' key1 <- x25519_keygen()
+#' key2 <- x25519_keygen()
+#'
+#' # Both parties can derive the same secret
+#' x25519_diffie_hellman(key1, key2$pubkey)
+#' x25519_diffie_hellman(key2, key1$pubkey)
+#'
+#' # Import/export sodium keys
+#' rawkey <- sodium::sig_keygen()
+#' rawpubkey <- sodium::sig_pubkey(rawkey)
+#' key <- read_ed25519_key(rawkey)
+#' pubkey <- read_ed25519_pubkey(rawpubkey)
+#'
+#' # To get the raw key data back for use in sodium
+#' as.list(key)$data
+#' as.list(pubkey)$data
+#' }
 read_ed25519_key <- function(x){
   stopifnot(is.raw(x))
   if(length(x) == 64)

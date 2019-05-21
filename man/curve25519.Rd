@@ -43,3 +43,35 @@ these functions are only available when building against version 1.1.1 or
 newer of the openssl library. The same functions are also available in the
 sodium R package.
 }
+\examples{
+# Generate a keypair
+if(openssl_config()$x25519){
+key <- ed25519_keygen()
+pubkey <- as.list(key)$pubkey
+
+# Sign message
+msg <- serialize(iris, NULL)
+sig <- ed25519_sign(msg, key)
+
+# Verify the signature
+ed25519_verify(msg, sig, pubkey)
+
+# Diffie Hellman example:
+key1 <- x25519_keygen()
+key2 <- x25519_keygen()
+
+# Both parties can derive the same secret
+x25519_diffie_hellman(key1, key2$pubkey)
+x25519_diffie_hellman(key2, key1$pubkey)
+
+# Import/export sodium keys
+rawkey <- sodium::sig_keygen()
+rawpubkey <- sodium::sig_pubkey(rawkey)
+key <- read_ed25519_key(rawkey)
+pubkey <- read_ed25519_pubkey(rawpubkey)
+
+# To get the raw key data back for use in sodium
+as.list(key)$data
+as.list(pubkey)$data
+}
+}

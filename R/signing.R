@@ -1,7 +1,8 @@
 #' Signatures
 #'
 #' Sign and verify a message digest. RSA supports both MD5 and SHA signatures
-#' whereas DSA and EC keys only support SHA.
+#' whereas DSA and EC keys only support SHA. ED25591 can sign any payload so you can
+#' set `hash` to `NULL` to sign the raw input data.
 #'
 #' The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures
 #' between the conventional DER format and the raw \code{(r,s)} bignum pair. Most
@@ -40,6 +41,8 @@ signature_create <- function(data, hash = sha1, key = my_key(), password = askpa
   data <- path_or_raw(data)
   sk <- read_key(key, password = password)
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
+  if(inherits(sk, "ed25519"))
+    return(data_sign(md, sk))
   if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
     stop("data must be md5, sha1, or sha2 digest")
   hash_sign(md, sk)
@@ -52,6 +55,8 @@ signature_verify <- function(data, sig, hash = sha1, pubkey = my_pubkey()){
   sig <- path_or_raw(sig)
   pk <- read_pubkey(pubkey)
   md <- if(is.null(hash)) parse_hash(data) else hash(data)
+  if(inherits(pk, "ed25519"))
+    return(data_verify(md, sig, pk))
   if(!is.raw(md) || !(length(md) %in% c(16, 20, 28, 32, 48, 64)))
     stop("data must be md5, sha1, or sha2 digest")
   hash_verify(md, sig, pk)

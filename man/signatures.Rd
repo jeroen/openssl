@@ -37,7 +37,8 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 }
 \description{
 Sign and verify a message digest. RSA supports both MD5 and SHA signatures
-whereas DSA and EC keys only support SHA.
+whereas DSA and EC keys only support SHA. ED25591 can sign any payload so you can
+set `hash` to `NULL` to sign the raw input data.
 }
 \details{
 The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures

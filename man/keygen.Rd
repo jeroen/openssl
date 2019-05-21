@@ -5,6 +5,8 @@
 \alias{rsa_keygen}
 \alias{dsa_keygen}
 \alias{ec_keygen}
+\alias{x25519_keygen}
+\alias{ed25519_keygen}
 \title{Generate Key pair}
 \usage{
 rsa_keygen(bits = 2048)
@@ -12,6 +14,10 @@ rsa_keygen(bits = 2048)
 dsa_keygen(bits = 1024)
 
 ec_keygen(curve = c("P-256", "P-384", "P-521"))
+
+x25519_keygen()
+
+ed25519_keygen()
 }
 \arguments{
 \item{bits}{bitsize of the generated RSA/DSA key}

@@ -10,6 +10,10 @@
 #include <openssl/ec.h>
 #endif
 
+#ifdef EVP_PKEY_ED25519
+#define HAS_ECX
+#endif
+
 SEXP R_keygen_rsa(SEXP bits){
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
   bail(!!ctx);
@@ -63,4 +67,46 @@ SEXP R_keygen_ecdsa(SEXP curve){
 #else //OPENSSL_NO_EC
   Rf_error("OpenSSL has been configured without EC support");
 #endif //OPENSSL_NO_EC
+}
+
+SEXP R_keygen_x25519(){
+#ifdef HAS_ECX
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_X25519, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_keygen_init(ctx) > 0);
+  EVP_PKEY *pkey = NULL;
+  bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
+  unsigned char *buf = NULL;
+  int len = i2d_PrivateKey(pkey, &buf);
+  bail(len);
+  EVP_PKEY_free(pkey);
+  EVP_PKEY_CTX_free(ctx);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  OPENSSL_free(buf);
+  return res;
+#else
+  Rf_error("Curve25519 requires OpenSSL 1.1.1 or newer.");
+#endif
+}
+
+SEXP R_keygen_ed25519(){
+#ifdef HAS_ECX
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_keygen_init(ctx) > 0);
+  EVP_PKEY *pkey = NULL;
+  bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
+  unsigned char *buf = NULL;
+  int len = i2d_PrivateKey(pkey, &buf);
+  bail(len);
+  EVP_PKEY_free(pkey);
+  EVP_PKEY_CTX_free(ctx);
+  SEXP res = allocVector(RAWSXP, len);
+  memcpy(RAW(res), buf, len);
+  OPENSSL_free(buf);
+  return res;
+#else
+  Rf_error("Curve25519 requires OpenSSL 1.1.1 or newer.");
+#endif
 }

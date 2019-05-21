@@ -5,12 +5,10 @@ fortran: false
 
 matrix:
   include:
-    - os: linux
-      dist: precise
+    - dist: precise
       r: 3.2
-    - os: linux
-      dist: xenial
-#      r_check_args: '--use-valgrind'
+    - dist: trusty
+    - dist: xenial
     - os: osx
       brew_packages: openssl
       after_success: R -e 'covr::codecov()'
@@ -25,14 +23,17 @@ matrix:
     - os: osx
       osx_image: xcode7.3
       disable_homebrew: true
+      before_install: sed -i.bak 's/-isysroot /-I/g' $(R RHOME)/etc/Makeconf
     - os: osx
       disable_homebrew: true
 
 addons:
   apt:
+    sources:
+    - sourceline: 'ppa:chris-lea/libsodium'
     packages:
     - libssl-dev
-    - valgrind
+    - libsodium-dev
 
 r_packages: covr
 

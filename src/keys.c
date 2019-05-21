@@ -83,7 +83,7 @@ SEXP R_pubkey_type(SEXP input){
   BIO_free(mem);
   if(!pkey)
     return R_NilValue;
-  char *keytype;
+  const char *keytype;
   switch(EVP_PKEY_base_id(pkey)){
   case EVP_PKEY_RSA:
     keytype = "rsa";
@@ -94,6 +94,14 @@ SEXP R_pubkey_type(SEXP input){
   case EVP_PKEY_EC:
     keytype = "ecdsa";
     break;
+#ifdef EVP_PKEY_ED25519
+  case EVP_PKEY_X25519:
+    keytype = "x25519";
+    break;
+  case EVP_PKEY_ED25519:
+    keytype = "ed25519";
+    break;
+#endif
   default:
     Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }
@@ -130,6 +138,12 @@ SEXP R_pubkey_bitsize(SEXP input){
     MY_DSA_get0_pqg(EVP_PKEY_get1_DSA(pkey), &val, NULL, NULL);
     size = BN_num_bits(val);
     break;
+#ifdef EVP_PKEY_ED25519
+  case EVP_PKEY_ED25519:
+  case EVP_PKEY_X25519:
+    size = 256;
+    break;
+#endif
 #ifndef OPENSSL_NO_EC
   case EVP_PKEY_EC:
     size = ec_bitsize(EC_GROUP_get_curve_name(EC_KEY_get0_group(EVP_PKEY_get1_EC_KEY(pkey))));

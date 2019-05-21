@@ -1,6 +1,6 @@
 # openssl
 
-##### *Toolkit for Encryption, Signatures and Certificates Based on OpenSSL*
+> Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
 
 [![Build Status](https://travis-ci.org/jeroen/openssl.svg?branch=master)](https://travis-ci.org/jeroen/openssl)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroen/openssl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroen/openssl)
@@ -8,14 +8,15 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/openssl)](http://cran.r-project.org/package=openssl)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/openssl)](http://cran.r-project.org/web/packages/openssl/index.html)
 
-> Bindings to OpenSSL libssl and libcrypto, plus custom SSH key
-  parsers. Supports RSA, DSA and NIST curves P-256, P-384 and P-521.
-  Cryptographic signatures can either be created and verified manually or via x509
-  certificates. AES block cipher is used in CBC mode for symmetric encryption; RSA
-  for asymmetric (public key) encryption. High-level envelope functions combine
-  RSA and AES for encrypting arbitrary sized data. Other utilities include key
-  generators, hash functions (md5, sha1, sha256, etc), base64 encoder, a secure
-  random number generator, and 'bignum' math methods for manually performing
+Bindings to OpenSSL libssl and libcrypto, plus custom SSH key parsers.
+Supports RSA, DSA and EC curves P-256, P-384, P-521, and curve25519. Cryptographic
+signatures can either be created and verified manually or via x509 certificates. 
+AES can be used in cbc, ctr or gcm mode for symmetric encryption; RSA for asymmetric
+(public key) encryption or EC for Diffie Hellman. High-level envelope functions 
+combine RSA and AES for encrypting arbitrary sized data. Other utilities include key
+generators, hash functions (md5, sha1, sha256, etc), base64 encoder, a secure random
+number generator, and 'bignum' math methods for manually performing crypto 
+calculations on large multibyte integers.
 
 ## Hello World
 

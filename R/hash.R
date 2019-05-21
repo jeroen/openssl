@@ -248,5 +248,7 @@ print.hash <- function(x, sep = ":", ...){
 as.character.hash <- function(x, sep = "", ...){
   if(is.raw(x))
     structure(paste(unclass(x), collapse = sep), class = class(x))
+  if(is.character(x))
+    unclass(x)
   else x
 }

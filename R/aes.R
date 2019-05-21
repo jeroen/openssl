@@ -89,10 +89,10 @@ aes_any <- function(x, key, iv = NULL, encrypt, mode){
 #' @rdname aes_cbc
 #' @export
 aes_keygen <- function(length = 16){
-  structure(rand_bytes(length), class = c("bytes", "aes", "raw"))
+  structure(rand_bytes(length), class = c("aes", "raw"))
 }
 
 #' @export
-print.bytes <- function(x, ...){
-  cat(class(x)[-1], paste(x, collapse = ":"), "\n")
+print.aes <- function(x, ...){
+  cat("aes", paste(x, collapse = ":"), "\n")
 }

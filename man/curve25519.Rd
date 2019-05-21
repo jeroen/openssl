@@ -28,9 +28,13 @@ x25519_diffie_hellman(key, pubkey)
 \arguments{
 \item{x}{a 32 byte raw vector with (pub)key data}
 
-\item{key}{private key as returned by [read_ed25519_key] or [ed25519_keygen]}
+\item{data}{raw vector with data to sign or verify}
 
-\item{pubkey}{public key as returned by [read_ed25519_pubkey] or `key$pubkey`}
+\item{key}{private key as returned by \code{read_ed25519_key} or \code{ed25519_keygen}}
+
+\item{sig}{raw vector of length 64 with signature as returned by \code{ed25519_sign}}
+
+\item{pubkey}{public key as returned by \code{read_ed25519_pubkey} or \code{key$pubkey}}
 }
 \description{
 Curve25519 is a recently added low-level algorithm that can be used both for

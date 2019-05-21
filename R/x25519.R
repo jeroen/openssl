@@ -46,7 +46,7 @@ read_x25519_pubkey <- function(x){
 
 #' @export
 #' @rdname curve25519
-#' @param key private key as returned by [read_ed25519_key] or [ed25519_keygen]
+#' @param key private key as returned by \code{read_ed25519_key} or \code{ed25519_keygen}
 ed25519_sign <- function(data, key){
   stopifnot(is.raw(data))
   key <- read_key(key)
@@ -56,7 +56,9 @@ ed25519_sign <- function(data, key){
 
 #' @export
 #' @rdname curve25519
-#' @param pubkey public key as returned by [read_ed25519_pubkey] or `key$pubkey`
+#' @param data raw vector with data to sign or verify
+#' @param sig raw vector of length 64 with signature as returned by \code{ed25519_sign}
+#' @param pubkey public key as returned by \code{read_ed25519_pubkey} or \code{key$pubkey}
 ed25519_verify <- function(data, sig, pubkey){
   stopifnot(is.raw(data))
   stopifnot(is.raw(sig))

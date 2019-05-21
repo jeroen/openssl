@@ -29,6 +29,8 @@ matrix:
 
 addons:
   apt:
+    sources:
+    - sourceline: 'ppa:chris-lea/libsodium'
     packages:
     - libssl-dev
     - libsodium-dev

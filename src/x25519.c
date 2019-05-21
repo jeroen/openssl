@@ -106,6 +106,7 @@ SEXP R_write_raw_pubkey(SEXP input){
 }
 
 SEXP R_data_sign(SEXP data, SEXP key){
+#ifdef HAS_ECX
   BIO *mem = BIO_new_mem_buf(RAW(key), LENGTH(key));
   EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
   BIO_free(mem);
@@ -120,9 +121,13 @@ SEXP R_data_sign(SEXP data, SEXP key){
   EVP_MD_CTX_free(ctx);
   EVP_PKEY_free(pkey);
   return res;
+#else
+  Rf_error("Curve25519 requires OpenSSL 1.1.1 or newer.");
+#endif
 }
 
 SEXP R_data_verify(SEXP data, SEXP sig, SEXP pubkey){
+#ifdef HAS_ECX
   const unsigned char *ptr = RAW(pubkey);
   EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(pubkey));
   bail(!!pkey);
@@ -136,4 +141,7 @@ SEXP R_data_verify(SEXP data, SEXP sig, SEXP pubkey){
   if(res == 0)
     error("Verification failed: incorrect signature");
   return ScalarLogical(1);
+#else
+  Rf_error("Curve25519 requires OpenSSL 1.1.1 or newer.");
+#endif
 }

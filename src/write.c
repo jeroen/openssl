@@ -15,6 +15,7 @@ SEXP R_pem_write_key(SEXP input, SEXP password){
   } else {
     PEM_write_bio_PrivateKey(out, pkey, NULL, NULL, 0, NULL, NULL);
   }
+  EVP_PKEY_free(pkey);
   int bufsize = 8192;
   char buf[bufsize];
   int len = BIO_read(out, buf, bufsize);
@@ -58,6 +59,7 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   } else {
     Rf_error("This key type cannot be exported to PKCS1");
   }
+  EVP_PKEY_free(pkey);
   int bufsize = 8192;
   char buf[bufsize];
   int len = BIO_read(out, buf, bufsize);

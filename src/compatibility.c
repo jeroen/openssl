@@ -6,6 +6,18 @@
 
 #ifndef HAS_OPENSSL11_API
 
+RSA *MY_EVP_PKEY_get0_RSA(EVP_PKEY *pkey){
+  return pkey->pkey.rsa;
+}
+
+DSA *MY_EVP_PKEY_get0_DSA(EVP_PKEY *pkey){
+  return pkey->pkey.dsa;
+}
+
+EC_KEY *MY_EVP_PKEY_get0_EC_KEY(EVP_PKEY *pkey){
+  return pkey->pkey.ec;
+}
+
 int MY_RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d){
   if(n) r->n = n;
   if(e) r->e = e;

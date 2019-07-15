@@ -7,7 +7,9 @@
 #endif
 
 #ifdef HAS_OPENSSL11_API
-
+#define MY_EVP_PKEY_get0_RSA EVP_PKEY_get0_RSA
+#define MY_EVP_PKEY_get0_DSA EVP_PKEY_get0_DSA
+#define MY_EVP_PKEY_get0_EC_KEY EVP_PKEY_get0_EC_KEY
 #define MY_RSA_set0_key RSA_set0_key
 #define MY_RSA_set0_factors RSA_set0_factors
 #define MY_RSA_set0_crt_params RSA_set0_crt_params
@@ -24,6 +26,9 @@
 
 #else
 
+RSA *MY_EVP_PKEY_get0_RSA(EVP_PKEY *pkey);
+DSA *MY_EVP_PKEY_get0_DSA(EVP_PKEY *pkey);
+EC_KEY *MY_EVP_PKEY_get0_EC_KEY(EVP_PKEY *pkey);
 int MY_RSA_set0_key(RSA *r, BIGNUM *n, BIGNUM *e, BIGNUM *d);
 int MY_RSA_set0_factors(RSA *r, BIGNUM *p, BIGNUM *q);
 int MY_RSA_set0_crt_params(RSA *r,BIGNUM *dmp1, BIGNUM *dmq1, BIGNUM *iqmp);

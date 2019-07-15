@@ -34,8 +34,8 @@ write_der <- function(x, path = NULL){
 #' @rdname write_pem
 #' @useDynLib openssl R_pem_write_pkcs1_privkey R_pem_write_pkcs1_pubkey
 write_pkcs1 <- function(x, path = NULL, password = NULL){
-  if(!inherits(x, "rsa"))
-    stop("PKCS1 only supports RSA keys")
+  if(!inherits(x, c("rsa", "key")))
+    stop("PKCS1 pubkey format only supports RSA keys")
   str <- if(inherits(x, "key"))
     .Call(R_pem_write_pkcs1_privkey, x, password)
   else

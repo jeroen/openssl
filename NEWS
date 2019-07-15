@@ -1,3 +1,6 @@
+1.4.1
+ - write_pkcs1 now supports RSA/DSA/EC keys for legacy ssh compatibility
+
 1.4.0
  - Expose ed25519 and x25519 functions for signatures and diffie hellman using
    curve25519. This is only supported when building against version 1.1.1 or newer

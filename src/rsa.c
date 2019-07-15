@@ -13,6 +13,7 @@ SEXP R_rsa_encrypt(SEXP data, SEXP keydata) {
   unsigned char* buf = OPENSSL_malloc(keysize);
   int len = RSA_public_encrypt(LENGTH(data), RAW(data), buf, rsa, RSA_PKCS1_PADDING);
   bail(len > 0);
+  RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
@@ -27,6 +28,7 @@ SEXP R_rsa_decrypt(SEXP data, SEXP keydata){
   unsigned char* buf = OPENSSL_malloc(keysize);
   int len = RSA_private_decrypt(LENGTH(data), RAW(data), buf, rsa, RSA_PKCS1_PADDING);
   bail(len > 0);
+  RSA_free(rsa);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);

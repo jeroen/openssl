@@ -26,6 +26,13 @@ test_that("reading public key formats", {
   expect_equal(pk1, pk5)
 })
 
+test_that("legacy pkcs1 format", {
+  expect_equal(sk1, read_key(write_pkcs1(sk1)))
+  expect_equal(sk1, read_key(write_pkcs1(sk1, password = 'test'), password = 'test'))
+  #expect_equal(pk1, read_pubkey(write_pkcs1(pk1)))
+  expect_error(read_key(write_pkcs1(sk1, password = 'test'), password = ''))
+})
+
 test_that("pubkey ssh fingerprint", {
   fp <- paste(as.list(pk1)$fingerprint, collapse = "")
   expect_equal(fp, "6c42ea8454e549b855cadd7fc86609ca")

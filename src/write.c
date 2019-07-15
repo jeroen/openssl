@@ -41,7 +41,6 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
     } else {
       PEM_write_bio_RSAPrivateKey(out, rsa, NULL, NULL, 0, NULL, NULL);
     }
-    RSA_free(rsa);
   } else if(type == EVP_PKEY_DSA){
     DSA *dsa = MY_EVP_PKEY_get0_DSA(pkey);
     if(pass){
@@ -49,7 +48,6 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
     } else {
       PEM_write_bio_DSAPrivateKey(out, dsa, NULL, NULL, 0, NULL, NULL);
     }
-    DSA_free(dsa);
   } else if(type == EVP_PKEY_EC){
     EC_KEY *ec = MY_EVP_PKEY_get0_EC_KEY(pkey);
     if(pass){
@@ -57,7 +55,6 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
     } else {
       PEM_write_bio_ECPrivateKey(out, ec, NULL, NULL, 0, NULL, NULL);
     }
-    EC_KEY_free(ec);
   } else {
     Rf_error("This key type cannot be exported to PKCS1");
   }

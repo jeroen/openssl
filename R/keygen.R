@@ -17,6 +17,7 @@
 #' # Write/read the key with a passphrase
 #' write_pem(key, "id_rsa", password = "supersecret")
 #' read_key("id_rsa", password = "supersecret")
+#' unlink("id_rsa")
 rsa_keygen <- function(bits = 2048){
   key <- .Call(R_keygen_rsa, as.integer(bits))
   structure(key, class = c("key", "rsa"))

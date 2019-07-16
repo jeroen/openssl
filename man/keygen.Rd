@@ -37,4 +37,5 @@ pubkey <- as.list(key)$pubkey
 # Write/read the key with a passphrase
 write_pem(key, "id_rsa", password = "supersecret")
 read_key("id_rsa", password = "supersecret")
+unlink("id_rsa")
 }

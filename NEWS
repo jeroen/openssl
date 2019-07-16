@@ -1,5 +1,6 @@
 1.4.1
  - write_pkcs1 now supports RSA/DSA/EC keys for legacy ssh compatibility
+ - as.list.cert() gains a parameter 'name_format' to control printing #72
 
 1.4.0
  - Expose ed25519 and x25519 functions for signatures and diffie hellman using

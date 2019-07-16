@@ -36,9 +36,9 @@ as.list.pubkey <- function(x, ...){
 }
 
 #' @export
-as.list.cert <- function(x, ...){
+as.list.cert <- function(x, ..., name_format = NULL){
   cert <- x
-  info <- cert_info(cert)
+  info <- cert_info(cert, name_format = name_format)
   info$pubkey <- cert_pubkey(cert)
   info
 }

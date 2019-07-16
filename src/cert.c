@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "compatibility.h"
 
-SEXP R_cert_info(SEXP bin){
+SEXP R_cert_info(SEXP bin, SEXP name_format){
   X509 *cert = X509_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
@@ -22,11 +22,12 @@ SEXP R_cert_info(SEXP bin){
   SEXP out = PROTECT(allocVector(VECSXP, 7));
 
   //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
+  int flags = Rf_length(name_format) ? Rf_asInteger(name_format) : XN_FLAG_RFC2253;
 
   //subject name
   name = X509_get_subject_name(cert);
   b = BIO_new(BIO_s_mem());
-  bail(X509_NAME_print_ex(b, name, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB));
+  bail(X509_NAME_print_ex(b, name, 0, flags & ~ASN1_STRFLGS_ESC_MSB));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
   SET_VECTOR_ELT(out, 0, allocVector(STRSXP, 1));
@@ -36,7 +37,7 @@ SEXP R_cert_info(SEXP bin){
   //issuer name name
   name = X509_get_issuer_name(cert);
   b = BIO_new(BIO_s_mem());
-  bail(X509_NAME_print_ex(b, name, 0, XN_FLAG_RFC2253 & ~ASN1_STRFLGS_ESC_MSB));
+  bail(X509_NAME_print_ex(b, name, 0, flags & ~ASN1_STRFLGS_ESC_MSB));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
   SET_VECTOR_ELT(out, 1, allocVector(STRSXP, 1));

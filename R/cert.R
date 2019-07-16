@@ -77,8 +77,10 @@ ca_bundle <- function(){
 }
 
 #' @useDynLib openssl R_cert_info
-cert_info <- function(cert){
+cert_info <- function(cert, name_format = NULL){
   stopifnot(is.raw(cert))
-  out <- .Call(R_cert_info, cert)
+  if(length(name_format))
+    stopifnot(is.integer(name_format))
+  out <- .Call(R_cert_info, cert, name_format)
   structure(out, names = c("subject", "issuer", "algorithm", "signature", "validity", "self_signed", "alt_names"))
 }

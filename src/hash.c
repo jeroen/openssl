@@ -18,9 +18,9 @@ unsigned int digest_string(unsigned char *x, int len, SEXP key, const char *algo
     error("Unknown cryptographic algorithm %s\n", algo);
 
   if(key == R_NilValue){
-    EVP_Digest(x, len, md_value, &md_len, md, NULL);
+    bail(EVP_Digest(x, len, md_value, &md_len, md, NULL));
   } else {
-    HMAC(md, RAW(key), LENGTH(key), x, len, md_value, &md_len);
+    bail(!!HMAC(md, RAW(key), LENGTH(key), x, len, md_value, &md_len));
   }
   return md_len;
 }

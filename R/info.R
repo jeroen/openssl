@@ -6,5 +6,5 @@
 #' @useDynLib openssl R_openssl_config
 openssl_config <- function(){
   out <- .Call(R_openssl_config)
-  structure(out, names = c("version", "ec", "x25519"))
+  structure(out, names = c("version", "ec", "x25519", "fips"))
 }

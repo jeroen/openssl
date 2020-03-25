@@ -75,6 +75,7 @@ fi
 # Try to link against the correct OpenSSL version
 if [ -z "$AUTOBREW" ]; then
 SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
+echo "OpenSSL soname: $SONAME"
 if [ "$SONAME" ]; then
 case "$OSTYPE" in
   "darwin"*)
@@ -90,7 +91,7 @@ ${CC} ${PKG_CFLAGS} src/tests/main.c ${PKG_LIBS_VERSIONED} -o src/main.exe 2>/de
 if [ $? -eq 0 ]; then PKG_LIBS="${PKG_LIBS_VERSIONED}"; fi
 
 # Suppress opensslv3 warnings for now
-if [ $SONAME -eq 3 ]; then
+if [ "$SONAME" == "3" ]; then
 PKG_CFLAGS="$PKG_CFLAGS -DOPENSSL_SUPPRESS_DEPRECATED"
 fi
 

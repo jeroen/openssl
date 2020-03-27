@@ -15,6 +15,7 @@
 \alias{blake2b}
 \alias{blake2s}
 \alias{ripemd160}
+\alias{multihash}
 \title{Vectorized hash/hmac functions}
 \usage{
 sha1(x, key = NULL)
@@ -38,6 +39,8 @@ blake2b(x, key = NULL)
 blake2s(x, key = NULL)
 
 ripemd160(x, key = NULL)
+
+multihash(x, algos = c("md5", "sha1", "sha256", "sha384", "sha512"))
 }
 \arguments{
 \item{x}{character vector, raw vector or connection object.}
@@ -45,6 +48,8 @@ ripemd160(x, key = NULL)
 \item{key}{string or raw vector used as the key for HMAC hashing}
 
 \item{size}{must be equal to 224 256 384 or 512}
+
+\item{algos}{string vector with names of hashing algorithms}
 }
 \description{
 All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC
@@ -52,6 +57,14 @@ All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC
 inputs are binary (raw vector), strings (character vector) or a connection object.
 }
 \details{
+The most efficient way to calculate hashes is by using input \link{connections},
+such as a \link[base:connections]{file()} or \link[base:connections]{url()} object.
+In this case the hash is calculated streamingly, using almost no memory or disk space,
+regardless of the data size. When using a connection input in the \link{multihash}
+function, the data is only read only once while streaming to multiple hash functions
+simultaneously. Therefore several hashes are calculated simultanously, without the
+need to store any data or download it multiple times.
+
 Functions are vectorized for the case of character vectors: a vector with \code{n}
 strings returns \code{n} hashes. When passing a connection object, the contents will
 be stream-hashed which minimizes the amount of required memory. This is recommended

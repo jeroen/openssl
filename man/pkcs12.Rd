@@ -9,8 +9,14 @@
 \alias{read_p7b}
 \title{PKCS7 / PKCS12 bundles}
 \usage{
-write_p12(key = NULL, cert = NULL, ca = NULL, name = NULL,
-  password = NULL, path = NULL)
+write_p12(
+  key = NULL,
+  cert = NULL,
+  ca = NULL,
+  name = NULL,
+  password = NULL,
+  path = NULL
+)
 
 write_p7b(ca, path = NULL)
 

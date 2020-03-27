@@ -4,6 +4,14 @@
 #' (hashed message authentication code) when \code{key} is not \code{NULL}. Supported
 #' inputs are binary (raw vector), strings (character vector) or a connection object.
 #'
+#' The most efficient way to calculate hashes is by using input \link{connections},
+#' such as a \link[base:connections]{file()} or \link[base:connections]{url()} object.
+#' In this case the hash is calculated streamingly, using almost no memory or disk space,
+#' regardless of the data size. When using a connection input in the \link{multihash}
+#' function, the data is only read only once while streaming to multiple hash functions
+#' simultaneously. Therefore several hashes are calculated simultanously, without the
+#' need to store any data or download it multiple times.
+#'
 #' Functions are vectorized for the case of character vectors: a vector with \code{n}
 #' strings returns \code{n} hashes. When passing a connection object, the contents will
 #' be stream-hashed which minimizes the amount of required memory. This is recommended
@@ -125,6 +133,22 @@ ripemd160 <- function(x, key = NULL){
   rawstringhash(x, "ripemd160", key)
 }
 
+#' @rdname hash
+#' @export
+multihash <- function(x, algos = c('md5', 'sha1', 'sha256', 'sha384', 'sha512')){
+  if(inherits(x, 'connection')){
+    connectionhashes(x, algos = algos)
+  } else if(is.raw(x)){
+    out <- lapply(algos, function(algo){rawstringhash(x, algo = algo, key = NULL)})
+    structure(out, names = algos)
+  } else if(is.character(x)){
+    m <- vapply(algos, function(algo){stringhash(x, algo = algo, key = NULL)}, FUN.VALUE = x)
+    if(length(x) == 1)
+      m <- t(m)
+    data.frame(m, stringsAsFactors = FALSE)
+  }
+}
+
 # Low level interfaces, not exported.
 rawhash <- function(x, algo, key = NULL){
   stopifnot(is.raw(x))
@@ -139,22 +163,27 @@ stringhash <- function(x, algo, key = NULL){
   .Call(R_digest,x, as.character(algo), key)
 }
 
-connectionhash <- function(con, algo){
-  md <- md_init(algo);
+connectionhashes <- function(con, algos){
   if(!isOpen(con)){
     open(con, "rb")
     on.exit(close(con))
   }
+  mds <- lapply(algos, function(algo){
+    structure(md_init(algo), algo = algo)
+  })
   if(summary(con)$text == "binary"){
     while(length(data <- readBin(con, raw(), 512*1024))){
-      md_feed(md, data)
+      lapply(mds, md_feed, data = data)
     }
   } else {
     while(length(data <- readLines(con, n = 1L, warn = FALSE))){
-      md_feed(md, charToRaw(data))
+      lapply(mds, md_feed, data = charToRaw(data))
     }
   }
-  md_final(md)
+  hashes <- lapply(mds, function(md){
+    structure(md_final(md), class = c("hash", attr(md, 'algo')))
+  })
+  structure(hashes, names = algos)
 }
 
 connectionhmac <- function(con, algo, key){
@@ -182,7 +211,7 @@ rawstringhash <- function(x, algo, key){
     key <- charToRaw(key)
   hash <- if(inherits(x, "connection")){
     if(is.null(key)){
-      connectionhash(x, algo)
+      connectionhashes(x, algo)[[algo]]
     } else {
       connectionhmac(x, algo, key)
     }

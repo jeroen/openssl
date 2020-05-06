@@ -12,6 +12,7 @@ SEXP R_parse_der_pubkey(SEXP input){
   bail(!!pkey);
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -26,6 +27,7 @@ SEXP R_parse_der_key(SEXP input){
   bail(!!pkey);
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -39,6 +41,7 @@ SEXP R_parse_der_cert(SEXP input){
   bail(!!cert);
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
+  X509_free(cert);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -54,6 +57,7 @@ SEXP R_derive_pubkey(SEXP input){
   bail(!!pkey);
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -67,9 +71,11 @@ SEXP R_cert_pubkey(SEXP input){
   X509 *cert = d2i_X509(NULL, &ptr, LENGTH(input));
   bail(!!cert);
   EVP_PKEY *key = X509_get_pubkey(cert);
+  X509_free(cert);
   bail(!!key);
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(key, &buf);
+  EVP_PKEY_free(key);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);

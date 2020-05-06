@@ -43,6 +43,7 @@ SEXP R_parse_pem_key(SEXP input, SEXP password){
   bail(!!pkey);
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -57,6 +58,7 @@ SEXP R_parse_pem_pubkey(SEXP input){
   bail(!!pkey);
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -69,6 +71,7 @@ SEXP R_parse_pem_cert(SEXP input){
   X509 *cert = PEM_read_bio_X509(mem, NULL, password_cb, NULL);
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
+  X509_free(cert);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -83,6 +86,7 @@ SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
   bail(!!rsa);
   unsigned char *buf = NULL;
   int len = i2d_RSA_PUBKEY(rsa, &buf);
+  RSA_free(rsa);
   bail(len);
   SEXP res = allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);

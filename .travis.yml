@@ -3,6 +3,8 @@ cache: packages
 latex: false
 fortran: false
 
+r_check_args: ' '
+
 matrix:
   include:
     - dist: precise
@@ -11,7 +13,6 @@ matrix:
     - dist: xenial
     - os: osx
       brew_packages: openssl
-      after_success: R -e 'covr::codecov()'
     - os: osx
       brew_packages: openssl@1.1
       before_install: brew uninstall --ignore-dependencies openssl
@@ -20,7 +21,8 @@ matrix:
       brew_packages: libressl
       before_install: brew uninstall --ignore-dependencies openssl openssl@1.1
       env: PKG_CONFIG_PATH="/usr/local/opt/libressl/lib/pkgconfig"
-    - os: osx
+    - r: 3.6
+      os: osx
       osx_image: xcode7.3
       disable_homebrew: true
       before_install: sed -i.bak 's/-isysroot /-I/g' $(R RHOME)/etc/Makeconf
@@ -34,10 +36,3 @@ addons:
     packages:
     - libssl-dev
     - libsodium-dev
-
-r_packages: covr
-
-notifications:
-  email:
-    on_success: change
-    on_failure: change

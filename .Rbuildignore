@@ -19,3 +19,4 @@ tools/benchmark.R
 ^.*\.a$
 ^.*\.o$
 ^.*\.so$
+^configure.log$

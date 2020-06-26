@@ -8,3 +8,4 @@ src/main.exe
 .Rhistory
 src/openssl.dll
 windows
+configure.log

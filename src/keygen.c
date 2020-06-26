@@ -34,7 +34,7 @@ SEXP R_keygen_rsa(SEXP bits){
 
 SEXP R_keygen_dsa(SEXP bits){
   DSA *dsa = DSA_new();
-  DSA_generate_parameters_ex(dsa, asInteger(bits), NULL, 0, NULL, NULL, NULL);
+  bail(DSA_generate_parameters_ex(dsa, asInteger(bits), NULL, 0, NULL, NULL, NULL));
   bail(DSA_generate_key(dsa));
   unsigned char *buf = NULL;
   int len = i2d_DSAPrivateKey(dsa, &buf);

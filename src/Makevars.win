@@ -1,4 +1,4 @@
-VERSION = 1.1.1
+VERSION = 1.1.1g
 PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
 PKG_LIBS = $(WIN32FIX) -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32

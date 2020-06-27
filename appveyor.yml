@@ -12,7 +12,7 @@ install:
 
 environment:
   matrix:
-    - R_VERSION: stable
+    - R_VERSION: 3.6.3
     - R_VERSION: patched
 
 # Adapt as necessary starting from here

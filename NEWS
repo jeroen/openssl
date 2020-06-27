@@ -1,5 +1,6 @@
 1.4.2
  - Catch FIPS errors and add FIPS flag to openssl_config()
+ - Win/Mac: update binary packages to openssl 1.1.1g
  - Early preparations for upcoming OpenSSL 3
 
 1.4.1

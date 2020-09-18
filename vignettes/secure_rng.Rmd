@@ -42,7 +42,7 @@ as.logical(rawToBits(x))
 rand_num(10)
 ```
 
-To map random draws from [0,1] into a probability density, we can use a [Cumulative Distribution Function](http://en.wikipedia.org/wiki/Cumulative_distribution_function). For example we can combine `qnorm` and `rand_num` to simulate `rnorm`:
+To map random draws from [0,1] into a probability density, we can use a [Cumulative Distribution Function](https://en.wikipedia.org/wiki/Cumulative_distribution_function). For example we can combine `qnorm` and `rand_num` to simulate `rnorm`:
 
 ```{r}
 # Secure rnorm

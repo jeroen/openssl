@@ -25,11 +25,3 @@ matrix:
       before_install: sed -i.bak 's/-isysroot /-I/g' $(R RHOME)/etc/Makeconf
     - os: osx
       disable_homebrew: true
-
-addons:
-  apt:
-    sources:
-    - sourceline: 'ppa:chris-lea/libsodium'
-    packages:
-    - libssl-dev
-    - libsodium-dev

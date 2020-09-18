@@ -11,7 +11,7 @@
 #' \code{rand_bytes} generates \code{n} random cryptographically secure bytes
 #' @useDynLib openssl R_RAND_bytes
 #' @param n number of random bytes or numbers to generate
-#' @references OpenSSL manual: \url{https://www.openssl.org/docs/manmaster/man3/RAND_bytes.html}
+#' @references OpenSSL manual: \url{https://www.openssl.org/docs/man1.1.1/man3/RAND_bytes.html}
 #' @examples rnd <- rand_bytes(10)
 #' as.numeric(rnd)
 #' as.character(rnd)

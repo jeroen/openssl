@@ -7,10 +7,9 @@ r_check_args: ' '
 
 matrix:
   include:
-    - dist: precise
-      r: 3.2
-    - dist: trusty
     - dist: xenial
+      r: 3.2
+    - dist: bionic
     - os: osx
       brew_packages: openssl@1.1
       before_install: brew uninstall --ignore-dependencies openssl

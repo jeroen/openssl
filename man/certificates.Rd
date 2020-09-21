@@ -32,7 +32,7 @@ at \url{https://ssldecoder.org}.
 }
 \examples{
 # Verify the r-project HTTPS cert
-chain <- download_ssl_cert("cloud.r-project.org", 443)
+chain <- download_ssl_cert("cran.r-project.org", 443)
 print(chain)
 cert_data <- as.list(chain[[1]])
 print(cert_data$pubkey)

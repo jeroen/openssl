@@ -1,17 +1,16 @@
 VERSION = 1.1.1g
 PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
-PKG_LIBS = $(WIN32FIX) -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
+PKG_LIBS = -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
-WIN32FIX = win32/ipv6.o
 
 #all: clean
 all: $(SHLIB)
 
 $(OBJECTS): winlibs
 
-$(SHLIB): $(WIN32FIX) $(OBJECTS) $(STATLIB)
+$(SHLIB): $(OBJECTS) $(STATLIB)
 
 $(STATLIB): $(LIBBCRYPT)
 	$(AR) rcs $(STATLIB) $(LIBBCRYPT)

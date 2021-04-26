@@ -3,6 +3,11 @@
 #define _POSIX_C_SOURCE 200112L
 #endif
 
+//needed to expose inet_ntop
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#endif
+
 //see https://github.com/jeroen/openssl/issues/41
 #if defined(__FreeBSD__) && !defined(__BSD_VISIBLE)
 #define __BSD_VISIBLE 1
@@ -18,7 +23,6 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 #else
 #include <sys/select.h>
 #include <sys/socket.h>

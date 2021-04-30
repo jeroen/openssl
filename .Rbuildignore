@@ -20,3 +20,4 @@ tools/benchmark.R
 ^.*\.o$
 ^.*\.so$
 ^configure.log$
+^\.github$

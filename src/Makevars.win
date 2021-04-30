@@ -1,6 +1,6 @@
-VERSION = 1.1.1g
+VERSION = 1.1.1k
 PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
-PKG_LIBS = -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH} \
+PKG_LIBS = -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o

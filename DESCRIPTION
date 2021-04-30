@@ -1,7 +1,7 @@
 Package: openssl
 Type: Package
 Title: Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
-Version: 1.4.3.9000
+Version: 1.4.4
 Authors@R: c(person("Jeroen", "Ooms", role = c("aut", "cre"), email = "jeroen@berkeley.edu",
     comment = c(ORCID = "0000-0002-4035-0289")),
     person("Oliver", "Keyes", role = "ctb"))
@@ -15,7 +15,7 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH key parse
     number generator, and 'bignum' math methods for manually performing crypto 
     calculations on large multibyte integers.
 License: MIT + file LICENSE
-URL: https://github.com/jeroen/openssl#readme
+URL: https://github.com/jeroen/openssl
 BugReports: https://github.com/jeroen/openssl/issues
 SystemRequirements: OpenSSL >= 1.0.1
 VignetteBuilder: knitr

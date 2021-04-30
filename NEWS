@@ -1,5 +1,6 @@
 1.4.4
  - Fix rand_bytes for large input
+ - Remove some legacy Windows workarounds from R 3.2
 
 1.4.3
  - Fix a harmless compiler warning for CRAN

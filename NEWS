@@ -1,6 +1,7 @@
 1.4.4
  - Fix rand_bytes for large input
  - Remove some legacy Windows workarounds from R 3.2
+ - Windows: upgrade libs to openssl 1.1.1k
 
 1.4.3
  - Fix a harmless compiler warning for CRAN

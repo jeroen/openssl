@@ -26,10 +26,6 @@ ca_bundle()
 \description{
 Read, download, analyze and verify X.509 certificates.
 }
-\details{
-If https verification fails and you can't figure out why, have a look
-at \url{https://ssldecoder.org}.
-}
 \examples{
 # Verify the r-project HTTPS cert
 chain <- download_ssl_cert("cran.r-project.org", 443)

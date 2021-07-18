@@ -2,9 +2,6 @@
 #'
 #' Read, download, analyze and verify X.509 certificates.
 #'
-#' If https verification fails and you can't figure out why, have a look
-#' at \url{https://ssldecoder.org}.
-#'
 #' @useDynLib openssl R_cert_verify_cert R_pubkey_verify_cert
 #' @export
 #' @rdname certificates

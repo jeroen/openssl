@@ -3,9 +3,12 @@
 #include "utils.h"
 
 void raise_error(){
-  unsigned long err = ERR_get_error(); //Pops earliest error from the queue
-  ERR_clear_error(); //Removes additional errors (if any) from the queue
-  stop("OpenSSL error in %s: %s", ERR_func_error_string(err), ERR_reason_error_string(err));
+  char buf[8192] = {0};
+  BIO *bp = BIO_new(BIO_s_mem());
+  ERR_print_errors(bp);
+  int len = BIO_read(bp, buf, 8192);
+  BIO_free(bp);
+  Rf_error("OpenSSL error: %.*s", len, buf);
 }
 
 void bail(int success){

@@ -1,3 +1,6 @@
+1.4.5
+ - Tweaks and fixes for upcoming OpenSSL 3
+
 1.4.4
  - Fix rand_bytes for large input
  - Remove some legacy Windows workarounds from R 3.2

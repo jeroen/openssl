@@ -109,7 +109,12 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     int ncerts = sk_X509_num(ca);
     SEXP bundle = PROTECT(allocVector(VECSXP, ncerts));
     for(int i = 0; i < ncerts; i++){
-      cert = sk_X509_value(ca, (ncerts - i - 1)); //reverse order to match PEM/SSL
+#if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR >= 3
+      cert = sk_X509_value(ca, i);
+#else
+      //see https://github.com/openssl/openssl/pull/12641
+      cert = sk_X509_value(ca, (ncerts - i - 1));
+#endif
       len = i2d_X509(cert, &buf);
       bail(len);
       SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));

@@ -36,21 +36,21 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   if(Rf_length(password) && Rf_length(STRING_ELT(password, 0)))
     pass = (char*) CHAR(STRING_ELT(password, 0));
   if(type == EVP_PKEY_RSA){
-    RSA *rsa = MY_EVP_PKEY_get0_RSA(pkey);
+    RSA *rsa = (RSA*) MY_EVP_PKEY_get0_RSA(pkey);
     if(pass){
       PEM_write_bio_RSAPrivateKey(out, rsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
     } else {
       PEM_write_bio_RSAPrivateKey(out, rsa, NULL, NULL, 0, NULL, NULL);
     }
   } else if(type == EVP_PKEY_DSA){
-    DSA *dsa = MY_EVP_PKEY_get0_DSA(pkey);
+    DSA *dsa = (DSA*) MY_EVP_PKEY_get0_DSA(pkey);
     if(pass){
       PEM_write_bio_DSAPrivateKey(out, dsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
     } else {
       PEM_write_bio_DSAPrivateKey(out, dsa, NULL, NULL, 0, NULL, NULL);
     }
   } else if(type == EVP_PKEY_EC){
-    EC_KEY *ec = MY_EVP_PKEY_get0_EC_KEY(pkey);
+    EC_KEY *ec = (EC_KEY*) MY_EVP_PKEY_get0_EC_KEY(pkey);
     if(pass){
       PEM_write_bio_ECPrivateKey(out, ec, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
     } else {

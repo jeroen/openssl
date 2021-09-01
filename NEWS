@@ -1,5 +1,6 @@
 1.4.5
- - Tweaks and fixes for upcoming OpenSSL 3
+ - Tweaks and fixes for upcoming OpenSSLv3. Once OpenSSLv3 is released we should
+   port the deprecated functions, but for now we keep supporting OpenSSL 1.0.2.
 
 1.4.4
  - Fix rand_bytes for large input

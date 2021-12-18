@@ -1,4 +1,4 @@
 library(testthat)
-library(openssl)
+suppressPackageStartupMessages(library(openssl))
 
 test_check("openssl")

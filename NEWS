@@ -1,3 +1,6 @@
+1.4.6
+ - Update unit tests to new pki.goog test servers
+
 1.4.5
  - Tweaks and fixes for upcoming OpenSSLv3. Once OpenSSLv3 is released we should
    port the deprecated functions, but for now we keep supporting OpenSSL 1.0.2.

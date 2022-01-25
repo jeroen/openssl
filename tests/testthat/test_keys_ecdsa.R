@@ -95,6 +95,16 @@ test_that("ec_keygen works", {
   rm(key)
 })
 
+test_that("non-MD5 fingerprints work as expected", {
+  fp <- as.list(pk1, hashfun = sha256)$fingerprint
+  expect_s3_class(fp, "sha256")
+  expect_equal(
+    paste(fp, collapse = ""),
+    "53492762ee530db92cc0c651f4454803d474f3a5bef6cac301cc8f3aac5d7f9e"
+  )
+  expect_silent(as.list(sk1, hashfun = sha256))
+})
+
 # Cleanup
 rm(sk1, pk1)
 

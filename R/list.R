@@ -1,8 +1,8 @@
 #' @export
-as.list.key <- function(x, ...){
+as.list.key <- function(x, hashfun = md5, ...){
   key <- x
   pubkey <- derive_pubkey(key)
-  pk <- as.list(pubkey)
+  pk <- as.list(pubkey, hashfun = hashfun)
   list(
     type = pk$type,
     size = pk$size,
@@ -12,7 +12,7 @@ as.list.key <- function(x, ...){
 }
 
 #' @export
-as.list.pubkey <- function(x, ...){
+as.list.pubkey <- function(x, hashfun = md5, ...){
   pubkey <- x
   data <- decompose(pubkey)
   type <- ifelse(inherits(pubkey, "ed25519"), "ed25519", pubkey_type(pubkey))
@@ -30,7 +30,7 @@ as.list.pubkey <- function(x, ...){
     type = type,
     size = size,
     ssh = paste(header, base64_encode(fp)),
-    fingerprint = md5(fp),
+    fingerprint = hashfun(fp),
     data = data
   )
 }

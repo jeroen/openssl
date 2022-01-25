@@ -98,5 +98,15 @@ test_that("dsa_keygen works", {
   rm(key)
 })
 
+test_that("non-MD5 fingerprints work as expected", {
+  fp <- as.list(pk1, hashfun = sha256)$fingerprint
+  expect_s3_class(fp, "sha256")
+  expect_equal(
+    paste(fp, collapse = ""),
+    "80e814f3f747a6427e2ab1c659ecbf3edcbeecc26039e7bcd207553619aec410"
+  )
+  expect_silent(as.list(sk1, hashfun = sha256))
+})
+
 # Cleanup
 rm(sk1, pk1)

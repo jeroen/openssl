@@ -259,19 +259,19 @@ split_pem <- function(text) {
 }
 
 #' @export
-print.key <- function(x, ...){
+print.key <- function(x, hashfun = md5, ...){
   pk <- derive_pubkey(x)
-  fp <- fingerprint(pk)
+  fp <- fingerprint(pk, hashfun)
   cat(sprintf("[%d-bit %s private key]\n", pubkey_bitsize(pk), pubkey_type(pk)))
-  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
+  print(fp)
 }
 
 #' @export
-print.pubkey <- function(x, ...){
-  fp <- fingerprint(x)
+print.pubkey <- function(x, hashfun = md5, ...){
+  fp <- fingerprint(x, hashfun)
   type <- class(x)[2]
   cat(sprintf("[%d-bit %s public key]\n", pubkey_bitsize(x), pubkey_type(x)))
-  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
+  print(fp)
 }
 
 #' @export

@@ -5,6 +5,8 @@ sk1 <- read_key("../keys/id_dsa")
 pk1 <- read_pubkey("../keys/id_dsa.pub")
 
 test_that("reading protected keys", {
+  # These keys use MD5-hashed passwords, which is not permitted under FIPS-140.
+  skip_if(fips_mode())
   sk2 <- read_key("../keys/id_dsa.pw", password = "test")
   sk3 <- read_key("../keys/id_dsa.openssh")
   sk4 <- read_key("../keys/id_dsa.openssh.pw", password = "test")

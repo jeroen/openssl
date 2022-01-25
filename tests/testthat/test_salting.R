@@ -1,10 +1,12 @@
 context("Test salting works with various algorithms")
 
 test_that("MD4 salts single values", {
+  skip_if(fips_mode())
   expect_false(md4("foo") == md4("foo","bar"))
 })
 
 test_that("MD4 salts multiple values", {
+  skip_if(fips_mode())
   salted_hashes <- md4(c("foo","bar"), "baz")
   unsalted_hashes <- md4(c("foo","bar"))
   expect_that(length(salted_hashes), equals(2))
@@ -13,10 +15,12 @@ test_that("MD4 salts multiple values", {
 })
 
 test_that("MD5 salts single values", {
+  skip_if(fips_mode())
   expect_false(md5("foo") == md5("foo","bar"))
 })
 
 test_that("MD5 salts multiple values", {
+  skip_if(fips_mode())
   salted_hashes <- md5(c("foo","bar"), "baz")
   unsalted_hashes <- md5(c("foo","bar"))
   expect_that(length(salted_hashes), equals(2))
@@ -25,10 +29,12 @@ test_that("MD5 salts multiple values", {
 })
 
 test_that("RIPEMD160 salts single values", {
+  skip_if(fips_mode())
   expect_false(ripemd160("foo") == ripemd160("foo","bar"))
 })
 
 test_that("RIPEMD160 salts multiple values", {
+  skip_if(fips_mode())
   salted_hashes <- ripemd160(c("foo","bar"), "baz")
   unsalted_hashes <- ripemd160(c("foo","bar"))
   expect_that(length(salted_hashes), equals(2))

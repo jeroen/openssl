@@ -25,7 +25,7 @@ test_that("MD5 salts multiple values", {
 })
 
 test_that("RIPEMD160 salts single values", {
-  expect_false(ripemd160("foo") == md5("foo","bar"))
+  expect_false(ripemd160("foo") == ripemd160("foo","bar"))
 })
 
 test_that("RIPEMD160 salts multiple values", {
@@ -37,7 +37,7 @@ test_that("RIPEMD160 salts multiple values", {
 })
 
 test_that("SHA1 salts single values", {
-  expect_false(sha1("foo") == md5("foo","bar"))
+  expect_false(sha1("foo") == sha1("foo","bar"))
 })
 
 test_that("SHA1 salts multiple values", {
@@ -49,7 +49,7 @@ test_that("SHA1 salts multiple values", {
 })
 
 test_that("SHA256 salts single values", {
-  expect_false(sha256("foo") == md5("foo","bar"))
+  expect_false(sha256("foo") == sha256("foo","bar"))
 })
 
 test_that("SHA256 salts multiple values", {
@@ -61,7 +61,7 @@ test_that("SHA256 salts multiple values", {
 })
 
 test_that("SHA512 salts single values", {
-  expect_false(sha512("foo") == md5("foo","bar"))
+  expect_false(sha512("foo") == sha512("foo","bar"))
 })
 
 test_that("SHA512 salts multiple values", {

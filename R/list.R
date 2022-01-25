@@ -30,7 +30,7 @@ as.list.pubkey <- function(x, ...){
     type = type,
     size = size,
     ssh = paste(header, base64_encode(fp)),
-    fingerprint = md5(fp),
+    fingerprint = sha256(fp),
     data = data
   )
 }

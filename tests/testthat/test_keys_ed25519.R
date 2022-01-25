@@ -29,7 +29,7 @@ test_that("reading public key formats", {
 
 test_that("pubkey ssh fingerprint", {
   fp <- paste(as.list(pk1)$fingerprint, collapse = "")
-  expect_equal(fp, "2c9bea2e9a4ce1fb4438d854b27204b3")
+  expect_equal(fp, "e07a7f95a68c864c757942aac2a42ca3fb26f1f66cd37d6f77559b63847b9ade")
 })
 
 test_that("signatures", {

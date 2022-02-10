@@ -1,5 +1,5 @@
-VERSION = 1.1.1k
-PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
+VERSION = 3.0.1
+PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include -DOPENSSL_SUPPRESS_DEPRECATED
 PKG_LIBS = -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} \
 	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 STATLIB = bcrypt/libstatbcrypt.a

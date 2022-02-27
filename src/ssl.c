@@ -86,6 +86,16 @@ int pending_interrupt() {
   return !(R_ToplevelExec(check_interrupt_fn, NULL));
 }
 
+static SEXP R_write_cert(X509 *cert){
+  unsigned char *buf = NULL;
+  int len = i2d_X509(cert, &buf);
+  SEXP out = allocVector(RAWSXP, len);
+  memcpy(RAW(out), buf, len);
+  setAttrib(out, R_ClassSymbol, mkString("cert"));
+  OPENSSL_free(buf);
+  return out;
+}
+
 SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   /* The 'hints' arg is only needed for solaris */
   struct addrinfo hints;
@@ -179,16 +189,9 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   int n = sk_X509_num(chain);
   bail(n > 0);
 
-  int len;
-  unsigned char *buf = NULL;
   SEXP res = PROTECT(allocVector(VECSXP, n));
   for(int i = 0; i < n; i++){
-    len = i2d_X509(sk_X509_value(chain, i), &buf);
-    SET_VECTOR_ELT(res, i, allocVector(RAWSXP, len));
-    memcpy(RAW(VECTOR_ELT(res, i)), buf, len);
-    setAttrib(VECTOR_ELT(res, i), R_ClassSymbol, mkString("cert"));
-    OPENSSL_free(buf);
-    buf = NULL;
+    SET_VECTOR_ELT(res, i, R_write_cert(sk_X509_value(chain, i)));
   }
 
   /* Cleanup SSL */
@@ -201,4 +204,20 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
 
   UNPROTECT(1);
   return res;
+}
+
+SEXP R_ssl_ctx_info(SEXP ptr){
+  if(TYPEOF(ptr) != EXTPTRSXP || !Rf_inherits(ptr, "ssl_ctx"))
+    Rf_error("Object is not a ssl_ctx");
+  SSL_CTX *ctx = (R_ExternalPtrAddr(ptr));
+  if(ctx == NULL)
+    return R_NilValue;
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
+  X509 *cert = SSL_CTX_get0_certificate(ctx);
+  if(cert != NULL){
+    SET_VECTOR_ELT(out, 0, R_write_cert(cert));
+  }
+  Rf_setAttrib(out, R_NamesSymbol, Rf_mkString("cert"));
+  UNPROTECT(1);
+  return out;
 }

@@ -96,6 +96,17 @@ static SEXP R_write_cert(X509 *cert){
   return out;
 }
 
+static SEXP R_write_cert_chain(STACK_OF(X509) *chain){
+  int n = sk_X509_num(chain);
+  bail(n > 0);
+  SEXP res = PROTECT(allocVector(VECSXP, n));
+  for(int i = 0; i < n; i++){
+    SET_VECTOR_ELT(res, i, R_write_cert(sk_X509_value(chain, i)));
+  }
+  UNPROTECT(1);
+  return res;
+}
+
 SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   /* The 'hints' arg is only needed for solaris */
   struct addrinfo hints;
@@ -185,24 +196,11 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   }
 
   /* Convert certs to RAW. Not sure if I should free these */
-  STACK_OF(X509) *chain = SSL_get_peer_cert_chain(ssl);
-  int n = sk_X509_num(chain);
-  bail(n > 0);
-
-  SEXP res = PROTECT(allocVector(VECSXP, n));
-  for(int i = 0; i < n; i++){
-    SET_VECTOR_ELT(res, i, R_write_cert(sk_X509_value(chain, i)));
-  }
+  SEXP res = R_write_cert_chain(SSL_get_peer_cert_chain(ssl));
 
   /* Cleanup SSL */
   SSL_free(ssl);
   SSL_CTX_free(ctx);
-
-  /* Test for cert */
-  if(n < 1)
-    error("Server did not present a certificate");
-
-  UNPROTECT(1);
   return res;
 }
 

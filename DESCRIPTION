@@ -31,3 +31,4 @@ Suggests:
     sodium
 RoxygenNote: 7.1.2
 Encoding: UTF-8
+Remotes: jeroen/curl

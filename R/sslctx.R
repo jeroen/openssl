@@ -55,3 +55,17 @@ ssl_ctx_set_verify_callback <- function(ssl_ctx, cb){
   stopifnot(inherits(ssl_ctx, 'ssl_ctx'))
   .Call(R_ssl_ctx_set_verify_callback, ssl_ctx, cb)
 }
+
+# Tests if the curl and openssl package use the same openssl
+curl_openssl_version_match <- function(){
+  x <- get_openssl_version(openssl::openssl_config()$version)
+  y <- get_openssl_version(curl::curl_version()$ssl_version)
+  return(length(x) && length(y) && identical(x,y))
+}
+
+get_openssl_version <- function(x){
+  x <- gsub("\\(.*\\)", "", tolower(x))
+  x <- gsub("/", " ", x, fixed = TRUE)
+  m <- regexpr('openssl.[0-9.]+', x)
+  regmatches(x, m)
+}

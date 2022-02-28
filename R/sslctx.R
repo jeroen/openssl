@@ -1,14 +1,23 @@
 #' Hooks to setup the SSL context for curl
 #'
-#' Manipulate the SSL context inside the `CURLOPT_SSL_CTX_FUNCTION` function in
-#' curl. Important: this only works if R packages curl and openssl are dynamically
-#' linked to the same libssl, e.g. when using `libcurl4-openssl-dev` on Ubuntu.
-#' It will almost surely crash for R packages with statically linked libssl.
+#' Hooks to manipulate the SSL context inside the `CURLOPT_SSL_CTX_FUNCTION`
+#' callback in the curl package.
 #'
 #' By default libcurl re-uses connections, hence the cert validation is only
-#' triggered in the first request. After that it re-uses the established TLS
-#' connection. For debugging you may want to set `forbid_reuse` to create a
-#' new connection for each request.
+#' performed in the first request to a given host. Subsequent requests use the
+#' already established TLS connection. For testing, it can be useful to set
+#' `forbid_reuse` to use new connection for each request, as done in the examples.
+#'
+#' Passing the SSL_CTX between the curl and openssl R packages only works if they
+#' are linked to the same version of openssl. Use `curl_openssl_version_match()`
+#' to test if this is the case. On Debian / Ubuntu it will work if curl was built
+#' against `libcurl4-openssl-dev`, which is usually the case. On Windows you need
+#' to set `CURL_SSL_BACKEND=openssl` to your `~/.Renviron` file. On MacOS it is
+#' more complicated because it does not use OpenSSL by default. You can make it
+#' work by compiling the curl R package from source against the homebrew version
+#' of curl and then set `CURL_SSL_BACKEND=openssl` in your `~/.Renviron` file. If
+#' your curl and openssl R packages use different versions of libssl, the examples
+#' below' may segfault due to ABI incompatibility of the SSL_CTX object.
 #'
 #' @examples \dontrun{
 #' # Example: accept your local snakeoil https cert
@@ -56,7 +65,8 @@ ssl_ctx_set_verify_callback <- function(ssl_ctx, cb){
   .Call(R_ssl_ctx_set_verify_callback, ssl_ctx, cb)
 }
 
-# Tests if the curl and openssl package use the same openssl
+#' @export
+#' @rdname ssl_ctx
 curl_openssl_version_match <- function(){
   x <- get_openssl_version(openssl::openssl_config()$version)
   y <- get_openssl_version(curl::curl_version()$ssl_version)

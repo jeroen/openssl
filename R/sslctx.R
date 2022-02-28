@@ -37,6 +37,7 @@
 #' req <- curl::curl_fetch_memory('https://localhost/ocpu/info', handle = h)
 #' }
 #' @export
+#' @name ssl_ctx
 #' @rdname ssl_ctx
 #' @useDynLib openssl R_ssl_ctx_add_cert_to_store
 #' @param ssl_ctx the payload you get from curl in ssl_ctx_function

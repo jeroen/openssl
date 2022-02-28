@@ -98,7 +98,7 @@ static SEXP R_write_cert(X509 *cert){
 
 static SEXP R_write_cert_chain(STACK_OF(X509) *chain){
   int n = sk_X509_num(chain);
-  bail(n > 0);
+  bail(n >= 0);
   SEXP res = PROTECT(allocVector(VECSXP, n));
   for(int i = 0; i < n; i++){
     SET_VECTOR_ELT(res, i, R_write_cert(sk_X509_value(chain, i)));
@@ -204,18 +204,50 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   return res;
 }
 
-SEXP R_ssl_ctx_info(SEXP ptr){
+static int sslVerifyCallback(X509_STORE_CTX* x509Ctx, void *fun) {
+  X509 *cert = X509_STORE_CTX_get0_cert(x509Ctx);
+  if(!cert){
+    REprintf("Did not get certificate from the server\n");
+    return 0;
+  }
+  SEXP p1 = PROTECT(R_write_cert(cert));
+  SEXP call = PROTECT(Rf_lang2(fun, p1));
+  int err = 0;
+  SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
+  if (err || TYPEOF(res) != LGLSXP || length(res) != 1) {
+    UNPROTECT(3);
+    REprintf("sslVerifyCallback must return TRUE (continue) or FALSE (stop)");
+    return 0;
+  }
+  UNPROTECT(3);
+  return Rf_asLogical(res);
+}
+
+SEXP R_ssl_ctx_set_verify_callback(SEXP ptr, SEXP fun){
   if(TYPEOF(ptr) != EXTPTRSXP || !Rf_inherits(ptr, "ssl_ctx"))
     Rf_error("Object is not a ssl_ctx");
-  SSL_CTX *ctx = (R_ExternalPtrAddr(ptr));
+  if(!Rf_isFunction(fun))
+    Rf_error("Callback is not a function");
+  SSL_CTX *ctx = R_ExternalPtrAddr(ptr);
   if(ctx == NULL)
     return R_NilValue;
-  SEXP out = PROTECT(Rf_allocVector(VECSXP, 1));
-  X509 *cert = SSL_CTX_get0_certificate(ctx);
-  if(cert != NULL){
-    SET_VECTOR_ELT(out, 0, R_write_cert(cert));
-  }
-  Rf_setAttrib(out, R_NamesSymbol, Rf_mkString("cert"));
-  UNPROTECT(1);
-  return out;
+  R_SetExternalPtrProtected(ptr, fun);
+  SSL_CTX_set_cert_verify_callback(ctx, sslVerifyCallback, fun);
+  return Rf_ScalarInteger(1);
+}
+
+SEXP R_ssl_ctx_add_cert_to_store(SEXP ssl_ctx, SEXP cert){
+  if(TYPEOF(ssl_ctx) != EXTPTRSXP || !Rf_inherits(ssl_ctx, "ssl_ctx"))
+    Rf_error("Object is not a ssl_ctx");
+  if(!inherits(cert, "cert"))
+    Rf_error("cert is not a cert object");
+  const unsigned char *certptr = RAW(cert);
+  X509 *crt = d2i_X509(NULL, &certptr, Rf_length(cert));
+  bail(!!crt);
+  SSL_CTX *ctx = R_ExternalPtrAddr(ssl_ctx);
+  if(ctx == NULL)
+    return R_NilValue;
+  X509_STORE_add_cert(SSL_CTX_get_cert_store(ctx), crt);
+  X509_free(crt);
+  return Rf_ScalarInteger(1);
 }

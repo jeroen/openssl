@@ -9,7 +9,7 @@
 #' `forbid_reuse` to use new connection for each request, as done in the examples.
 #'
 #' Passing the SSL_CTX between the curl and openssl R packages only works if they
-#' are linked to the same version of libssl. Use `curl_openssl_version_match()`
+#' are linked to the same version of libssl. Use `ssl_ctx_curl_version_match()`
 #' to test if this is the case. On Debian / Ubuntu you need to build the R curl
 #' package against `libcurl4-openssl-dev`, which is usually the case. On Windows
 #' you can set `CURL_SSL_BACKEND=openssl` to your `~/.Renviron` file. On MacOS
@@ -68,7 +68,7 @@ ssl_ctx_set_verify_callback <- function(ssl_ctx, cb){
 
 #' @export
 #' @rdname ssl_ctx
-curl_openssl_version_match <- function(){
+ssl_ctx_curl_version_match <- function(){
   x <- get_openssl_version(openssl::openssl_config()$version)
   y <- get_openssl_version(curl::curl_version()$ssl_version)
   return(length(x) && length(y) && identical(x,y))

@@ -1,3 +1,6 @@
+1.4.7
+ - New family of ssl_ctx functions to manipulate the SSL context inside curl.
+
 1.4.6
  - Update unit tests to new pki.goog test servers
 

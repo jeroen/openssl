@@ -4,14 +4,14 @@
 \alias{ssl_ctx}
 \alias{ssl_ctx_add_cert_to_store}
 \alias{ssl_ctx_set_verify_callback}
-\alias{curl_openssl_version_match}
+\alias{ssl_ctx_curl_version_match}
 \title{Hooks to setup the SSL context for curl}
 \usage{
 ssl_ctx_add_cert_to_store(ssl_ctx, cert)
 
 ssl_ctx_set_verify_callback(ssl_ctx, cb)
 
-curl_openssl_version_match()
+ssl_ctx_curl_version_match()
 }
 \arguments{
 \item{ssl_ctx}{the payload you get from curl in ssl_ctx_function}
@@ -31,7 +31,7 @@ already established TLS connection. For testing, it can be useful to set
 `forbid_reuse` to use new connection for each request, as done in the examples.
 
 Passing the SSL_CTX between the curl and openssl R packages only works if they
-are linked to the same version of libssl. Use `curl_openssl_version_match()`
+are linked to the same version of libssl. Use `ssl_ctx_curl_version_match()`
 to test if this is the case. On Debian / Ubuntu you need to build the R curl
 package against `libcurl4-openssl-dev`, which is usually the case. On Windows
 you can set `CURL_SSL_BACKEND=openssl` to your `~/.Renviron` file. On MacOS

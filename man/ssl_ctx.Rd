@@ -52,7 +52,7 @@ h <- curl::new_handle(ssl_ctx_function = function(ssl_ctx){
 }, verbose = TRUE, forbid_reuse = TRUE)
 
 # Perform the request
-req <- curl::curl_fetch_memory('https://localhost/ocpu/info', handle = h)
+req <- curl::curl_fetch_memory('https://localhost', handle = h)
 
 # Example using a custom verify function
 verify_cb <- function(cert){
@@ -66,6 +66,6 @@ h <- curl::new_handle(ssl_ctx_function = function(ssl_ctx){
 }, verbose = TRUE, forbid_reuse = TRUE)
 
 # Perform the request
-req <- curl::curl_fetch_memory('https://localhost/ocpu/info', handle = h)
+req <- curl::curl_fetch_memory('https://localhost', handle = h)
 }
 }

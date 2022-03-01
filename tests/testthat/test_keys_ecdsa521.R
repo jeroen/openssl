@@ -36,7 +36,7 @@ test_that("legacy pkcs1 format", {
 
 test_that("pubkey ssh fingerprint", {
   fp <- paste(as.list(pk1)$fingerprint, collapse = "")
-  expect_equal(fp, "904d4c50be879bf0557af96b9935f1c2")
+  expect_equal(fp, "7a67bb9829dd93cfa56bf116120ba6ef14e464f36d4dc07a97a71e63a0e70f6c")
 })
 
 test_that("signatures", {

@@ -19,18 +19,18 @@
 #'
 #' # Other key types
 #' fingerprint(dsa_keygen())
-fingerprint <- function(key, hashfun = md5){
+fingerprint <- function(key, hashfun = sha256){
   UseMethod("fingerprint")
 }
 
 #' @export
-fingerprint.key <- function(key, hashfun = md5){
+fingerprint.key <- function(key, hashfun = sha256){
   pubkey <- derive_pubkey(key)
   fingerprint(pubkey, hashfun = hashfun)
 }
 
 #' @export
-fingerprint.pubkey <- function(key, hashfun = md5){
+fingerprint.pubkey <- function(key, hashfun = sha256){
   hashdata <- fpdata(key)
   hashfun(unlist(unname(hashdata)))
 }

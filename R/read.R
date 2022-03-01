@@ -261,17 +261,21 @@ split_pem <- function(text) {
 #' @export
 print.key <- function(x, ...){
   pk <- derive_pubkey(x)
-  fp <- fingerprint(pk)
   cat(sprintf("[%d-bit %s private key]\n", pubkey_bitsize(pk), pubkey_type(pk)))
-  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
+  if(!fips_mode()){
+    cat(sprintf("md5: %s\n", as.character(fingerprint(pk, md5))))
+  }
+  cat(sprintf("sha256: %s\n", as.character(fingerprint(pk))))
 }
 
 #' @export
 print.pubkey <- function(x, ...){
-  fp <- fingerprint(x)
   type <- class(x)[2]
   cat(sprintf("[%d-bit %s public key]\n", pubkey_bitsize(x), pubkey_type(x)))
-  cat(sprintf("md5: %s\n", paste(fp, collapse = ":")))
+  if(!fips_mode()){
+    cat(sprintf("md5: %s\n", as.character(fingerprint(x, md5))))
+  }
+  cat(sprintf("sha256: %s\n", as.character(fingerprint(x))))
 }
 
 #' @export
@@ -280,8 +284,10 @@ print.cert <- function(x, ...){
   cname <- regmatches(subject, regexpr("CN ?=[^,]*", subject))
   cname <- ifelse(length(cname), gsub("CN ?=", "", cname), "")
   cat(sprintf("[x509 certificate] %s\n", cname))
-  cat(sprintf("md5: %s\n", paste(md5(x), collapse = ":")))
-  cat(sprintf("sha1: %s\n", paste(sha1(x), collapse = ":")))
+  if(!fips_mode()){
+    cat(sprintf("md5: %s\n", as.character(md5(x))))
+  }
+  cat(sprintf("sha1: %s\n", as.character(sha1(x))))
 }
 
 path_or_raw <- function(x){

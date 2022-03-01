@@ -17,7 +17,7 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH key parse
 License: MIT + file LICENSE
 URL: https://github.com/jeroen/openssl
 BugReports: https://github.com/jeroen/openssl/issues
-SystemRequirements: OpenSSL >= 1.0.1
+SystemRequirements: OpenSSL >= 1.0.2
 VignetteBuilder: knitr
 Imports: askpass
 Suggests:

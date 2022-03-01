@@ -4,7 +4,7 @@ text <- "foo"
 bin <- charToRaw(text)
 
 test_that("MD4 outputs a 32-character hash", {
-
+  skip_if(fips_mode())
   expect_that(nchar(md4(text)), equals(32))
   expect_that(length(md4(bin)), equals(16))
   expect_identical(as.character(md4(bin)), md4(text))
@@ -12,7 +12,7 @@ test_that("MD4 outputs a 32-character hash", {
 })
 
 test_that("MD5 outputs a 32-character hash", {
-
+  skip_if(fips_mode())
   expect_that(nchar(md5(text)), equals(32))
   expect_that(length(md5(bin)), equals(16))
   expect_identical(as.character(md5(bin)), md5(text))
@@ -20,7 +20,7 @@ test_that("MD5 outputs a 32-character hash", {
 })
 
 test_that("ripemd160 outputs a 40-character hash", {
-
+  skip_if(fips_mode())
   expect_that(nchar(ripemd160(text)), equals(40))
   expect_that(length(ripemd160(bin)), equals(20))
   expect_identical(as.character(ripemd160(bin)), ripemd160(text))

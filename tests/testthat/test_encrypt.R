@@ -8,7 +8,7 @@ test_that("rsa decrypt", {
 })
 
 test_that("encrypt with various rsa key sizes", {
-  for(size in c(512, 1024, 2048, 4096)){
+  for(size in c(1024, 2048, 4096)){
     key <- rsa_keygen(size)
     pubkey <- as.list(key)$pubkey
     msg <- rand_bytes(size / 10)
@@ -20,7 +20,7 @@ test_that("encrypt with various rsa key sizes", {
 })
 
 test_that("envelopes with various rsa key sizes", {
-  for(size in c(512, 1024, 2048, 4096)){
+  for(size in c(1024, 2048, 4096)){
     key <- rsa_keygen(size)
     pubkey <- as.list(key)$pubkey
     msg <- serialize(iris, NULL)

@@ -4,7 +4,7 @@
 \alias{fingerprint}
 \title{OpenSSH fingerprint}
 \usage{
-fingerprint(key, hashfun = md5)
+fingerprint(key, hashfun = sha256)
 }
 \arguments{
 \item{key}{a public or private key}

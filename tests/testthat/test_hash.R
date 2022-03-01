@@ -1,6 +1,7 @@
 context("Test AES encryption")
 
 test_that("AES-128 encrypts and decrypts for all lengths", {
+  skip_if(fips_mode())
   key <- md5(charToRaw("supersecret"))
   for(n in 0:100){
     x <- rand_bytes(n)

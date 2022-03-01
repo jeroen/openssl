@@ -35,6 +35,7 @@
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
 #include "utils.h"
+#include "compatibility.h"
 
 #ifdef _WIN32
 #define NONBLOCK_OK (WSAGetLastError() == WSAEWOULDBLOCK)
@@ -205,7 +206,7 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
 }
 
 static int sslVerifyCallback(X509_STORE_CTX* x509Ctx, void *fun) {
-  X509 *cert = X509_STORE_CTX_get0_cert(x509Ctx);
+  X509 *cert = MY_X509_STORE_CTX_get0_cert(x509Ctx);
   if(!cert){
     REprintf("Did not get certificate from the server\n");
     return 0;

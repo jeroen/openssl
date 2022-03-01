@@ -46,8 +46,8 @@ return `TRUE` or `FALSE` to decide if the cert should be trusted.
 By default libcurl re-uses connections, hence the cert validation is only
 performed in the first request to a given host. Subsequent requests use the
 already established TLS connection. For testing, it can be useful to set
-`forbid_reuse` to use new connection for each request, as done in the examples
-below.
+`forbid_reuse` in order to make a new connection for each request, as done
+in the examples below.
 
 Passing the SSL_CTX between the curl and openssl R packages only works if they
 are linked to the same version of libssl. Use `ssl_ctx_curl_version_match()`

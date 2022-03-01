@@ -2,10 +2,20 @@
 % Please edit documentation in R/info.R
 \name{openssl_config}
 \alias{openssl_config}
+\alias{fips_mode}
 \title{OpenSSL Configuration Info}
 \usage{
 openssl_config()
+
+fips_mode()
 }
 \description{
 Shows libssl version and configuration information.
+}
+\details{
+Note that the "fips" flag in `openssl_config` means that FIPS is
+supported, but it does not mean that it is currently enforced. If
+supported, it can be enabled in several ways, such as a kernel
+option, or setting an environment variable `OPENSSL_FORCE_FIPS_MODE=1`.
+The `fips_mode()` function shows if FIPS is currently enforced.
 }

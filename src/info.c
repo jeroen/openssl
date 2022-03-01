@@ -28,3 +28,12 @@ SEXP R_openssl_config() {
   UNPROTECT(1);
   return res;
 }
+
+SEXP R_openssl_fips_mode(){
+#if OPENSSL_VERSION_MAJOR < 3
+  int enabled = FIPS_mode();
+#else
+  int enabled = EVP_default_properties_is_fips_enabled(NULL);
+#endif
+  return Rf_ScalarLogical(enabled);
+}

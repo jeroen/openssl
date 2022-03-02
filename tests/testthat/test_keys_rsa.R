@@ -5,17 +5,15 @@ sk1 <- read_key("../keys/id_rsa")
 pk1 <- read_pubkey("../keys/id_rsa.pub")
 
 test_that("reading protected keys", {
-  if(fips_mode()){
-    expect_error(read_key("../keys/id_rsa.pw", password = "test"), "FIPS")
-  } else {
-    expect_error(read_key("../keys/id_rsa.pw", password = ""), "bad")
-    sk2 <- read_key("../keys/id_rsa.pw", password = "test")
-    expect_equal(sk1, sk2)
-  }
-
-  sk3 <- read_key("../keys/id_rsa.openssh")
-  sk4 <- read_key("../keys/id_rsa.openssh.pw", password = "test")
+  expect_error(read_key("../keys/id_rsa.pw", password = ""))
+  sk2 <- read_key("../keys/id_rsa.openssh")
+  sk3 <- read_key("../keys/id_rsa.openssh.pw", password = "test")
+  expect_equal(sk1, sk2)
   expect_equal(sk1, sk3)
+
+  # This key uses a MD5-hashed password, which is not permitted under FIPS-140.
+  skip_if(fips_mode())
+  sk4 <- read_key("../keys/id_rsa.pw", password = "test")
   expect_equal(sk1, sk4)
 })
 
@@ -90,14 +88,15 @@ test_that("signature path interface", {
 })
 
 test_that("rsa_keygen works", {
-  key <- rsa_keygen(1024)
-  expect_is(key, "rsa")
-  expect_equal(as.list(key)$size, 1024)
-  rm(key)
-
   key <- rsa_keygen(2048)
   expect_is(key, "rsa")
   expect_equal(as.list(key)$size, 2048)
+  rm(key)
+
+  skip_if(fips_mode())
+  key <- rsa_keygen(1024)
+  expect_is(key, "rsa")
+  expect_equal(as.list(key)$size, 1024)
   rm(key)
 })
 

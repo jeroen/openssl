@@ -5,13 +5,18 @@ sk1 <- read_key("../keys/id_rsa")
 pk1 <- read_pubkey("../keys/id_rsa.pub")
 
 test_that("reading protected keys", {
-  sk2 <- read_key("../keys/id_rsa.pw", password = "test")
+  if(fips_mode()){
+    expect_error(read_key("../keys/id_rsa.pw", password = "test"), "FIPS")
+  } else {
+    expect_error(read_key("../keys/id_rsa.pw", password = ""), "bad")
+    sk2 <- read_key("../keys/id_rsa.pw", password = "test")
+    expect_equal(sk1, sk2)
+  }
+
   sk3 <- read_key("../keys/id_rsa.openssh")
   sk4 <- read_key("../keys/id_rsa.openssh.pw", password = "test")
-  expect_equal(sk1, sk2)
   expect_equal(sk1, sk3)
   expect_equal(sk1, sk4)
-  expect_error(read_key("../keys/id_rsa.pw", password = ""), "bad")
 })
 
 test_that("reading public key formats", {

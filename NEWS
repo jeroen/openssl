@@ -1,7 +1,9 @@
 2.0.0
  - The default fingerprint() for keys has changed from md5 to sha256. This is
    a breaking change, but in line with other software phasing out md5.
- - New family of ssl_ctx functions to manipulate the SSL context inside curl.
+ - Make the test-suite pass under FIPS on RHEL 8.
+ - New family of ssl_ctx functions to manipulate an SSL context from inside
+   curl https requests.
 
 1.4.6
  - Update unit tests to new pki.goog test servers

@@ -2,9 +2,6 @@
 
 > Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
 
-[![Build Status](https://travis-ci.org/jeroen/openssl.svg?branch=master)](https://travis-ci.org/jeroen/openssl)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jeroen/openssl?branch=master&svg=true)](https://ci.appveyor.com/project/jeroen/openssl)
-[![Coverage Status](https://codecov.io/github/jeroen/openssl/coverage.svg?branch=master)](https://codecov.io/github/jeroen/openssl?branch=master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/openssl)](http://cran.r-project.org/package=openssl)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/openssl)](http://cran.r-project.org/web/packages/openssl/index.html)
 
@@ -64,19 +61,19 @@ Binary packages for __OS-X__ or __Windows__ can be installed directly from CRAN:
 install.packages("openssl")
 ```
 
-Installation from source on Linux requires [`openssl`](http://openssl.org/source). On __Debian__ or __Ubuntu__ use [libssl-dev](https://packages.debian.org/testing/libssl-dev):
+Installation from source on Linux requires [`openssl`](https://www.openssl.org/source/). On __Debian__ or __Ubuntu__ use [libssl-dev](https://packages.debian.org/testing/libssl-dev):
 
 ```
 sudo apt-get install -y libssl-dev
 ```
 
-On __Fedora__, __CentOS or RHEL__ use [openssl-devel](https://apps.fedoraproject.org/packages/openssl-devel):
+On __Fedora__, __CentOS or RHEL__ use [openssl-devel](https://src.fedoraproject.org/rpms/openssl):
 
 ```
 sudo yum install openssl-devel
 ````
 
-On __OS-X__ we need [openssl](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb) from homebrew, which may be installed as:
+On __OS-X__ we need [openssl](https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl@1.1.rb) from homebrew, which may be installed as:
 
 ```
 brew install openssl

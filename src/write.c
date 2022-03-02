@@ -38,23 +38,23 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   if(type == EVP_PKEY_RSA){
     RSA *rsa = (RSA*) MY_EVP_PKEY_get0_RSA(pkey);
     if(pass){
-      PEM_write_bio_RSAPrivateKey(out, rsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
+      bail(PEM_write_bio_RSAPrivateKey(out, rsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass));
     } else {
-      PEM_write_bio_RSAPrivateKey(out, rsa, NULL, NULL, 0, NULL, NULL);
+      bail(PEM_write_bio_RSAPrivateKey(out, rsa, NULL, NULL, 0, NULL, NULL));
     }
   } else if(type == EVP_PKEY_DSA){
     DSA *dsa = (DSA*) MY_EVP_PKEY_get0_DSA(pkey);
     if(pass){
-      PEM_write_bio_DSAPrivateKey(out, dsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
+      bail(PEM_write_bio_DSAPrivateKey(out, dsa, EVP_des_ede3_cbc(), NULL, 0, NULL, pass));
     } else {
-      PEM_write_bio_DSAPrivateKey(out, dsa, NULL, NULL, 0, NULL, NULL);
+      bail(PEM_write_bio_DSAPrivateKey(out, dsa, NULL, NULL, 0, NULL, NULL));
     }
   } else if(type == EVP_PKEY_EC){
     EC_KEY *ec = (EC_KEY*) MY_EVP_PKEY_get0_EC_KEY(pkey);
     if(pass){
-      PEM_write_bio_ECPrivateKey(out, ec, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
+      bail(PEM_write_bio_ECPrivateKey(out, ec, EVP_des_ede3_cbc(), NULL, 0, NULL, pass));
     } else {
-      PEM_write_bio_ECPrivateKey(out, ec, NULL, NULL, 0, NULL, NULL);
+      bail(PEM_write_bio_ECPrivateKey(out, ec, NULL, NULL, 0, NULL, NULL));
     }
   } else {
     Rf_error("This key type cannot be exported to PKCS1");
@@ -64,7 +64,7 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   char buf[bufsize];
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
-  bail(len);
+  bail(len > 0);
   return ScalarString(mkCharLen(buf, len));
 }
 

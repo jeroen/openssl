@@ -31,7 +31,7 @@ All basic \link{Arithmetic} and \link{Comparison} operators such as
 \code{!=}, \code{<}, \code{<=}, \code{>} and \code{>=} are implemented for
 bignum objects. The
 \href{https://en.wikipedia.org/wiki/Modular_exponentiation}{Modular exponent}
-(\code{a^b \%\% m}) can be calculated using \code{\link{bignum_mod_exp}}
+(\code{a^b \%\% m}) can be calculated using \code{\link[=bignum_mod_exp]{bignum_mod_exp()}}
 when \code{b} is too large for calculating \code{a^b} directly.
 }
 \examples{

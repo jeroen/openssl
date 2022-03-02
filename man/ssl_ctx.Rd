@@ -25,7 +25,7 @@ and which returns TRUE (for proceed) or FALSE (for abort).}
 \description{
 These functions allow for manipulating the SSL context from inside the
 \href{https://curl.se/libcurl/c/CURLOPT_SSL_CTX_FUNCTION.html}{CURLOPT_SSL_CTX_FUNCTION}
-callback in the curl package. Note that this is not fully portable and will
+callback using the curl R package. Note that this is not fully portable and will
 only work on installations that use matching versions of libssl (see details).
 It is recommended to only use this locally and if what you need cannot be
 accomplished using standard libcurl TLS options, e.g. those listed in

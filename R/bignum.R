@@ -1,22 +1,22 @@
 #' Big number arithmetic
 #'
-#' Basic operations for working with large integers. The \code{bignum}
+#' Basic operations for working with large integers. The `bignum`
 #' function converts a positive integer, string or raw vector into a bignum type.
-#' All basic \link{Arithmetic} and \link{Comparison} operators such as
-#' \code{+}, \code{-}, \code{*}, \code{^}, \code{\%\%}, \code{\%/\%}, \code{==},
-#' \code{!=}, \code{<}, \code{<=}, \code{>} and \code{>=} are implemented for
+#' All basic [Arithmetic] and [Comparison] operators such as
+#' `+`, `-`, `*`, `^`, `%%`, `%/%`, `==`,
+#' `!=`, `<`, `<=`, `>` and `>=` are implemented for
 #' bignum objects. The
-#' \href{https://en.wikipedia.org/wiki/Modular_exponentiation}{Modular exponent}
-#' (\code{a^b \%\% m}) can be calculated using \code{\link{bignum_mod_exp}}
-#' when \code{b} is too large for calculating \code{a^b} directly.
+#' [Modular exponent](https://en.wikipedia.org/wiki/Modular_exponentiation)
+#' (`a^b %% m`) can be calculated using [bignum_mod_exp()]
+#' when `b` is too large for calculating `a^b` directly.
 #'
 #' @export
 #' @name bignum
 #' @rdname bignum
 #' @param x an integer, string (hex or dec) or raw vector
-#' @param a bignum value for \code{(a^b \%\% m)}
-#' @param b bignum value for \code{(a^b \%\% m)}
-#' @param m bignum value for \code{(a^b \%\% m)}
+#' @param a bignum value for `(a^b %% m)`
+#' @param b bignum value for `(a^b %% m)`
+#' @param m bignum value for `(a^b %% m)`
 #' @param hex set to TRUE to parse strings as hex rather than decimal notation
 #' @useDynLib openssl R_parse_bignum
 #' @examples # create a bignum

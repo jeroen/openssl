@@ -1,9 +1,10 @@
 2.0.0
  - The default fingerprint() for keys has changed from md5 to sha256. This is
-   a breaking change, but in line with other software phasing out md5.
+   a breaking change, but in line with other software phasing out md5, and needed
+   to support systems where use of MD5 has been disabled to comply with FIPS.
  - Make the test-suite pass under FIPS on RHEL 8.
- - New family of ssl_ctx functions to manipulate an SSL context from inside
-   curl https requests.
+ - New family of ssl_ctx functions to manipulate an SSL context from inside curl
+   https requests.
  - Rd manuals have been markdownified
 
 1.4.6

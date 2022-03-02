@@ -1,6 +1,7 @@
 context("Test p12 / p7b format")
 
 test_that("reading p12 certificates", {
+  skip_if(fips_mode())
   p1 <- read_p12("../google.dk/wildcard-google.dk-chain.p12")
 
   expect_error(read_p12("../google.dk/wildcard-google.dk-chain-password.p12", password = ""), "password")
@@ -16,6 +17,7 @@ test_that("reading p12 certificates", {
 })
 
 test_that("reading p12 keys", {
+  skip_if(fips_mode())
   expect_error(read_p12("../certigo/example-root.p12", password = ""), "password")
   b1 <- read_p12("../certigo/example-root.p12", password = "password")
   c1 <- read_cert("../certigo/example-root.crt")
@@ -46,6 +48,7 @@ test_that("reading p12 keys", {
 })
 
 test_that("roundtrip p12 key and cert", {
+  skip_if(fips_mode())
   if(isTRUE(openssl_config()$ec)){
     b3 <- read_p12("../certigo/example-elliptic-sha1.p12", password = "password")
     c3 <- read_cert("../certigo/example-elliptic-sha1.crt")
@@ -56,6 +59,7 @@ test_that("roundtrip p12 key and cert", {
 })
 
 test_that("writing big p12 bundle", {
+  skip_if(fips_mode())
   if(isTRUE(openssl_config()$ec)){
     bundle = ca_bundle()
 

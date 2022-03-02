@@ -92,10 +92,12 @@ test_that("signature path interface", {
 })
 
 test_that("dsa_keygen works", {
-  key <- dsa_keygen(1024)
-  expect_is(key, "dsa")
-  expect_equal(as.list(key)$size, 1024)
-  rm(key)
+  if(!fips_mode()){
+    key <- dsa_keygen(1024)
+    expect_is(key, "dsa")
+    expect_equal(as.list(key)$size, 1024)
+    rm(key)
+  }
 
   key <- dsa_keygen(2048)
   expect_is(key, "dsa")

@@ -51,13 +51,8 @@ test_that("pubkey ssh fingerprint", {
 })
 
 test_that("signatures", {
-  # MD5 signature
-  msg <- readBin("../keys/message", raw(), 100)
-  sig <- readBin("../keys/message.sig.rsa.md5", raw(), 1000)
-  expect_equal(signature_create(msg, md5, sk1), sig)
-  expect_true(signature_verify(msg, sig, md5, pk1))
-
   # SHA1 signature
+  msg <- readBin("../keys/message", raw(), 100)
   sig <- readBin("../keys/message.sig.rsa.sha1", raw(), 1000)
   expect_equal(signature_create(msg, sha1, sk1), sig)
   expect_true(signature_verify(msg, sig, sha1, pk1))
@@ -66,6 +61,12 @@ test_that("signatures", {
   sig <- readBin("../keys/message.sig.rsa.sha256", raw(), 1000)
   expect_equal(signature_create(msg, sha256, sk1), sig)
   expect_true(signature_verify(msg, sig, sha256, pk1))
+
+  # MD5 signature
+  skip_if(fips_mode())
+  sig <- readBin("../keys/message.sig.rsa.md5", raw(), 1000)
+  expect_equal(signature_create(msg, md5, sk1), sig)
+  expect_true(signature_verify(msg, sig, md5, pk1))
 })
 
 test_that("roundtrip pem format", {

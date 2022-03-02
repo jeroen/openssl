@@ -12,9 +12,9 @@
 #' @useDynLib openssl R_diffie_hellman
 #' @param key your own private key
 #' @param peerkey the public key from your peer
-#' @param password passed to \link{read_key} for reading protected private keys
-#' @references \url{https://wiki.openssl.org/index.php/EVP_Key_Agreement},
-#' \url{https://wiki.openssl.org/index.php/Elliptic_Curve_Diffie_Hellman}
+#' @param password passed to [read_key] for reading protected private keys
+#' @references <https://wiki.openssl.org/index.php/EVP_Key_Agreement>,
+#' <https://wiki.openssl.org/index.php/Elliptic_Curve_Diffie_Hellman>
 #' @examples \dontrun{
 #' # Need two EC keypairs from the same curve
 #' alice_key <- ec_keygen("P-521")

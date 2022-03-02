@@ -2,6 +2,7 @@
 % Please edit documentation in R/signing.R
 \name{signature_create}
 \alias{signature_create}
+\alias{signatures}
 \alias{signature_verify}
 \alias{ecdsa_parse}
 \alias{ecdsa_write}
@@ -19,16 +20,16 @@ ecdsa_write(r, s)
 \item{data}{raw data vector or file path for message to be signed.
 If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 
-\item{hash}{the digest function to use. Must be one of \code{\link{md5}},
-\code{\link{sha1}}, \code{\link{sha256}}, \code{\link{sha512}} or \code{NULL}.}
+\item{hash}{the digest function to use. Must be one of \code{\link[=md5]{md5()}},
+\code{\link[=sha1]{sha1()}}, \code{\link[=sha256]{sha256()}}, \code{\link[=sha512]{sha512()}} or \code{NULL}.}
 
-\item{key}{private key or file path. See \code{\link{read_key}}.}
+\item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 
-\item{password}{string or a function to read protected keys. See \code{\link{read_key}}.}
+\item{password}{string or a function to read protected keys. See \code{\link[=read_key]{read_key()}}.}
 
 \item{sig}{raw vector or file path for the signature data.}
 
-\item{pubkey}{public key or file path. See \code{\link{read_pubkey}}.}
+\item{pubkey}{public key or file path. See \code{\link[=read_pubkey]{read_pubkey()}}.}
 
 \item{r}{bignum value for r parameter}
 
@@ -37,11 +38,11 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \description{
 Sign and verify a message digest. RSA supports both MD5 and SHA signatures
 whereas DSA and EC keys only support SHA. ED25591 can sign any payload so you can
-set `hash` to `NULL` to sign the raw input data.
+set \code{hash} to \code{NULL} to sign the raw input data.
 }
 \details{
 The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures
-between the conventional DER format and the raw \code{(r,s)} bignum pair. Most
+between the conventional DER format and the raw \verb{(r,s)} bignum pair. Most
 users won't need this, it is mostly here to support the JWT format (which does not
 use DER).
 }

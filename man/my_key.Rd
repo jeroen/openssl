@@ -11,7 +11,7 @@ my_pubkey()
 }
 \description{
 The default user key can be set in the \code{USER_KEY} variable and otherwise
-is \code{~/.ssh/id_rsa}. Note that on Windows we treat `~` as the windows user
+is \verb{~/.ssh/id_rsa}. Note that on Windows we treat \code{~} as the windows user
 home (and not the documents folder).
 }
 \details{

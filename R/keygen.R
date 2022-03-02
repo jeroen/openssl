@@ -1,7 +1,7 @@
 #' Generate Key pair
 #'
-#' The \code{keygen} functions generate a random private key. Use \code{as.list(key)$pubkey}
-#' to derive the corresponding public key. Use \link{write_pem} to save a private key
+#' The `keygen` functions generate a random private key. Use `as.list(key)$pubkey`
+#' to derive the corresponding public key. Use [write_pem] to save a private key
 #' to a file, optionally with a password.
 #'
 #' @export

@@ -4,21 +4,22 @@
 #' whereas DSA and EC keys only support SHA. ED25591 can sign any payload so you can
 #' set `hash` to `NULL` to sign the raw input data.
 #'
-#' The \code{ecdsa_parse} and \code{ecdsa_write} functions convert (EC)DSA signatures
-#' between the conventional DER format and the raw \code{(r,s)} bignum pair. Most
+#' The `ecdsa_parse` and `ecdsa_write` functions convert (EC)DSA signatures
+#' between the conventional DER format and the raw `(r,s)` bignum pair. Most
 #' users won't need this, it is mostly here to support the JWT format (which does not
 #' use DER).
 #'
 #' @export
+#' @aliases signatures
 #' @rdname signatures
 #' @param data raw data vector or file path for message to be signed.
-#' If \code{hash == NULL} then \code{data} must be a hash string or raw vector.
-#' @param hash the digest function to use. Must be one of \code{\link{md5}},
-#' \code{\link{sha1}}, \code{\link{sha256}}, \code{\link{sha512}} or \code{NULL}.
-#' @param key private key or file path. See \code{\link{read_key}}.
-#' @param pubkey public key or file path. See \code{\link{read_pubkey}}.
+#' If `hash == NULL` then `data` must be a hash string or raw vector.
+#' @param hash the digest function to use. Must be one of [md5()],
+#' [sha1()], [sha256()], [sha512()] or `NULL`.
+#' @param key private key or file path. See [read_key()].
+#' @param pubkey public key or file path. See [read_pubkey()].
 #' @param sig raw vector or file path for the signature data.
-#' @param password string or a function to read protected keys. See \code{\link{read_key}}.
+#' @param password string or a function to read protected keys. See [read_key()].
 #' @examples # Generate a keypair
 #' key <- rsa_keygen()
 #' pubkey <- key$pubkey

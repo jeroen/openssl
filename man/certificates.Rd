@@ -2,6 +2,7 @@
 % Please edit documentation in R/cert.R
 \name{cert_verify}
 \alias{cert_verify}
+\alias{certificates}
 \alias{download_ssl_cert}
 \alias{ca_bundle}
 \title{X509 certificates}

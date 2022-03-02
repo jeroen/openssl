@@ -27,7 +27,7 @@ read_p7b(file, der = is.raw(file))
 \arguments{
 \item{key}{a private key}
 
-\item{cert}{certificate that matches `key`}
+\item{cert}{certificate that matches \code{key}}
 
 \item{ca}{a list of certificates (the CA chain)}
 
@@ -35,7 +35,7 @@ read_p7b(file, der = is.raw(file))
 
 \item{password}{string or function to set/get the password.}
 
-\item{path}{a file where to write the output to. If `NULL` the output is returned
+\item{path}{a file where to write the output to. If \code{NULL} the output is returned
 as a raw vector.}
 
 \item{file}{path or raw vector with binary PKCS12 data to parse}

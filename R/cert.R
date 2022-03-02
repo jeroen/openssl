@@ -5,7 +5,8 @@
 #' @useDynLib openssl R_cert_verify_cert R_pubkey_verify_cert
 #' @export
 #' @rdname certificates
-#' @seealso \link{read_cert}
+#' @aliases certificates
+#' @seealso [read_cert]
 #' @param cert certificate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
 #' @examples # Verify the r-project HTTPS cert
@@ -47,7 +48,7 @@ cert_verify <- function(cert, root = ca_bundle()){
 #' @export
 #' @rdname certificates
 #' @param host string: hostname of the server to connect to
-#' @param port string or integer: port or protocol to use, e.g: \code{443} or \code{"https"}
+#' @param port string or integer: port or protocol to use, e.g: `443` or `"https"`
 #' @param ipv4_only do not use IPv6 connections
 download_ssl_cert <- function(host = "localhost", port = 443, ipv4_only = FALSE){
   if(grepl("https?://", host))

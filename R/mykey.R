@@ -1,10 +1,10 @@
 #' Default key
 #'
-#' The default user key can be set in the \code{USER_KEY} variable and otherwise
-#' is \code{~/.ssh/id_rsa}. Note that on Windows we treat `~` as the windows user
+#' The default user key can be set in the `USER_KEY` variable and otherwise
+#' is `~/.ssh/id_rsa`. Note that on Windows we treat `~` as the windows user
 #' home (and not the documents folder).
 #'
-#' The \code{my_pubkey()} function looks for the public key by appending \code{.pub}
+#' The `my_pubkey()` function looks for the public key by appending `.pub`
 #' to the above key path. If this file does not exist, it reads the private key file
 #' and automatically derives the corresponding pubkey. In the latter case the user
 #' may be prompted for a passphrase if the private key is protected.

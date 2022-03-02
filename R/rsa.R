@@ -3,7 +3,7 @@
 #' Asymmetric encryption and decryption with RSA. Because RSA can only encrypt messages
 #' smaller than the size of the key, it is typically used only for exchanging a random
 #' session-key. This session key is used to encipher arbitrary sized data via a stream
-#' cipher such as \link{aes_cbc}. See \code{\link{encrypt_envelope}} for a high-level
+#' cipher such as [aes_cbc]. See [encrypt_envelope()] for a high-level
 #' wrappers combining RSA and AES in this way.
 #'
 #' @export

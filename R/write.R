@@ -1,18 +1,18 @@
 #' Export key or certificate
 #'
-#' The \code{write_pem} functions exports a key or certificate to the standard
+#' The `write_pem` functions exports a key or certificate to the standard
 #' base64 PEM format. For private keys it is possible to set a password.
 #'
 #' The pkcs1 format is a legacy format which only supports RSA keys and should
 #' not be used anymore. It is only provided for compatibility with some old SSH
-#' clients. Simply use \code{write_pem} to export keys and certs to the recommended
+#' clients. Simply use `write_pem` to export keys and certs to the recommended
 #' format.
 #'
 #' @export
 #' @param x a public/private key or certificate object
 #' @param password string or callback function to set password (only applicable for
 #' private keys).
-#' @param path file to write to. If \code{NULL} it returns the output as a string.
+#' @param path file to write to. If `NULL` it returns the output as a string.
 #' @rdname write_pem
 write_pem <- function(x, path = NULL, password = NULL){
   str <- pem_export(x, password)

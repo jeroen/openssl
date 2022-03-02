@@ -4,6 +4,7 @@
  - Make the test-suite pass under FIPS on RHEL 8.
  - New family of ssl_ctx functions to manipulate an SSL context from inside
    curl https requests.
+ - Rd manuals have been markdownified
 
 1.4.6
  - Update unit tests to new pki.goog test servers

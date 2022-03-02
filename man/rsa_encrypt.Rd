@@ -14,17 +14,17 @@ rsa_decrypt(data, key = my_key(), password = askpass)
 \arguments{
 \item{data}{raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt}
 
-\item{pubkey}{public key or file path. See \code{\link{read_pubkey}}.}
+\item{pubkey}{public key or file path. See \code{\link[=read_pubkey]{read_pubkey()}}.}
 
-\item{key}{private key or file path. See \code{\link{read_key}}.}
+\item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 
-\item{password}{string or a function to read protected keys. See \code{\link{read_key}}.}
+\item{password}{string or a function to read protected keys. See \code{\link[=read_key]{read_key()}}.}
 }
 \description{
 Asymmetric encryption and decryption with RSA. Because RSA can only encrypt messages
 smaller than the size of the key, it is typically used only for exchanging a random
 session-key. This session key is used to encipher arbitrary sized data via a stream
-cipher such as \link{aes_cbc}. See \code{\link{encrypt_envelope}} for a high-level
+cipher such as \link{aes_cbc}. See \code{\link[=encrypt_envelope]{encrypt_envelope()}} for a high-level
 wrappers combining RSA and AES in this way.
 }
 \examples{

@@ -1,19 +1,19 @@
 #' Vectorized hash/hmac functions
 #'
-#' All hash functions either calculate a hash-digest for \code{key == NULL} or HMAC
-#' (hashed message authentication code) when \code{key} is not \code{NULL}. Supported
+#' All hash functions either calculate a hash-digest for `key == NULL` or HMAC
+#' (hashed message authentication code) when `key` is not `NULL`. Supported
 #' inputs are binary (raw vector), strings (character vector) or a connection object.
 #'
-#' The most efficient way to calculate hashes is by using input \link{connections},
-#' such as a \link[base:connections]{file()} or \link[base:connections]{url()} object.
+#' The most efficient way to calculate hashes is by using input [connections],
+#' such as a [file()][base::connections] or [url()][base::connections] object.
 #' In this case the hash is calculated streamingly, using almost no memory or disk space,
-#' regardless of the data size. When using a connection input in the \link{multihash}
+#' regardless of the data size. When using a connection input in the [multihash]
 #' function, the data is only read only once while streaming to multiple hash functions
 #' simultaneously. Therefore several hashes are calculated simultanously, without the
 #' need to store any data or download it multiple times.
 #'
-#' Functions are vectorized for the case of character vectors: a vector with \code{n}
-#' strings returns \code{n} hashes. When passing a connection object, the contents will
+#' Functions are vectorized for the case of character vectors: a vector with `n`
+#' strings returns `n` hashes. When passing a connection object, the contents will
 #' be stream-hashed which minimizes the amount of required memory. This is recommended
 #' for hashing files from disk or network.
 #'
@@ -23,20 +23,20 @@
 #' purposes.
 #'
 #' In applications where hashes should be irreversible (such as names or passwords) it is
-#' often recommended to use a random \emph{key} for HMAC hashing. This prevents attacks where
+#' often recommended to use a random *key* for HMAC hashing. This prevents attacks where
 #' we can lookup hashes of common and/or short strings. See examples. A common special case
 #' is adding a random salt to a large number of records to test for uniqueness within the
 #' dataset, while simultaneously rendering the results incomparable to other datasets.
 #'
-#' The \code{blake2b} and \code{blake2s} algorithms are only available if your system has
+#' The `blake2b` and `blake2s` algorithms are only available if your system has
 #' libssl 1.1 or newer.
 #'
 #' @param x character vector, raw vector or connection object.
 #' @param key string or raw vector used as the key for HMAC hashing
 #' @param size must be equal to 224 256 384 or 512
-#' @references Digest types: \url{https://www.openssl.org/docs/man1.1.1/man1/openssl-dgst.html}
+#' @references Digest types: <https://www.openssl.org/docs/man1.1.1/man1/openssl-dgst.html>
 #' @export
-#' @aliases hmac mac
+#' @aliases hash hmac mac
 #' @rdname hash
 #' @name hashing
 #' @useDynLib openssl R_digest_raw R_digest

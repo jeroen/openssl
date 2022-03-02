@@ -3,13 +3,13 @@
 #' Low-level symmetric encryption/decryption using the AES block cipher in CBC mode.
 #' The key is a raw vector, for example a hash of some secret. When no shared
 #' secret is available, a random key can be used which is exchanged via an
-#' asymmetric protocol such as RSA. See \code{\link{rsa_encrypt}} for a worked example
-#' or \code{\link{encrypt_envelope}} for a high-level wrapper combining AES and RSA.
+#' asymmetric protocol such as RSA. See [rsa_encrypt()] for a worked example
+#' or [encrypt_envelope()] for a high-level wrapper combining AES and RSA.
 #'
 #' @export
 #' @rdname aes_cbc
 #' @name aes_cbc
-#' @param length how many bytes to generate. Usually 16 (128-bit) or 12 (92-bit) for \code{aes_gcm}
+#' @param length how many bytes to generate. Usually 16 (128-bit) or 12 (92-bit) for `aes_gcm`
 #' @param data raw vector or path to file with data to encrypt or decrypt
 #' @param key raw vector of length 16, 24 or 32, e.g. the hash of a shared secret
 #' @param iv raw vector of length 16 (aes block size) or NULL. The initialization vector

@@ -3,6 +3,7 @@
 \name{hashing}
 \alias{hashing}
 \alias{sha1}
+\alias{hash}
 \alias{hmac}
 \alias{mac}
 \alias{sha224}

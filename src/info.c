@@ -7,6 +7,10 @@
 #define HAS_ECX
 #endif
 
+#if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR >= 3
+#include <openssl/provider.h>
+#endif
+
 SEXP R_openssl_config() {
   int has_ec = 1;
   #ifdef OPENSSL_NO_EC
@@ -34,6 +38,10 @@ SEXP R_openssl_fips_mode(){
   int enabled = FIPS_mode();
 #else
   int enabled = EVP_default_properties_is_fips_enabled(NULL);
+  if (!enabled) {
+    enabled = OSSL_PROVIDER_available(NULL, "fips") &&
+      !OSSL_PROVIDER_available(NULL, "default");
+  }
 #endif
   return Rf_ScalarLogical(enabled);
 }

@@ -13,7 +13,7 @@ test_that("reading protected keys", {
   expect_equal(sk1, sk2)
   expect_equal(sk1, sk3)
   expect_equal(sk1, sk4)
-  expect_error(read_key("../keys/id_ed25519.pw", password = NULL), "bad")
+  expect_error(read_key("../keys/id_ed25519.pw", password = NULL), "bad|empty")
 })
 
 test_that("reading public key formats", {

@@ -1,3 +1,6 @@
+2.0.1
+ - Fix a unit test for a changed error message in openssl 3.0.2
+
 2.0.0
  - The default fingerprint() for keys has changed from md5 to sha256. This is
    a breaking change, but in line with other software phasing out md5, and needed

@@ -9,7 +9,8 @@
 #' @seealso [read_cert]
 #' @param cert certificate (or certificate-chain) to be verified. Must be cert or list or path.
 #' @param root trusted pubkey or certificate(s) e.g. CA bundle.
-#' @examples # Verify the r-project HTTPS cert
+#' @examples \donttest{
+#' # Verify the r-project HTTPS cert
 #' chain <- download_ssl_cert("cran.r-project.org", 443)
 #' print(chain)
 #' cert_data <- as.list(chain[[1]])
@@ -19,6 +20,7 @@
 #'
 #' # Write cert in PEM format
 #' cat(write_pem(chain[[1]]))
+#' }
 cert_verify <- function(cert, root = ca_bundle()){
   if(is.raw(cert))
     cert <- list(cert)

@@ -28,6 +28,7 @@ ca_bundle()
 Read, download, analyze and verify X.509 certificates.
 }
 \examples{
+\donttest{
 # Verify the r-project HTTPS cert
 chain <- download_ssl_cert("cran.r-project.org", 443)
 print(chain)
@@ -38,6 +39,7 @@ cert_verify(chain, ca_bundle())
 
 # Write cert in PEM format
 cat(write_pem(chain[[1]]))
+}
 }
 \seealso{
 \link{read_cert}

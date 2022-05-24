@@ -3,6 +3,9 @@ context("Google SSL tests")
 # Certificates from https://pki.goog/
 
 test_that("google certs validate", {
+  # CRAN checks have to work offline
+  skip_on_cran()
+
   # Google CA root certs
   gsr4 <- read_cert('https://pki.goog/repo/certs/gsr4.der', der = TRUE)
   gtsr1 <- read_cert('https://pki.goog/repo/certs/gtsr1.der', der = TRUE)

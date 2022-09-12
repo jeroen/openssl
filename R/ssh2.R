@@ -165,7 +165,8 @@ parse_openssh_key_private <- function(input, password){
   data <- parse_openssh_key_data(input)
   ciphername <- data$ciphername
   kdfname <- data$kdfname
-  input <- if(kdfname == "none") {
+  #cat(sprintf("privdata: %d\n", length(data$privdata)))
+  output <- if(kdfname == "none") {
     data$privdata
   } else if(kdfname == "bcrypt") {
     kdfopt <- parse_openssh_kdfoptions(data$kdfoptions)
@@ -184,9 +185,9 @@ parse_openssh_key_private <- function(input, password){
   } else {
     stop(sprintf("Unsupported key encryption: %s (%s)", kdfname, ciphername))
   }
-  if(!identical(input[1:4], input[5:8]))
+  if(!identical(output[1:4], output[5:8]))
     stop("Check failed, invalid passphrase?")
-  ssh_build_privkey(input[-seq_len(8)])
+  ssh_build_privkey(output[-seq_len(8)])
 }
 
 parse_openssh_kdfoptions <- function(input){

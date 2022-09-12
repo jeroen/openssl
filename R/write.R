@@ -3,10 +3,10 @@
 #' The `write_pem` functions exports a key or certificate to the standard
 #' base64 PEM format. For private keys it is possible to set a password.
 #'
-#' The pkcs1 format is a legacy format which only supports RSA keys and should
-#' not be used anymore. It is only provided for compatibility with some old SSH
-#' clients. Simply use `write_pem` to export keys and certs to the recommended
-#' format.
+#' The pkcs1 format is the old legacy format used by OpenSSH. PKCS1 does not
+#' support the new ed25519 keys, for which you need `write_openssh_pem`.
+#' For non-ssh clients, we recommend to simply use `write_pem` to export keys
+#' and certs into the recommended formats.
 #'
 #' @export
 #' @param x a public/private key or certificate object

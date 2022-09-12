@@ -1,3 +1,6 @@
+2.0.3
+ - New function write_openssh_pem to support ed25519 in libssh2/gert
+
 2.0.2
  - Disable tests that require internet access to comply with AON policy
 

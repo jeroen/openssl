@@ -20,3 +20,53 @@ write_ssh <- function(pubkey, path = NULL){
   invisible(path)
 }
 
+
+# Inverse of ssh_parse_data
+ssh_generate_buf <- function(data, header = NULL, padsize = NULL){
+  con <- rawConnection(raw(0), "r+")
+  on.exit(close(con))
+  if(length(header))
+    writeBin(header, con)
+  lapply(data, function(buf){
+    buf <- unclass(buf)
+    if(is.integer(buf))
+      return(writeBin(buf, con, endian = 'big'))
+    if(is.character(buf))
+      buf <- charToRaw(buf)
+    stopifnot(is.raw(buf))
+    len <- as.integer(length(buf))
+    writeBin(len, con, endian = 'big')
+    writeBin(buf, con, endian = 'big')
+  })
+  out <- rawConnectionValue(con)
+  if(length(padsize)){
+    len <- length(out)
+    outlen <- padsize * (((len-1) %/% padsize) + 1)
+    out <- c(out, as.raw(seq_len(outlen - len)))
+  }
+  out
+}
+
+
+#' @export
+#' @rdname write_pem
+#' @param key a private key
+write_openssh_pem <- function(key, path = NULL){
+  # For now no passwords supported yet
+  stopifnot(inherits(key, "key"))
+  payload <- c(privdata(key), "user@localhost")
+  header <- rep(rand_bytes(4), 2)
+  fields <- list (
+    ciphername = "none",
+    kdfname = "none",
+    kdfoptions = "",
+    count = 1L,
+    pubdata = unlist(fpdata(key$pubkey)),
+    privdata = ssh_generate_buf(payload, header = header, padsize = 32)
+  )
+  out <- ssh_generate_buf(fields, header = 'openssh-key-v1')
+  str <- paste0("-----BEGIN OPENSSH PRIVATE KEY-----\n", base64_encode(out), "\n-----END OPENSSH PRIVATE KEY-----\n")
+  if(is.null(path)) return(str)
+  writeLines(str, path)
+  invisible(path)
+}

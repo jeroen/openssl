@@ -150,3 +150,34 @@ pubkey_decompose.x25519 <- pubkey_decompose.ed25519 <- function(x){
 priv_decompose.ed25519 <- priv_decompose.x25519 <- function(x){
   write_raw_key(x)
 }
+
+privdata <- function(x, ...){
+  UseMethod("priv_keydata")
+}
+
+priv_keydata.rsa <- function(key){
+  privdata <- decompose(key)
+  c('ssh-rsa', privdata[c("n", "e", "d", "qi", "p", "q")])
+}
+
+priv_keydata.dsa <- function(key){
+  data <- decompose(key)
+  c('ssh-dss', data[c("p", "q", "g", "y", "x")])
+}
+
+priv_keydata.ecdsa <- function(key){
+  privdata <- decompose(key)
+  curve <- switch(privdata$curve,
+     "P-256" = "nistp256",
+     "P-384" = "nistp384",
+     "P-521" = "nistp521",
+     stop("Unknown curve type: ", privdata$curve)
+  )
+  list(paste0("ecdsa-sha2-", curve), curve, c(as.raw(4), privdata$x, privdata$y), privdata$secret)
+}
+
+priv_keydata.ed25519 <- function(key){
+  pubdata <- decompose(key$pubkey)
+  privdata <- decompose(key)
+  list("ssh-ed25519", pubdata, c(privdata, pubdata))
+}

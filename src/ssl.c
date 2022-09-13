@@ -90,10 +90,11 @@ int pending_interrupt() {
 static SEXP R_write_cert(X509 *cert){
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
-  SEXP out = allocVector(RAWSXP, len);
+  SEXP out = PROTECT(allocVector(RAWSXP, len));
   memcpy(RAW(out), buf, len);
   setAttrib(out, R_ClassSymbol, mkString("cert"));
   OPENSSL_free(buf);
+  UNPROTECT(1);
   return out;
 }
 

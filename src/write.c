@@ -110,3 +110,16 @@ SEXP R_pem_write_cert(SEXP input){
   bail(len);
   return ScalarString(mkCharLen(buf, len));
 }
+
+
+SEXP R_pem_write_data(SEXP name, SEXP data){
+  BIO *out = BIO_new(BIO_s_mem());
+  /* Do not set header to NULL: https://github.com/openssl/openssl/issues/18825 */
+  PEM_write_bio(out, CHAR(STRING_ELT(name, 0)), "", RAW(data), Rf_length(data));
+  int bufsize = 100000;
+  char buf[bufsize];
+  int len = BIO_read(out, buf, bufsize);
+  BIO_free(out);
+  bail(len);
+  return ScalarString(mkCharLen(buf, len));
+}

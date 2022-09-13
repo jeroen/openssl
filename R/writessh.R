@@ -53,6 +53,7 @@ ssh_generate_buf <- function(data, header = NULL, padsize = NULL){
 #' @param key a private key
 write_openssh_pem <- function(key, path = NULL){
   # For now no passwords supported yet
+  # Spec: https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD
   stopifnot(inherits(key, "key"))
   payload <- c(privdata(key), "user@localhost")
   header <- rep(rand_bytes(4), 2)
@@ -65,8 +66,16 @@ write_openssh_pem <- function(key, path = NULL){
     privdata = ssh_generate_buf(payload, header = header, padsize = 32)
   )
   out <- ssh_generate_buf(fields, header = 'openssh-key-v1')
-  str <- paste0("-----BEGIN OPENSSH PRIVATE KEY-----\n", base64_encode(out), "\n-----END OPENSSH PRIVATE KEY-----\n")
+  str <- write_pem_data('OPENSSH PRIVATE KEY', out)
+  #str <- paste0("-----BEGIN OPENSSH PRIVATE KEY-----\n", base64_encode(out), "\n-----END OPENSSH PRIVATE KEY-----\n")
   if(is.null(path)) return(str)
   writeLines(str, path)
   invisible(path)
+}
+
+#' @useDynLib openssl R_pem_write_data
+write_pem_data <- function(name, data){
+  stopifnot(is.character(name))
+  stopifnot(is.raw(data))
+  .Call(R_pem_write_data, name, data)
 }

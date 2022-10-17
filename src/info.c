@@ -11,7 +11,7 @@
 #include <openssl/provider.h>
 #endif
 
-SEXP R_openssl_config() {
+SEXP R_openssl_config(void) {
   int has_ec = 1;
   #ifdef OPENSSL_NO_EC
   has_ec = 0;
@@ -33,7 +33,7 @@ SEXP R_openssl_config() {
   return res;
 }
 
-SEXP R_openssl_fips_mode(){
+SEXP R_openssl_fips_mode(void){
 #if OPENSSL_VERSION_MAJOR < 3
   int enabled = FIPS_mode();
 #else

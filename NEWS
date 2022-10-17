@@ -1,3 +1,6 @@
+2.0.4
+ - Fix strict-prototype warnings for CRAN
+
 2.0.3
  - New function write_openssh_pem to support ed25519 in libssh2/gert
 

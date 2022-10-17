@@ -69,7 +69,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
 #endif //OPENSSL_NO_EC
 }
 
-SEXP R_keygen_x25519(){
+SEXP R_keygen_x25519(void){
 #ifdef HAS_ECX
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_X25519, NULL);
   bail(!!ctx);
@@ -90,7 +90,7 @@ SEXP R_keygen_x25519(){
 #endif
 }
 
-SEXP R_keygen_ed25519(){
+SEXP R_keygen_ed25519(void){
 #ifdef HAS_ECX
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_ED25519, NULL);
   bail(!!ctx);

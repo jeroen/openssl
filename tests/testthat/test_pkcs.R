@@ -81,7 +81,7 @@ test_that("reading encrypted p7b", {
   expect_equal(trimws(rawToChar(msg)), "yolo")
 
   # roundtrip
-  testdata <- serialize(iris, NULL);
+  testdata <- serialize(iris, NULL)
   buf <- pkcs7_encrypt(testdata, cert = "../keys/id_rsa.crt")
-  expect_equal(pkcs7_decrypt(buf, "../keys/id_rsa"), out)
+  expect_equal(pkcs7_decrypt(buf, "../keys/id_rsa"), testdata)
 })

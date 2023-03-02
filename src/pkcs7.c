@@ -143,7 +143,7 @@ SEXP R_pkcs7_encrypt(SEXP message, SEXP cert){
   bail(sk_X509_push(sk, crt));
   bail(sk_X509_num(sk));
   BIO *bio = BIO_push(BIO_new(BIO_f_buffer()), BIO_new_mem_buf((void*) RAW(message), Rf_length(message)));
-  PKCS7 *p7 = PKCS7_encrypt(sk, bio, EVP_des_ede3_cbc(), 0);
+  PKCS7 *p7 = PKCS7_encrypt(sk, bio, EVP_des_ede3_cbc(), PKCS7_BINARY);
   bail(!!p7);
   BIO_free(bio);
   sk_X509_free(sk);

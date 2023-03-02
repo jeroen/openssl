@@ -65,6 +65,8 @@ SEXP R_parse_der_pkcs7(SEXP input){
       certs = p7->d.signed_and_enveloped->cert;
       crls = p7->d.signed_and_enveloped->crl;
     }
+  } else if(p7type == NID_pkcs7_enveloped){
+    Rf_errorcall(R_NilValue, "This is an encrypted PKCS7, use pkcs7_decrypt() instead");
   } else {
     Rf_errorcall(R_NilValue, "Unsupported P7 type: %d\n", p7type);
   }

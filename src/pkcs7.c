@@ -135,7 +135,7 @@ SEXP R_pkcs7_decrypt(SEXP input, SEXP keydata){
   return content;
 }
 
-SEXP R_pkcs7_encrypt(SEXP message, SEXP cert, SEXP pem){
+SEXP R_pkcs7_encrypt(SEXP message, SEXP cert){
   const unsigned char *ptr = RAW(cert);
   X509 *crt = d2i_X509(NULL, &ptr, LENGTH(cert));
   bail(!!crt);

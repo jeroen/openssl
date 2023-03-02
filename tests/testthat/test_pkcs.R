@@ -72,6 +72,16 @@ test_that("writing big p12 bundle", {
     buf <- write_p7b(ca = bundle)
     out <- read_p7b(buf)
     expect_equal(bundle, out)
-
   }
+})
+
+test_that("reading encrypted p7b", {
+  skip_if(fips_mode())
+  msg <- pkcs7_decrypt("../keys/encrypted.rsa.p7b", key = "../keys/id_rsa")
+  expect_equal(trimws(rawToChar(msg)), "yolo")
+
+  # roundtrip
+  testdata <- serialize(iris, NULL)
+  buf <- pkcs7_encrypt(testdata, cert = "../keys/id_rsa.crt")
+  expect_equal(pkcs7_decrypt(buf, "../keys/id_rsa"), testdata)
 })

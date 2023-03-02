@@ -141,10 +141,11 @@ SEXP R_pkcs7_encrypt(SEXP message, SEXP cert){
   bail(!!crt);
   STACK_OF(X509) *sk = sk_X509_new_null();
   bail(sk_X509_push(sk, crt));
-  BIO *msgbuf = BIO_push(BIO_new(BIO_f_base64()), BIO_new_mem_buf((void*) RAW(message), Rf_length(message)));
-  PKCS7 *p7 = PKCS7_encrypt(sk, msgbuf, EVP_des_ede3_cbc() , 0);
+  bail(sk_X509_num(sk));
+  BIO *bio = BIO_push(BIO_new(BIO_f_buffer()), BIO_new_mem_buf((void*) RAW(message), Rf_length(message)));
+  PKCS7 *p7 = PKCS7_encrypt(sk, bio, EVP_des_ede3_cbc(), 0);
   bail(!!p7);
-  BIO_free(msgbuf);
+  BIO_free(bio);
   sk_X509_free(sk);
   X509_free(crt);
   unsigned char *buf = NULL;

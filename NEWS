@@ -1,5 +1,6 @@
 2.0.6
  - Add support for decryption in read_p7b.
+ - Fix snprintf bug in hash functions
 
 2.0.5
  - Replace sprintf with snprintf for CRAN

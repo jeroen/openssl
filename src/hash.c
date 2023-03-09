@@ -62,13 +62,11 @@ SEXP R_digest(SEXP x, SEXP algo, SEXP key){
     unsigned int md_len = digest_string( (unsigned char*) str, stringlen, key, CHAR(asChar(algo)), md_value);
 
     /* create character vector */
-    int len = 2*md_len+1;
-    char mdString[len];
+    char strbuf[2*md_len+1];
     for (int i = 0; i < md_len; i++) {
-      snprintf(&mdString[i*2], len, "%02x", (unsigned int) md_value[i]);
+      snprintf(strbuf + i*2, 3, "%02x", (unsigned int) md_value[i]);
     }
-    mdString[2*md_len] = '\0';
-    SET_STRING_ELT(out, i, mkChar(mdString));
+    SET_STRING_ELT(out, i, mkChar(strbuf));
   }
   UNPROTECT(1);
   return out;

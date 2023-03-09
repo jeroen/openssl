@@ -13,7 +13,6 @@ $(OBJECTS): winlibs
 $(SHLIB): $(OBJECTS) $(STATLIB)
 
 $(STATLIB): $(LIBBCRYPT)
-	$(AR) rcs $(STATLIB) $(LIBBCRYPT)
 
 winlibs:
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)

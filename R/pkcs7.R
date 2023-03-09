@@ -23,7 +23,7 @@ pkcs7_encrypt <- function(message, cert, pem = TRUE){
 
 #' @export
 #' @rdname pkcs7
-#' @seealso encrypt_envelope
+#' @seealso [encrypt_envelope]
 #' @param input file path or string with PEM or raw vector with p7b data
 #' @param key private key to decrypt data
 #' @param der assume input is in DER format (rather than PEM)

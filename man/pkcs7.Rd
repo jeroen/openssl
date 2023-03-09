@@ -27,5 +27,5 @@ Encrypt or decrypt messages using PKCS7 smime format.
 Note PKCS7 only supports RSA keys.
 }
 \seealso{
-encrypt_envelope
+\link{encrypt_envelope}
 }

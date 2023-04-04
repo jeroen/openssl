@@ -12,6 +12,8 @@
 #' @param rounds number of hashing rounds
 #' @param size desired length of the output key
 bcrypt_pbkdf <- function(password, salt, rounds = 16L, size = 32L){
+  if(fips_mode())
+    stop("Disabled for FIPS")
   if(is.character(password))
     password <- charToRaw(password)
   stopifnot(is.raw(password))

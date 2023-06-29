@@ -110,6 +110,10 @@ static SEXP R_write_cert_chain(STACK_OF(X509) *chain){
 }
 
 SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
+#ifdef __EMSCRIPTEN__
+  Rf_error("Raw network access is unavailable when running under Wasm.");
+  return NULL;
+#else
   /* The 'hints' arg is only needed for solaris */
   struct addrinfo hints;
   memset(&hints,0,sizeof(hints));
@@ -204,6 +208,7 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   SSL_free(ssl);
   SSL_CTX_free(ctx);
   return res;
+#endif // __EMSCRIPTEN__
 }
 
 static int sslVerifyCallback(X509_STORE_CTX* x509Ctx, void *fun) {

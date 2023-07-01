@@ -2,6 +2,7 @@ test_that("ssl-ctx integration works", {
   skip_if_not_installed('curl')
   skip_if(packageVersion('curl') < '4.3.3')
   skip_if_not(ssl_ctx_curl_version_match())
+  skip_if_offline()
 
   test <- download_ssl_cert('cran.r-project.org')[[1]]
 

@@ -1,9 +1,16 @@
-VERSION = 1.1.1k
-PKG_CPPFLAGS = -I../windows/openssl-$(VERSION)/include
-PKG_LIBS = -Lbcrypt -lstatbcrypt -L../windows/openssl-$(VERSION)/lib${R_ARCH}${CRT} \
-	-lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
+VERSION = 3.1.1
+RWINLIB = ../windows/openssl-$(VERSION)
+TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
+PKG_CPPFLAGS = -I$(RWINLIB)/include -DOPENSSL_SUPPRESS_DEPRECATED
+
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
+
+PKG_LIBS = \
+	-Lbcrypt -lstatbcrypt \
+	-L$(RWINLIB)/$(TARGET) \
+	-L$(RWINLIB)/lib$(R_ARCH) \
+	-lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
 
 #all: clean
 all: $(SHLIB)

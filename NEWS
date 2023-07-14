@@ -1,4 +1,5 @@
 2.1.0
+ - MacOS binaries have been bumped to libssl 3.1.1
  - Added sha3() function
 
 2.0.6

@@ -1,7 +1,7 @@
 Package: openssl
 Type: Package
 Title: Toolkit for Encryption, Signatures and Certificates Based on OpenSSL
-Version: 2.0.6
+Version: 2.1.0
 Authors@R: c(person("Jeroen", "Ooms", role = c("aut", "cre"), email = "jeroen@berkeley.edu",
     comment = c(ORCID = "0000-0002-4035-0289")),
     person("Oliver", "Keyes", role = "ctb"))

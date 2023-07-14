@@ -105,6 +105,12 @@ sha2 <- function(x, size = 256, key = NULL){
 
 #' @rdname hash
 #' @export
+sha3 <- function(x, size = 256, key = NULL){
+  rawstringhash(x, paste0("sha3-", size), key)
+}
+
+#' @rdname hash
+#' @export
 md4 <- function(x, key = NULL){
   rawstringhash(x, "md4", key)
 }

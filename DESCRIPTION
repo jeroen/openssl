@@ -15,7 +15,7 @@ Description: Bindings to OpenSSL libssl and libcrypto, plus custom SSH key parse
     number generator, and 'bignum' math methods for manually performing crypto 
     calculations on large multibyte integers.
 License: MIT + file LICENSE
-URL: https://github.com/jeroen/openssl
+URL: https://jeroen.r-universe.dev/openssl
 BugReports: https://github.com/jeroen/openssl/issues
 SystemRequirements: OpenSSL >= 1.0.2
 VignetteBuilder: knitr

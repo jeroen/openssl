@@ -35,7 +35,7 @@ fingerprint.pubkey <- function(key, hashfun = sha256){
   hashfun(unlist(unname(hashdata)))
 }
 
-fpdata <- function(pubkey, ...){
+fpdata <- function(pubkey){
   UseMethod("fpdata")
 }
 

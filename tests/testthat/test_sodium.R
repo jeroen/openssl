@@ -1,6 +1,7 @@
 context("Sodium Compatibility")
 
 test_that("Signatures are compatible with sodium", {
+  skip_if_not_installed('sodium')
   skip_if(fips_mode())
   skip_if_not(openssl_config()$x25519)
 
@@ -26,6 +27,7 @@ test_that("Signatures are compatible with sodium", {
 })
 
 test_that("Diffie Hellman is compatible with sodium", {
+  skip_if_not_installed('sodium')
   skip_if(fips_mode())
   skip_if_not(openssl_config()$x25519)
   # Generate keypair with sodium

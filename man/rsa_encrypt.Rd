@@ -7,14 +7,16 @@
 \alias{rsa_decrypt}
 \title{Low-level RSA encryption}
 \usage{
-rsa_encrypt(data, pubkey = my_pubkey())
+rsa_encrypt(data, pubkey = my_pubkey(), oaep = FALSE)
 
-rsa_decrypt(data, key = my_key(), password = askpass)
+rsa_decrypt(data, key = my_key(), password = askpass, oaep = FALSE)
 }
 \arguments{
 \item{data}{raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt}
 
 \item{pubkey}{public key or file path. See \code{\link[=read_pubkey]{read_pubkey()}}.}
+
+\item{oaep}{if TRUE, changes padding to EME-OAEP as defined in PKCS #1 v2.0}
 
 \item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 

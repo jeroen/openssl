@@ -8,6 +8,7 @@
 #'
 #' @export
 #' @param data raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt
+#' @param oaep if TRUE, changes padding to EME-OAEP as defined in PKCS #1 v2.0
 #' @inheritParams signature_create
 #' @rdname rsa_encrypt
 #' @aliases rsa encrypt
@@ -28,19 +29,19 @@
 #' tempkey <- rsa_decrypt(ciphertext, key)
 #' message <- aes_cbc_decrypt(blob, tempkey, iv)
 #' out <- rawToChar(message)
-rsa_encrypt <- function(data, pubkey = my_pubkey()){
+rsa_encrypt <- function(data, pubkey = my_pubkey(), oaep = FALSE){
   pk <- read_pubkey(pubkey)
   stopifnot(inherits(pk, "rsa"))
   stopifnot(is.raw(data))
-  .Call(R_rsa_encrypt, data, pk)
+  .Call(R_rsa_encrypt, data, pk, oaep)
 }
 
 #' @useDynLib openssl R_rsa_decrypt
 #' @export
 #' @rdname rsa_encrypt
-rsa_decrypt <- function(data, key = my_key(), password = askpass){
+rsa_decrypt <- function(data, key = my_key(), password = askpass, oaep = FALSE){
   sk <- read_key(key, password)
   stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(data))
-  .Call(R_rsa_decrypt, data, sk)
+  .Call(R_rsa_decrypt, data, sk, oaep)
 }

@@ -1,3 +1,6 @@
+2.1.1
+ - Windows: update to openssl 3.1.2 + arm support
+
 2.1.0
  - Windows and autobrew binaries have been bumped to libssl 3.1.1. (MacOS CRAN
    binaries use libssl from CRAN 'recipes' which is currently libssl 1.1.1)

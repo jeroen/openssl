@@ -1,5 +1,4 @@
-VERSION = 3.1.1
-RWINLIB = ../windows/openssl-$(VERSION)
+RWINLIB = ../windows/libssl
 TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
 PKG_CPPFLAGS = -I$(RWINLIB)/include -DOPENSSL_SUPPRESS_DEPRECATED
 
@@ -9,7 +8,7 @@ LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
 PKG_LIBS = \
 	-Lbcrypt -lstatbcrypt \
 	-L$(RWINLIB)/$(TARGET) \
-	-L$(RWINLIB)/lib$(R_ARCH) \
+	-L$(RWINLIB)/lib \
 	-lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
 
 #all: clean
@@ -22,7 +21,7 @@ $(SHLIB): $(OBJECTS) $(STATLIB)
 $(STATLIB): $(LIBBCRYPT)
 
 winlibs:
-	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R" $(VERSION)
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS) $(STATLIB) $(LIBBCRYPT)

@@ -18,6 +18,7 @@ jobs:
         config:
           - {os: windows-latest, r: '3.6'}
           - {os: windows-latest, r: '4.1'}
+          - {os: windows-latest, r: '4.2'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: 'release', ssl_backend: 'openssl'}
           - {os: windows-latest,   r: 'devel'}

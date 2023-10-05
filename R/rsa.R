@@ -33,6 +33,7 @@ rsa_encrypt <- function(data, pubkey = my_pubkey(), oaep = FALSE){
   pk <- read_pubkey(pubkey)
   stopifnot(inherits(pk, "rsa"))
   stopifnot(is.raw(data))
+  oaep <- as.logical(oaep)
   .Call(R_rsa_encrypt, data, pk, oaep)
 }
 
@@ -43,5 +44,6 @@ rsa_decrypt <- function(data, key = my_key(), password = askpass, oaep = FALSE){
   sk <- read_key(key, password)
   stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(data))
+  oaep <- as.logical(oaep)
   .Call(R_rsa_decrypt, data, sk, oaep)
 }

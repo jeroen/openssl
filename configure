@@ -76,7 +76,7 @@ fi
 
 # Try to link against the correct OpenSSL version
 if [ -z "$AUTOBREW" ]; then
-SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | sh | xargs`
+SONAME=`${CC} -E ${PKG_CFLAGS} src/tests/soname.h | grep 'echo' | sh | xargs`
 if [ "$SONAME" ]; then
 if [ `uname` = "Darwin" ]; then
   PKG_LIBS_VERSIONED=`echo "${PKG_LIBS}" | sed "s/-lssl/-lssl.${SONAME}/" | sed "s/-lcrypto/-lcrypto.${SONAME}/"`

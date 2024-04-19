@@ -140,7 +140,6 @@ ripemd160 <- function(x, key = NULL){
 }
 
 #' @rdname hash
-#' @export
 #' @param algos string vector with names of hashing algorithms
 multihash <- function(x, algos = c('md5', 'sha1', 'sha256', 'sha384', 'sha512')){
   if(inherits(x, 'connection')){

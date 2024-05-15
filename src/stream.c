@@ -14,7 +14,11 @@ void fin_md(SEXP ptr){
 }
 
 SEXP R_md_init(SEXP algo){
+#ifdef HAS_OPENSSL3_API
+  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(asChar(algo)), NULL);
+#else
   const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
+#endif
   if(!md)
     error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
   EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
@@ -61,7 +65,11 @@ void fin_hmac(SEXP ptr){
 }
 
 SEXP R_hmac_init(SEXP algo, SEXP key){
+#ifdef HAS_OPENSSL3_API
+  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(asChar(algo)), NULL);
+#else
   const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
+#endif
   if(!md)
     error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
 #ifdef HAS_OPENSSL11_API

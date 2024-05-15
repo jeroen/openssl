@@ -99,6 +99,12 @@ sha512 <- function(x, key = NULL){
 
 #' @rdname hash
 #' @export
+keccak256 <- function(x, key = NULL){
+  rawstringhash(x, "keccak-256", key)
+}
+
+#' @rdname hash
+#' @export
 sha2 <- function(x, size = 256, key = NULL){
   rawstringhash(x, paste0("sha", size), key)
 }

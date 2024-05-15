@@ -10,6 +10,7 @@
 \alias{sha256}
 \alias{sha384}
 \alias{sha512}
+\alias{keccak256}
 \alias{sha2}
 \alias{sha3}
 \alias{md4}
@@ -29,6 +30,8 @@ sha256(x, key = NULL)
 sha384(x, key = NULL)
 
 sha512(x, key = NULL)
+
+keccak256(x, key = NULL)
 
 sha2(x, size = 256, key = NULL)
 

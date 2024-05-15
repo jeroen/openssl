@@ -3,7 +3,9 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#include <openssl/pem.h>
 #include "utils.h"
+#include "compatibility.h"
 
 /*
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_DigestInit.html
@@ -13,7 +15,12 @@ unsigned int digest_string(unsigned char *x, int len, SEXP key, const char *algo
 
   /* init openssl stuff */
   unsigned int md_len;
+#ifdef HAS_OPENSSL3_API
+  EVP_MD *md = EVP_MD_fetch(NULL, algo, NULL);
+#else
   const EVP_MD *md = EVP_get_digestbyname(algo);
+#endif
+
   if(!md)
     error("Unknown cryptographic algorithm %s\n", algo);
 

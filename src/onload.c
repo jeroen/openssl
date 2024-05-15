@@ -4,10 +4,7 @@
 #include <openssl/ssl.h>
 #include <openssl/engine.h>
 #include <openssl/hmac.h>
-
-#if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR >= 3
-#define HAS_OPENSSL3_API 1
-#endif
+#include "compatibility.h"
 
 #ifdef HAS_OPENSSL3_API
 #include <openssl/provider.h>

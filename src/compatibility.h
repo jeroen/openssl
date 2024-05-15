@@ -6,6 +6,10 @@
 #define HAS_OPENSSL11_API 1
 #endif
 
+#if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR >= 3
+#define HAS_OPENSSL3_API 1
+#endif
+
 #ifdef HAS_OPENSSL11_API
 #define MY_EVP_PKEY_get0_RSA EVP_PKEY_get0_RSA
 #define MY_EVP_PKEY_get0_DSA EVP_PKEY_get0_DSA

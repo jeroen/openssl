@@ -100,7 +100,7 @@ sha512 <- function(x, key = NULL){
 #' @rdname hash
 #' @export
 keccak <- function(x, size = 256, key = NULL){
-  # Keccak is not available on LibreSSL or OpenSSL < 3.2
+  # Keccak is not available on OpenSSL < 3.2 or LibreSSL
   rawstringhash(x, paste0("keccak-", size), key)
 }
 

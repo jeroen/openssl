@@ -15,6 +15,13 @@ openssl_config <- function(){
   structure(out, names = c("version", "ec", "x25519", "fips"))
 }
 
+#' @rdname openssl_config
+#' @export
+libssl_version <- function(){
+  ver <- openssl_config()$version
+  m <- regexec('[0-9.]+', ver)
+  numeric_version(regmatches(ver, m)[[1]])
+}
 
 #' @rdname openssl_config
 #' @export

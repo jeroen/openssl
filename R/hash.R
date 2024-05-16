@@ -99,8 +99,8 @@ sha512 <- function(x, key = NULL){
 
 #' @rdname hash
 #' @export
-keccak256 <- function(x, key = NULL){
-  rawstringhash(x, "keccak-256", key)
+keccak <- function(x, size = 256, key = NULL){
+  rawstringhash(x, paste0("keccak-", size), key)
 }
 
 #' @rdname hash

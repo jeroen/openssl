@@ -1,6 +1,6 @@
 2.2.0
  - Use new EVP_MD_fetch() api on libssl 3 to find non-default algorithms.
- - Add keccak256() hash function
+ - Add keccak() hash function
 
 2.1.2
  - MacOS: avoid linking against legacy versions of openssl

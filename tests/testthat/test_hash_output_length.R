@@ -52,7 +52,9 @@ test_that("SHA512 outputs a 128-character hash", {
 })
 
 test_that("keccak outputs a 64-character hash", {
+  # Keccak is not available on LibreSSL or OpenSSL < 3.2
   skip_if(libssl_version_number < '3.2')
+  skip_if_not(grepl('OpenSSL', openssl_config()$version))
   expect_that(nchar(keccak(text)), equals(64))
   expect_that(length(keccak(bin)), equals(32))
   expect_identical(as.character(keccak(bin)), keccak(text))

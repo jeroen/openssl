@@ -17,14 +17,6 @@ openssl_config <- function(){
 
 #' @rdname openssl_config
 #' @export
-libssl_version <- function(){
-  ver <- openssl_config()$version
-  m <- regexec('[0-9.]+', ver)
-  numeric_version(regmatches(ver, m)[[1]])
-}
-
-#' @rdname openssl_config
-#' @export
 #' @useDynLib openssl R_openssl_fips_mode
 fips_mode <- function(){
   .Call(R_openssl_fips_mode)

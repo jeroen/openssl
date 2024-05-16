@@ -52,7 +52,7 @@ test_that("SHA512 outputs a 128-character hash", {
 })
 
 test_that("keccak outputs a 64-character hash", {
-  skip_if(libssl_version() < '3.2')
+  skip_if(libssl_version_number < '3.2')
   expect_that(nchar(keccak(text)), equals(64))
   expect_that(length(keccak(bin)), equals(32))
   expect_identical(as.character(keccak(bin)), keccak(text))

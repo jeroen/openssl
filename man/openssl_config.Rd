@@ -2,13 +2,10 @@
 % Please edit documentation in R/info.R
 \name{openssl_config}
 \alias{openssl_config}
-\alias{libssl_version}
 \alias{fips_mode}
 \title{OpenSSL Configuration Info}
 \usage{
 openssl_config()
-
-libssl_version()
 
 fips_mode()
 }

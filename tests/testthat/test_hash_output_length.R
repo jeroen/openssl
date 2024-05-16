@@ -50,3 +50,11 @@ test_that("SHA512 outputs a 128-character hash", {
   expect_identical(as.character(sha512(bin)), sha512(text))
 
 })
+
+test_that("SHA512 outputs a 128-character hash", {
+  skip_if(grepl("OpenSSL 1", openssl_config()$version))
+  expect_that(nchar(keccak256(text)), equals(64))
+  expect_that(length(keccak256(bin)), equals(32))
+  expect_identical(as.character(keccak256(bin)), keccak256(text))
+
+})

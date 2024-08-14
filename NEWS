@@ -1,3 +1,6 @@
+2.2.1
+ - Skip some legacy sha1 tests on Redhat systems to fix #125
+
 2.2.0
  - Use new EVP_MD_fetch() api on libssl 3 to find non-default algorithms.
  - Add keccak() hash function

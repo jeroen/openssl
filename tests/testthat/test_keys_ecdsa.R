@@ -49,11 +49,9 @@ test_that("pubkey ssh fingerprint", {
   expect_equal(pk1, pk6)
 })
 
-test_that("signatures", {
-  # ecdsa does not support MD5
+test_that("SHA1 signatures", {
+  skip_on_redhat()
   msg <- readBin("../keys/message", raw(), 100)
-
-  # SHA1 signature
   sig <- readBin("../keys/message.sig.ecdsa.sha1", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha1, pk1))
   expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
@@ -61,8 +59,10 @@ test_that("signatures", {
   sig <- signature_create(msg, sha1, sk1)
   expect_true(signature_verify(msg, sig, sha1, pk1))
   expect_equal(names(ecdsa_parse(sig)), c("r", "s"))
+})
 
-  # SHA256 signature
+test_that("SHA256 signatures", {
+  msg <- readBin("../keys/message", raw(), 100)
   sig <- readBin("../keys/message.sig.ecdsa.sha256", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha256, pk1))
   expect_equal(names(ecdsa_parse(sig)), c("r", "s"))

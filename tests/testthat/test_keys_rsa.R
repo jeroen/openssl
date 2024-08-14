@@ -50,14 +50,16 @@ test_that("pubkey ssh fingerprint", {
   expect_equal(pk1, pk8)
 })
 
-test_that("signatures", {
-  # SHA1 signature
+test_that("SHA1 signatures", {
+  skip_on_redhat()
   msg <- readBin("../keys/message", raw(), 100)
   sig <- readBin("../keys/message.sig.rsa.sha1", raw(), 1000)
   expect_equal(signature_create(msg, sha1, sk1), sig)
   expect_true(signature_verify(msg, sig, sha1, pk1))
+})
 
-  # SHA256 signature
+test_that("SHA256 signatures", {
+  msg <- readBin("../keys/message", raw(), 100)
   sig <- readBin("../keys/message.sig.rsa.sha256", raw(), 1000)
   expect_equal(signature_create(msg, sha256, sk1), sig)
   expect_true(signature_verify(msg, sig, sha256, pk1))

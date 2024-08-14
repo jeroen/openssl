@@ -26,8 +26,8 @@
 #'
 #' # Sign a file
 #' data <- system.file("DESCRIPTION")
-#' sig <- signature_create(data, key = key)
-#' stopifnot(signature_verify(data, sig, pubkey = pubkey))
+#' sig <- signature_create(data, sha256, key = key)
+#' stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
 #'
 #' # Sign raw data
 #' data <- serialize(iris, NULL)
@@ -36,8 +36,8 @@
 #'
 #' # Sign a hash
 #' md <- md5(data)
-#' sig <- signature_create(md, hash = NULL, key = key)
-#' stopifnot(signature_verify(md, sig, hash = NULL, pubkey = pubkey))
+#' sig <- signature_create(md, hash = sha256, key = key)
+#' stopifnot(signature_verify(md, sig, hash = sha256, pubkey = pubkey))
 signature_create <- function(data, hash = sha1, key = my_key(), password = askpass){
   data <- path_or_raw(data)
   sk <- read_key(key, password = password)

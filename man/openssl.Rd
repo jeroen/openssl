@@ -20,6 +20,14 @@ combine RSA and AES for encrypting arbitrary sized data. Other utilities include
 and \code{\link[=bignum]{bignum()}} math methods for manually performing crypto
 calculations on large multibyte integers.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://jeroen.r-universe.dev/openssl}
+  \item Report bugs at \url{https://github.com/jeroen/openssl/issues}
+}
+
+}
 \author{
 Jeroen Ooms, Oliver Keyes
 }

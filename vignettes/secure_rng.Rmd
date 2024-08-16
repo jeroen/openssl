@@ -14,7 +14,7 @@ knitr::opts_chunk$set(comment = "")
 library(openssl)
 ```
 
-The `rand_bytes` function binds to [RAND_bytes](https://www.openssl.org/docs/man1.1.1/man3/RAND_bytes.html) in OpenSSL to generate cryptographically strong pseudo-random bytes. See the OpenSSL documentation for what this means. 
+The `rand_bytes` function binds to [RAND_bytes](https://docs.openssl.org/1.1.1/man3/RAND_bytes/) in OpenSSL to generate cryptographically strong pseudo-random bytes. See the OpenSSL documentation for what this means. 
 
 ```{r}
 rnd <- rand_bytes(10)

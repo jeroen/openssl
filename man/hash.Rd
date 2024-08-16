@@ -123,5 +123,5 @@ sha256("john") # googleable
 sha256(c("john", "mary", "john"), key = "random_salt_value")
 }
 \references{
-Digest types: \url{https://www.openssl.org/docs/man1.1.1/man1/openssl-dgst.html}
+Digest types: \url{https://docs.openssl.org/1.1.1/man1/dgst/}
 }

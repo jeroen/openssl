@@ -14,7 +14,7 @@ knitr::opts_chunk$set(comment = "")
 library(openssl)
 ```
 
-The functions `sha1`, `sha256`, `sha512`, `md4`, `md5` and `ripemd160` bind to the respective [digest functions](https://www.openssl.org/docs/man1.1.1/man1/openssl-dgst.html) in OpenSSL's libcrypto. Both binary and string inputs are supported and the output type will match the input type.
+The functions `sha1`, `sha256`, `sha512`, `md4`, `md5` and `ripemd160` bind to the respective [digest functions](https://docs.openssl.org/1.1.1/man1/openssl-dgst/) in OpenSSL's libcrypto. Both binary and string inputs are supported and the output type will match the input type.
 
 ```{r}
 md5("foo")

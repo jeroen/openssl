@@ -11,7 +11,7 @@
 #' `rand_bytes` generates `n` random cryptographically secure bytes
 #' @useDynLib openssl R_RAND_bytes
 #' @param n number of random bytes or numbers to generate
-#' @references OpenSSL manual: <https://www.openssl.org/docs/man1.1.1/man3/RAND_bytes.html>
+#' @references OpenSSL manual: <https://docs.openssl.org/1.1.1/man3/RAND_bytes/>
 #' @examples rnd <- rand_bytes(10)
 #' as.numeric(rnd)
 #' as.character(rnd)

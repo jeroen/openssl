@@ -34,7 +34,7 @@
 #' @param x character vector, raw vector or connection object.
 #' @param key string or raw vector used as the key for HMAC hashing
 #' @param size must be equal to 224 256 384 or 512
-#' @references Digest types: <https://www.openssl.org/docs/man1.1.1/man1/openssl-dgst.html>
+#' @references Digest types: <https://docs.openssl.org/1.1.1/man1/dgst/>
 #' @export
 #' @aliases hash hmac mac
 #' @rdname hash

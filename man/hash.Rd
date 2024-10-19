@@ -90,6 +90,10 @@ dataset, while simultaneously rendering the results incomparable to other datase
 
 The \code{blake2b} and \code{blake2s} algorithms are only available if your system has
 libssl 1.1 or newer.
+
+NB R base \code{file()} function has a poor default \code{raw = FALSE} which causes files to get
+altereted (e.g. decompressed) when reading. Use \code{file(path, raw = TRUE)} to get the
+hash of the file as it exists on your disk.
 }
 \examples{
 # Support both strings and binary
@@ -108,8 +112,8 @@ md5(serialize(cars, NULL))
 
 # Stream-verify from connections (including files)
 myfile <- system.file("CITATION")
-md5(file(myfile))
-md5(file(myfile), key = "secret")
+md5(file(myfile, raw = TRUE))
+md5(file(myfile, raw = TRUE), key = "secret")
 
 \dontrun{check md5 from: http://cran.r-project.org/bin/windows/base/old/3.1.1/md5sum.txt
 md5(url("http://cran.r-project.org/bin/windows/base/old/3.1.1/R-3.1.1-win.exe"))}

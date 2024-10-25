@@ -9,8 +9,10 @@
 #endif
 
 //see https://github.com/jeroen/openssl/issues/41
-#if defined(__FreeBSD__) && !defined(__BSD_VISIBLE)
+#if defined(__FreeBSD__) || defined(__DragonFly__)
+#if !defined(__BSD_VISIBLE)
 #define __BSD_VISIBLE 1
+#endif
 #endif
 
 #include <Rinternals.h>

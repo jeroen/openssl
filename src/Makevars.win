@@ -1,29 +1,33 @@
+PKG_CONFIG ?= $(BINPREF)pkg-config
+OPENSSL_CFLAGS := $(shell $(PKG_CONFIG) --cflags openssl)
+OPENSSL_LIBS := $(shell $(PKG_CONFIG) --libs openssl)
+
+ifndef OPENSSL_LIBS
 RWINLIB = ../windows/libssl
 TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
-PKG_CPPFLAGS = -I$(RWINLIB)/include -DOPENSSL_SUPPRESS_DEPRECATED
+OPENSSL_CFLAGS = -I$(RWINLIB)/include
+OPENSSL_LIBS = -L$(RWINLIB)/$(TARGET) -L$(RWINLIB)/lib -lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
+endif
 
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
+PKG_CPPFLAGS = $(OPENSSL_CFLAGS) -DOPENSSL_SUPPRESS_DEPRECATED
+PKG_LIBS = $(OPENSSL_LIBS) -Lbcrypt -lstatbcrypt
 
-PKG_LIBS = \
-	-Lbcrypt -lstatbcrypt \
-	-L$(RWINLIB)/$(TARGET) \
-	-L$(RWINLIB)/lib \
-	-lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
 
 #all: clean
 all: $(SHLIB)
 
-$(OBJECTS): winlibs
+$(OBJECTS): $(RWINLIB)
 
 $(SHLIB): $(OBJECTS) $(STATLIB)
 
 $(STATLIB): $(LIBBCRYPT)
 
-winlibs:
+$(RWINLIB):
 	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "../tools/winlibs.R"
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS) $(STATLIB) $(LIBBCRYPT)
 
-.PHONY: all clean winlibs
+.PHONY: all clean

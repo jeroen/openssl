@@ -17,11 +17,6 @@ PKG_CFLAGS=""
 # Build against a specific openssl version
 # export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig"
 
-# On MacOS we avoid legacy versions of openssl
-if [ `uname` = "Darwin" ]; then
-MINVERSION="--atleast-version=3"
-fi
-
 # Use pkg-config if available
 pkg-config ${PKG_CONFIG_NAME} ${MINVERSION} 2>/dev/null
 if [ $? -eq 0 ]; then

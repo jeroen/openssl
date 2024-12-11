@@ -1,8 +1,10 @@
 PKG_CONFIG ?= $(BINPREF)pkg-config
-OPENSSL_CFLAGS := $(shell $(PKG_CONFIG) --cflags openssl)
 OPENSSL_LIBS := $(shell $(PKG_CONFIG) --libs openssl)
 
-ifndef OPENSSL_LIBS
+ifneq ($(OPENSSL_LIBS),)
+$(info using OpenSSL from Rtools)
+OPENSSL_CFLAGS := $(shell $(PKG_CONFIG) --cflags openssl)
+else
 RWINLIB = ../windows/libssl
 TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
 OPENSSL_CFLAGS = -I$(RWINLIB)/include

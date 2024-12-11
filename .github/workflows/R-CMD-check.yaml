@@ -16,15 +16,16 @@ jobs:
       fail-fast: false
       matrix:
         config:
+          - {os: windows-latest, r: '3.6'}
           - {os: windows-latest, r: '4.1'}
           - {os: windows-latest, r: '4.2'}
           - {os: windows-latest, r: '4.3'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: 'release', ssl_backend: 'openssl'}
           - {os: windows-latest,   r: 'devel'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+          - {os: ubuntu-24.04,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-24.04,   r: 'release'}
+          - {os: ubuntu-24.04,   r: 'oldrel-1'}
           - {os: ubuntu-22.04,    r: 'oldrel-4'}
           - {os: ubuntu-20.04,    r: 'oldrel-4'}
           - {os: macOS-13,   r: 'release'}

@@ -1,3 +1,6 @@
+2.3.0
+ - Windows: use OpenSSL from Rtools if found
+
 2.2.2
  - Reduce test verbosity per CRAN request
  - Update maintainer email address

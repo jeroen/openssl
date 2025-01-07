@@ -1,0 +1,14 @@
+# This is a test
+on:
+  push:
+  pull_request:
+
+name: Test-docs
+
+jobs:
+  Test-docs:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: ropensci-org/rotemplate@main

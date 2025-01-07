@@ -29,6 +29,9 @@ base64_decode <- function(text){
     text <- rawToChar(text)
   }
   stopifnot(is.character(text))
+  if(is.na(text)){
+    return(raw(0))
+  }
   text <- paste(text, collapse="")
   text <- gsub("[\r\n]", "", text)[[1]]
   .Call(R_base64_decode, text)

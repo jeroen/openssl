@@ -42,6 +42,11 @@ SEXP R_base64_decode(SEXP text){
   //binary size is always smaller than base64 msg
   unsigned char *bin = malloc(len);
   int bin_len = BIO_read(bio, bin, len);
+  if(bin_len < 0){
+    free(bin);
+    BIO_free_all(bio);
+    Rf_error("Failed to decode base64 string");
+  }
 
   //create raw output vector
   SEXP out = PROTECT(allocVector(RAWSXP, bin_len));

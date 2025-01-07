@@ -1,3 +1,6 @@
+2.3.1
+ - Fix case base64_decode(NA) for libssl 3.4.0 (#130)
+
 2.3.0
  - Windows: use OpenSSL from Rtools if found
 

@@ -24,11 +24,11 @@ SEXP R_openssl_config(void) {
   #ifdef OPENSSL_FIPS
   has_fips = 1;
   #endif
-  SEXP res = PROTECT(allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, mkString(OPENSSL_VERSION_TEXT));
-  SET_VECTOR_ELT(res, 1, ScalarLogical(has_ec));
-  SET_VECTOR_ELT(res, 2, ScalarLogical(has_x25519));
-  SET_VECTOR_ELT(res, 3, ScalarLogical(has_fips));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
+  SET_VECTOR_ELT(res, 0, Rf_mkString(OPENSSL_VERSION_TEXT));
+  SET_VECTOR_ELT(res, 1, Rf_ScalarLogical(has_ec));
+  SET_VECTOR_ELT(res, 2, Rf_ScalarLogical(has_x25519));
+  SET_VECTOR_ELT(res, 3, Rf_ScalarLogical(has_fips));
   UNPROTECT(1);
   return res;
 }

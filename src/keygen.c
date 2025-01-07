@@ -18,7 +18,7 @@ SEXP R_keygen_rsa(SEXP bits){
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
   bail(!!ctx);
   bail(EVP_PKEY_keygen_init(ctx) > 0);
-  bail(EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, asInteger(bits)) > 0);
+  bail(EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, Rf_asInteger(bits)) > 0);
   EVP_PKEY *pkey = NULL;
   bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
   unsigned char *buf = NULL;
@@ -26,7 +26,7 @@ SEXP R_keygen_rsa(SEXP bits){
   bail(len);
   EVP_PKEY_free(pkey);
   EVP_PKEY_CTX_free(ctx);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -34,13 +34,13 @@ SEXP R_keygen_rsa(SEXP bits){
 
 SEXP R_keygen_dsa(SEXP bits){
   DSA *dsa = DSA_new();
-  bail(DSA_generate_parameters_ex(dsa, asInteger(bits), NULL, 0, NULL, NULL, NULL));
+  bail(DSA_generate_parameters_ex(dsa, Rf_asInteger(bits), NULL, 0, NULL, NULL, NULL));
   bail(DSA_generate_key(dsa));
   unsigned char *buf = NULL;
   int len = i2d_DSAPrivateKey(dsa, &buf);
   bail(len);
   DSA_free(dsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -60,7 +60,7 @@ SEXP R_keygen_ecdsa(SEXP curve){
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len > 0);
   EVP_PKEY_free(pkey);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -81,7 +81,7 @@ SEXP R_keygen_x25519(void){
   bail(len);
   EVP_PKEY_free(pkey);
   EVP_PKEY_CTX_free(ctx);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -102,7 +102,7 @@ SEXP R_keygen_ed25519(void){
   bail(len);
   EVP_PKEY_free(pkey);
   EVP_PKEY_CTX_free(ctx);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;

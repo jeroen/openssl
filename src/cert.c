@@ -19,7 +19,7 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   int len;
   X509_NAME *name;
   BIO *b;
-  SEXP out = PROTECT(allocVector(VECSXP, 7));
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 7));
 
   //Note: for some reason XN_FLAG_MULTILINE messes up UTF8
   int flags = Rf_length(name_format) ? Rf_asInteger(name_format) : XN_FLAG_RFC2253;
@@ -30,8 +30,8 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   bail(X509_NAME_print_ex(b, name, 0, flags & ~ASN1_STRFLGS_ESC_MSB));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_VECTOR_ELT(out, 0, allocVector(STRSXP, 1));
-  SET_STRING_ELT(VECTOR_ELT(out, 0), 0, mkCharLenCE(buf, len, CE_UTF8));
+  SET_VECTOR_ELT(out, 0, Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(VECTOR_ELT(out, 0), 0, Rf_mkCharLenCE(buf, len, CE_UTF8));
   X509_NAME_free(name);
 
   //issuer name name
@@ -40,8 +40,8 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   bail(X509_NAME_print_ex(b, name, 0, flags & ~ASN1_STRFLGS_ESC_MSB));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_VECTOR_ELT(out, 1, allocVector(STRSXP, 1));
-  SET_STRING_ELT(VECTOR_ELT(out, 1), 0, mkCharLenCE(buf, len, CE_UTF8));
+  SET_VECTOR_ELT(out, 1, Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(VECTOR_ELT(out, 1), 0, Rf_mkCharLenCE(buf, len, CE_UTF8));
   X509_NAME_free(name);
 
   //sign algorithm
@@ -49,41 +49,41 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   const X509_ALGOR *sig_alg;
   MY_X509_get0_signature(&signature, &sig_alg, cert);
   OBJ_obj2txt(buf, sizeof(buf), sig_alg->algorithm, 0);
-  SET_VECTOR_ELT(out, 2, mkString(buf));
+  SET_VECTOR_ELT(out, 2, Rf_mkString(buf));
 
   //signature
-  SET_VECTOR_ELT(out, 3, allocVector(RAWSXP, signature->length));
+  SET_VECTOR_ELT(out, 3, Rf_allocVector(RAWSXP, signature->length));
   memcpy(RAW(VECTOR_ELT(out, 3)), signature->data, signature->length);
 
   //start date
-  SET_VECTOR_ELT(out, 4, allocVector(STRSXP, 2));
+  SET_VECTOR_ELT(out, 4, Rf_allocVector(STRSXP, 2));
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, X509_get_notBefore(cert)));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_STRING_ELT(VECTOR_ELT(out, 4), 0, mkCharLen(buf, len));
+  SET_STRING_ELT(VECTOR_ELT(out, 4), 0, Rf_mkCharLen(buf, len));
 
   //expiration date
   b = BIO_new(BIO_s_mem());
   bail(ASN1_TIME_print(b, X509_get_notAfter(cert)));
   len = BIO_read(b, buf, bufsize);
   BIO_free(b);
-  SET_STRING_ELT(VECTOR_ELT(out, 4), 1, mkCharLen(buf, len));
+  SET_STRING_ELT(VECTOR_ELT(out, 4), 1, Rf_mkCharLen(buf, len));
 
   //test for self signed
-  SET_VECTOR_ELT(out, 5, ScalarLogical(X509_verify(cert, X509_get_pubkey(cert))));
+  SET_VECTOR_ELT(out, 5, Rf_ScalarLogical(X509_verify(cert, X509_get_pubkey(cert))));
 
   //check for alternative names (requires x509v3 extensions !!)
   GENERAL_NAMES *subjectAltNames = X509_get_ext_d2i (cert, NID_subject_alt_name, NULL, NULL);
   int numalts = sk_GENERAL_NAME_num (subjectAltNames);
   if(numalts > 0) {
-    SET_VECTOR_ELT(out, 6, allocVector(STRSXP, numalts));
+    SET_VECTOR_ELT(out, 6, Rf_allocVector(STRSXP, numalts));
     unsigned char *tmpbuf;
     for (int i = 0; i < numalts; i++) {
       const GENERAL_NAME *name = sk_GENERAL_NAME_value(subjectAltNames, i);
       len = ASN1_STRING_to_UTF8(&tmpbuf, name->d.ia5);
       if(len > 0){
-        SET_STRING_ELT(VECTOR_ELT(out, 6), i, mkCharLenCE((char*) tmpbuf, len, CE_UTF8));
+        SET_STRING_ELT(VECTOR_ELT(out, 6), i, Rf_mkCharLenCE((char*) tmpbuf, len, CE_UTF8));
         OPENSSL_free(tmpbuf);
       }
     }
@@ -104,7 +104,7 @@ SEXP R_pubkey_verify_cert(SEXP cert, SEXP pubkey){
   int res = X509_verify(crt, pkey);
   X509_free(crt);
   EVP_PKEY_free(pkey);
-  return ScalarLogical(res);
+  return Rf_ScalarLogical(res);
 }
 
 SEXP R_cert_verify_cert(SEXP cert, SEXP chain, SEXP bundle) {
@@ -145,7 +145,7 @@ SEXP R_cert_verify_cert(SEXP cert, SEXP chain, SEXP bundle) {
   X509_free(crt);
 
   if(err)
-    error("Certificate validation failed: %s", err);
+    Rf_error("Certificate validation failed: %s", err);
 
-  return ScalarLogical(TRUE);
+  return Rf_ScalarLogical(TRUE);
 }

@@ -9,7 +9,7 @@ SEXP R_pem_write_key(SEXP input, SEXP password){
   BIO_free(mem);
   bail(!!pkey);
   BIO *out = BIO_new(BIO_s_mem());
-  if(!isNull(password) && LENGTH(STRING_ELT(password, 0))){
+  if(!Rf_isNull(password) && LENGTH(STRING_ELT(password, 0))){
     char *pass = (char*) CHAR(STRING_ELT(password, 0));
     PEM_write_bio_PrivateKey(out, pkey, EVP_des_ede3_cbc(), NULL, 0, NULL, pass);
   } else {
@@ -21,7 +21,7 @@ SEXP R_pem_write_key(SEXP input, SEXP password){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 /* legacy format but still used by old ssh clients */
@@ -65,7 +65,7 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len > 0);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 /* legacy format but still used by old ssh clients */
@@ -80,7 +80,7 @@ SEXP R_pem_write_pkcs1_pubkey(SEXP keydata){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 SEXP R_pem_write_pubkey(SEXP input){
@@ -94,7 +94,7 @@ SEXP R_pem_write_pubkey(SEXP input){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 SEXP R_pem_write_cert(SEXP input){
@@ -108,7 +108,7 @@ SEXP R_pem_write_cert(SEXP input){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 SEXP R_pem_write_data(SEXP name, SEXP data){
@@ -120,7 +120,7 @@ SEXP R_pem_write_data(SEXP name, SEXP data){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }
 
 SEXP R_pem_write_pkcs7(SEXP input){
@@ -134,5 +134,5 @@ SEXP R_pem_write_pkcs7(SEXP input){
   int len = BIO_read(out, buf, bufsize);
   BIO_free(out);
   bail(len);
-  return ScalarString(mkCharLen(buf, len));
+  return Rf_ScalarString(Rf_mkCharLen(buf, len));
 }

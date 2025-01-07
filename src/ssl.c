@@ -92,9 +92,9 @@ int pending_interrupt(void) {
 static SEXP R_write_cert(X509 *cert){
   unsigned char *buf = NULL;
   int len = i2d_X509(cert, &buf);
-  SEXP out = PROTECT(allocVector(RAWSXP, len));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, len));
   memcpy(RAW(out), buf, len);
-  setAttrib(out, R_ClassSymbol, mkString("cert"));
+  Rf_setAttrib(out, R_ClassSymbol, Rf_mkString("cert"));
   OPENSSL_free(buf);
   UNPROTECT(1);
   return out;
@@ -103,7 +103,7 @@ static SEXP R_write_cert(X509 *cert){
 static SEXP R_write_cert_chain(STACK_OF(X509) *chain){
   int n = sk_X509_num(chain);
   bail(n >= 0);
-  SEXP res = PROTECT(allocVector(VECSXP, n));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, n));
   for(int i = 0; i < n; i++){
     SET_VECTOR_ELT(res, i, R_write_cert(sk_X509_value(chain, i)));
   }
@@ -120,12 +120,12 @@ SEXP R_download_cert(SEXP hostname, SEXP service, SEXP ipv4_only) {
   struct addrinfo hints;
   memset(&hints,0,sizeof(hints));
   hints.ai_socktype = SOCK_STREAM;
-  hints.ai_family = asLogical(ipv4_only) ? AF_INET : PF_UNSPEC;
+  hints.ai_family = Rf_asLogical(ipv4_only) ? AF_INET : PF_UNSPEC;
 
   /* Because gethostbyname() is deprecated */
   struct addrinfo *addr;
   if(getaddrinfo(CHAR(STRING_ELT(hostname, 0)), CHAR(STRING_ELT(service, 0)), &hints, &addr))
-    error("Failed to resolve hostname or unknown port");
+    Rf_error("Failed to resolve hostname or unknown port");
   int sockfd = socket(addr->ai_family, SOCK_STREAM, 0);
 
   /* For debugging */
@@ -223,7 +223,7 @@ static int sslVerifyCallback(X509_STORE_CTX* x509Ctx, void *fun) {
   SEXP call = PROTECT(Rf_lang2(fun, p1));
   int err = 0;
   SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
-  if (err || TYPEOF(res) != LGLSXP || length(res) != 1) {
+  if (err || TYPEOF(res) != LGLSXP || Rf_length(res) != 1) {
     UNPROTECT(3);
     REprintf("sslVerifyCallback must return TRUE (continue) or FALSE (stop)");
     return 0;
@@ -248,7 +248,7 @@ SEXP R_ssl_ctx_set_verify_callback(SEXP ptr, SEXP fun){
 SEXP R_ssl_ctx_add_cert_to_store(SEXP ssl_ctx, SEXP cert){
   if(TYPEOF(ssl_ctx) != EXTPTRSXP || !Rf_inherits(ssl_ctx, "ssl_ctx"))
     Rf_error("Object is not a ssl_ctx");
-  if(!inherits(cert, "cert"))
+  if(!Rf_inherits(cert, "cert"))
     Rf_error("cert is not a cert object");
   const unsigned char *certptr = RAW(cert);
   X509 *crt = d2i_X509(NULL, &certptr, Rf_length(cert));

@@ -14,7 +14,7 @@ SEXP R_parse_der_pubkey(SEXP input){
   int len = i2d_PUBKEY(pkey, &buf);
   EVP_PKEY_free(pkey);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -29,7 +29,7 @@ SEXP R_parse_der_key(SEXP input){
   int len = i2d_PrivateKey(pkey, &buf);
   EVP_PKEY_free(pkey);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -43,7 +43,7 @@ SEXP R_parse_der_cert(SEXP input){
   int len = i2d_X509(cert, &buf);
   X509_free(cert);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -59,7 +59,7 @@ SEXP R_derive_pubkey(SEXP input){
   int len = i2d_PUBKEY(pkey, &buf);
   EVP_PKEY_free(pkey);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -77,7 +77,7 @@ SEXP R_cert_pubkey(SEXP input){
   int len = i2d_PUBKEY(key, &buf);
   EVP_PKEY_free(key);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -112,7 +112,7 @@ SEXP R_pubkey_type(SEXP input){
     Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }
   EVP_PKEY_free(pkey);
-  return mkString(keytype);
+  return Rf_mkString(keytype);
 }
 
 int ec_bitsize(int nid){
@@ -159,5 +159,5 @@ SEXP R_pubkey_bitsize(SEXP input){
     Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }
   EVP_PKEY_free(pkey);
-  return ScalarInteger(size);
+  return Rf_ScalarInteger(size);
 }

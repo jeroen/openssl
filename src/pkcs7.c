@@ -16,7 +16,7 @@ SEXP R_parse_pem_pkcs7(SEXP input){
   int len = i2d_PKCS7(p7, &buf);
   PKCS7_free(p7);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -38,7 +38,7 @@ SEXP R_write_pkcs7(SEXP cadata){
   int len = i2d_PKCS7(p7, &buf);
   bail(len);
   PKCS7_free(p7);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = PROTECT(Rf_allocVector(RAWSXP, len));
   Rf_setAttrib(res, R_ClassSymbol, Rf_mkString("pkcs7"));
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
@@ -73,16 +73,16 @@ SEXP R_parse_der_pkcs7(SEXP input){
 
   unsigned char *buf = NULL;
   int len = 0;
-  SEXP out = PROTECT(allocVector(VECSXP, 2));
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
 
   if (certs != NULL) {
     int n = sk_X509_num(certs);
-    SEXP bundle = PROTECT(allocVector(VECSXP, n));
+    SEXP bundle = PROTECT(Rf_allocVector(VECSXP, n));
     for(int i = 0; i < n; i++){
       X509 *x = sk_X509_value(certs, i);
       len = i2d_X509(x, &buf);
       bail(len);
-      SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
+      SET_VECTOR_ELT(bundle, i, Rf_allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
       OPENSSL_free(buf);
       buf = NULL;
@@ -93,12 +93,12 @@ SEXP R_parse_der_pkcs7(SEXP input){
 
   if (crls != NULL) {
     int n = sk_X509_CRL_num(crls);
-    SEXP bundle = PROTECT(allocVector(VECSXP, n));
+    SEXP bundle = PROTECT(Rf_allocVector(VECSXP, n));
     for(int i = 0; i < n; i++){
       X509_CRL *crl = sk_X509_CRL_value(crls, i);
       len = i2d_X509_CRL(crl, &buf);
       bail(len);
-      SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
+      SET_VECTOR_ELT(bundle, i, Rf_allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
       OPENSSL_free(buf);
       buf = NULL;
@@ -129,7 +129,7 @@ SEXP R_pkcs7_decrypt(SEXP input, SEXP keydata){
   int len = BIO_read(msgbuf, buf, maxsize);
   bail(len > 0);
   BIO_free(msgbuf);
-  SEXP content = allocVector(RAWSXP, len);
+  SEXP content = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(content), buf, len);
   PKCS7_free(p7);
   return content;
@@ -151,7 +151,7 @@ SEXP R_pkcs7_encrypt(SEXP message, SEXP cert){
   int len = i2d_PKCS7(p7, &buf);
   bail(len);
   PKCS7_free(p7);
-  SEXP res = PROTECT(allocVector(RAWSXP, len));
+  SEXP res = PROTECT(Rf_allocVector(RAWSXP, len));
   Rf_setAttrib(res, R_ClassSymbol, Rf_mkString("pkcs7"));
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);

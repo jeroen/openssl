@@ -1,4 +1,4 @@
-PKG_CPPFLAGS = @cflags@
+PKG_CPPFLAGS = @cflags@ -DSTRICT_R_HEADERS -DR_NO_REMAP
 PKG_LIBS = -Lbcrypt -lstatbcrypt @libs@
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o

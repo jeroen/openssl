@@ -17,8 +17,8 @@ void raise_error(void){
 }
 #else
 void raise_error(void){
-  unsigned long err = ERR_get_error(); //Pops earliest error from the queue
-  ERR_clear_error(); //Removes additional errors (if any) from the queue
+  unsigned long err = ERR_get_Rf_error(); //Pops earliest error from the queue
+  ERR_clear_Rf_error(); //Removes additional errors (if any) from the queue
   stop("OpenSSL error in %s: %s", ERR_func_error_string(err), ERR_reason_error_string(err));
 }
 #endif

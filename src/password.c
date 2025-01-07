@@ -4,36 +4,36 @@
 
 int password_cb(char *buf, int max_size, int rwflag, void *ctx){
   if(!ctx)
-    error("No password callback supplied.");
+    Rf_error("No password callback supplied.");
 
   SEXP cb = (SEXP) ctx;
 
   /* no password */
-  if(isNull(cb)){
+  if(Rf_isNull(cb)){
     return 0;
   }
 
   /* case where password is a hardcoded string */
-  if(isString(cb)){
+  if(Rf_isString(cb)){
     strncpy(buf, CHAR(STRING_ELT(cb, 0)), max_size);
     buf[max_size-1] = '\0'; //in case of max size
     return strlen(buf);
   }
 
   /* case where password is an R function */
-  if(isFunction(cb)){
+  if(Rf_isFunction(cb)){
     int err;
-    SEXP prompt = PROTECT(mkString("Please enter private key passphrase: "));
-    Rf_setAttrib(prompt, R_NamesSymbol, mkString("PRIVATE KEY"));
-    SEXP call = PROTECT(LCONS(cb, LCONS(prompt, R_NilValue)));
+    SEXP prompt = PROTECT(Rf_mkString("Please enter private key passphrase: "));
+    Rf_setAttrib(prompt, R_NamesSymbol, Rf_mkString("PRIVATE KEY"));
+    SEXP call = PROTECT(Rf_lcons(cb, Rf_lcons(prompt, R_NilValue)));
     SEXP res = PROTECT(R_tryEval(call, R_GlobalEnv, &err));
-    if(err || !isString(res)){
-      error("Password callback did not return a string value");
+    if(err || !Rf_isString(res)){
+      Rf_error("Password callback did not return a string value");
     }
     strncpy(buf, CHAR(STRING_ELT(res, 0)), max_size);
     buf[max_size-1] = '\0';
     UNPROTECT(3);
     return strlen(buf);
   }
-  error("Callback must be string or function");
+  Rf_error("Callback must be string or function");
 }

@@ -11,7 +11,7 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   BIO *bio = BIO_push(BIO_new(BIO_f_base64()), BIO_new(BIO_s_mem()));
 
   //No linebreaks
-  if(!asLogical(linebreaks))
+  if(!Rf_asLogical(linebreaks))
     BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
   bail(BIO_set_close(bio, BIO_NOCLOSE));
@@ -23,8 +23,8 @@ SEXP R_base64_encode(SEXP bin, SEXP linebreaks){
   BIO_get_mem_ptr(bio, &buf);
 
   //return a character vector
-  SEXP out = PROTECT(allocVector(STRSXP, 1));
-  SET_STRING_ELT(out, 0, mkCharLen(buf->data, buf->length));
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, 1));
+  SET_STRING_ELT(out, 0, Rf_mkCharLen(buf->data, buf->length));
   UNPROTECT(1);
 
   //Cleanup and return
@@ -49,7 +49,7 @@ SEXP R_base64_decode(SEXP text){
   }
 
   //create raw output vector
-  SEXP out = PROTECT(allocVector(RAWSXP, bin_len));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, bin_len));
   memcpy(RAW(out), bin, bin_len);
   UNPROTECT(1);
 

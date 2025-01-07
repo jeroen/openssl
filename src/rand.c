@@ -5,8 +5,8 @@
 #include "utils.h"
 
 SEXP R_RAND_bytes(SEXP n) {
-  int length = asInteger(n);
-  SEXP out = PROTECT(allocVector(RAWSXP, length));
+  int length = Rf_asInteger(n);
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, length));
   if(length > 0)
     bail(RAND_bytes(RAW(out), length));
   UNPROTECT(1);

@@ -6,17 +6,17 @@
 #include "utils.h"
 
 BIGNUM *r2bignum(SEXP x){
-  if(!inherits(x, "bignum"))
-    error("Argument is not valid bignum");
+  if(!Rf_inherits(x, "bignum"))
+    Rf_error("Argument is not valid bignum");
   BIGNUM *val = BN_bin2bn(RAW(x), LENGTH(x), NULL);
   bail(val != NULL);
   return val;
 }
 
 SEXP bignum2r(const BIGNUM *val){
-  SEXP out = PROTECT(allocVector(RAWSXP, BN_num_bytes(val)));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, BN_num_bytes(val)));
   bail(BN_bn2bin(val, RAW(out)) >= 0);
-  setAttrib(out, R_ClassSymbol, mkString("bignum"));
+  Rf_setAttrib(out, R_ClassSymbol, Rf_mkString("bignum"));
   UNPROTECT(1);
   return out;
 }
@@ -25,7 +25,7 @@ SEXP R_parse_bignum(SEXP x, SEXP hex){
   BIGNUM *val = BN_new();
   if(TYPEOF(x) == RAWSXP){
     bail(NULL != BN_bin2bn(RAW(x), LENGTH(x), val));
-  } else if(asLogical(hex)){
+  } else if(Rf_asLogical(hex)){
     bail(BN_hex2bn(&val, CHAR(STRING_ELT(x, 0))));
   } else {
     bail(BN_dec2bn(&val, CHAR(STRING_ELT(x, 0))));
@@ -38,12 +38,12 @@ SEXP R_parse_bignum(SEXP x, SEXP hex){
 SEXP R_bignum_as_character(SEXP x, SEXP hex){
   BIGNUM *val = r2bignum(x);
   char *str;
-  if(asLogical(hex)){
+  if(Rf_asLogical(hex)){
     bail(!!(str = BN_bn2hex(val)));
   } else {
     bail(!!(str = BN_bn2dec(val)));
   }
-  SEXP res = mkString(str);
+  SEXP res = Rf_mkString(str);
   OPENSSL_free(str);
   BN_free(val);
   return res;
@@ -52,7 +52,7 @@ SEXP R_bignum_as_character(SEXP x, SEXP hex){
 SEXP R_bignum_as_integer(SEXP x){
   BIGNUM *val = r2bignum(x);
   int res = BN_div_word(val, (BN_ULONG) INT_MAX + 1);
-  return ScalarInteger(BN_num_bits(val) ? NA_INTEGER : res);
+  return Rf_ScalarInteger(BN_num_bits(val) ? NA_INTEGER : res);
 }
 
 SEXP R_bignum_add(SEXP x, SEXP y){
@@ -171,10 +171,10 @@ SEXP R_bignum_compare(SEXP x, SEXP y){
   int out = BN_cmp(val1, val2);
   BN_free(val1);
   BN_free(val2);
-  return ScalarInteger(out);
+  return Rf_ScalarInteger(out);
 }
 
 SEXP R_bignum_bits(SEXP x){
   BIGNUM *num = r2bignum(x);
-  return ScalarInteger(BN_num_bits(num));
+  return Rf_ScalarInteger(BN_num_bits(num));
 }

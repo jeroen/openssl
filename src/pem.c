@@ -19,13 +19,13 @@ SEXP R_parse_pem(SEXP input){
   ERR_clear_error();
   BIO_free(mem);
   mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  SEXP out = PROTECT(allocVector(VECSXP, count));
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, count));
   for(int i = 0; i < count; i++){
     PEM_read_bio(mem, &name, &header, &data, &len);
-    SEXP res = PROTECT(allocVector(VECSXP, 3));
-    SET_VECTOR_ELT(res, 0, mkString(name));
-    SET_VECTOR_ELT(res, 1, mkString(header));
-    SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, (int) len));
+    SEXP res = PROTECT(Rf_allocVector(VECSXP, 3));
+    SET_VECTOR_ELT(res, 0, Rf_mkString(name));
+    SET_VECTOR_ELT(res, 1, Rf_mkString(header));
+    SET_VECTOR_ELT(res, 2, Rf_allocVector(RAWSXP, (int) len));
     memcpy(RAW(VECTOR_ELT(res, 2)), data, (int) len);
     SET_VECTOR_ELT(out, i, res);
     UNPROTECT(1);
@@ -45,7 +45,7 @@ SEXP R_parse_pem_key(SEXP input, SEXP password){
   int len = i2d_PrivateKey(pkey, &buf);
   EVP_PKEY_free(pkey);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -60,7 +60,7 @@ SEXP R_parse_pem_pubkey(SEXP input){
   int len = i2d_PUBKEY(pkey, &buf);
   EVP_PKEY_free(pkey);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -73,7 +73,7 @@ SEXP R_parse_pem_cert(SEXP input){
   int len = i2d_X509(cert, &buf);
   X509_free(cert);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -88,7 +88,7 @@ SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
   int len = i2d_RSA_PUBKEY(rsa, &buf);
   RSA_free(rsa);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -103,7 +103,7 @@ SEXP R_parse_pem_key_pkcs1(SEXP input){
   int len = i2d_RSAPrivateKey(rsa, &buf);
   bail(len);
   RSA_free(rsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;

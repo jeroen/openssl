@@ -28,7 +28,7 @@ SEXP R_diffie_hellman(SEXP key, SEXP peerkey){
   /* Determine buffer length */
   size_t skeylen = 0;
   bail(EVP_PKEY_derive(ctx, NULL, &skeylen) > 0);
-  SEXP out = allocVector(RAWSXP, skeylen);
+  SEXP out = Rf_allocVector(RAWSXP, skeylen);
   bail(EVP_PKEY_derive(ctx, RAW(out), &skeylen) > 0);
 
   /* cleanup */

@@ -52,7 +52,7 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   bail(EVP_PKEY_sign(ctx, sig, &siglen, RAW(md), LENGTH(md)) > 0);
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
-  SEXP res = allocVector(RAWSXP, siglen);
+  SEXP res = Rf_allocVector(RAWSXP, siglen);
   memcpy(RAW(res), sig, siglen);
   OPENSSL_free(sig);
   return res;
@@ -72,10 +72,10 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
   int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
   bail(res >= 0);
   if(res == 0)
-    error("Verification failed: incorrect signature");
+    Rf_error("Verification failed: incorrect signature");
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
-  return ScalarLogical(1);
+  return Rf_ScalarLogical(1);
 }
 
 /* Note: DSA and ECDSA signatures have the same ASN.1 structure */
@@ -100,7 +100,7 @@ SEXP R_write_ecdsa(SEXP r, SEXP s){
   unsigned char *buf = NULL;
   int siglen = i2d_ECDSA_SIG(sig, &buf);
   bail(siglen > 0);
-  SEXP res = allocVector(RAWSXP, siglen);
+  SEXP res = Rf_allocVector(RAWSXP, siglen);
   memcpy(RAW(res), buf, siglen);
   free(buf);
   ECDSA_SIG_free(sig);

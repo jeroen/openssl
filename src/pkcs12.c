@@ -55,7 +55,7 @@ SEXP R_write_pkcs12(SEXP keydata, SEXP certdata, SEXP cadata, SEXP namedata, SEX
   unsigned char *buf = NULL;
   int len = i2d_PKCS12(p12, &buf);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -86,12 +86,12 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
 
   unsigned char *buf = NULL;
   int len = 0;
-  SEXP res = PROTECT(allocVector(VECSXP, 4));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
   if (cert != NULL) {
     len = i2d_X509(cert, &buf);
     X509_free(cert);
     bail(len);
-    SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, len));
+    SET_VECTOR_ELT(res, 0, Rf_allocVector(RAWSXP, len));
     memcpy(RAW(VECTOR_ELT(res, 0)), buf, len);
     OPENSSL_free(buf);
     buf = NULL;
@@ -100,14 +100,14 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     len = i2d_PrivateKey(pkey, &buf);
     EVP_PKEY_free(pkey);
     bail(len);
-    SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, len));
+    SET_VECTOR_ELT(res, 1, Rf_allocVector(RAWSXP, len));
     memcpy(RAW(VECTOR_ELT(res, 1)), buf, len);
     OPENSSL_free(buf);
     buf = NULL;
   }
   if(ca && sk_X509_num(ca)){
     int ncerts = sk_X509_num(ca);
-    SEXP bundle = PROTECT(allocVector(VECSXP, ncerts));
+    SEXP bundle = PROTECT(Rf_allocVector(VECSXP, ncerts));
     for(int i = 0; i < ncerts; i++){
 #if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR >= 3
       cert = sk_X509_value(ca, i);
@@ -117,7 +117,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
 #endif
       len = i2d_X509(cert, &buf);
       bail(len);
-      SET_VECTOR_ELT(bundle, i, allocVector(RAWSXP, len));
+      SET_VECTOR_ELT(bundle, i, Rf_allocVector(RAWSXP, len));
       memcpy(RAW(VECTOR_ELT(bundle, i)), buf, len);
       OPENSSL_free(buf);
       buf = NULL;
@@ -127,7 +127,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
     UNPROTECT(1);
   }
   if(friendly_name)
-    SET_VECTOR_ELT(res, 3, mkString(friendly_name));
+    SET_VECTOR_ELT(res, 3, Rf_mkString(friendly_name));
   UNPROTECT(1);
   return res;
 }

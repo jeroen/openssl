@@ -15,17 +15,17 @@ void fin_md(SEXP ptr){
 
 SEXP R_md_init(SEXP algo){
 #ifdef HAS_OPENSSL3_API
-  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(asChar(algo)), NULL);
+  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(Rf_asChar(algo)), NULL);
 #else
-  const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
+  const EVP_MD *md = EVP_get_digestbyname(CHAR(Rf_asChar(algo)));
 #endif
   if(!md)
-    error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
+    Rf_error("Unknown cryptographic algorithm %s\n", CHAR(Rf_asChar(algo)));
   EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
   EVP_DigestInit_ex(mdctx, md, NULL);
   SEXP ptr = PROTECT(R_MakeExternalPtr(mdctx, R_NilValue, R_NilValue));
   R_RegisterCFinalizerEx(ptr, fin_md, TRUE);
-  setAttrib(ptr, R_ClassSymbol, mkString("md"));
+  Rf_setAttrib(ptr, R_ClassSymbol, Rf_mkString("md"));
   UNPROTECT(1);
   return ptr;
 }
@@ -33,14 +33,14 @@ SEXP R_md_init(SEXP algo){
 SEXP R_md_feed(SEXP md, SEXP data){
   EVP_MD_CTX *mdctx = R_ExternalPtrAddr(md);
   if(!mdctx)
-    error("mdctx is null");
-  EVP_DigestUpdate(mdctx, RAW(data), length(data));
-  return ScalarLogical(1);
+    Rf_error("mdctx is null");
+  EVP_DigestUpdate(mdctx, RAW(data), Rf_length(data));
+  return Rf_ScalarLogical(1);
 }
 
 SEXP R_md_final(SEXP md){
   if(!R_ExternalPtrAddr(md))
-    error("md is null");
+    Rf_error("md is null");
 
   /* Calculates the hash */
   unsigned char md_value[EVP_MAX_MD_SIZE];
@@ -48,7 +48,7 @@ SEXP R_md_final(SEXP md){
   EVP_DigestFinal_ex(R_ExternalPtrAddr(md), (unsigned char *) &md_value, &md_len);
 
   /* create output raw vec */
-  SEXP out = allocVector(RAWSXP, md_len);
+  SEXP out = Rf_allocVector(RAWSXP, md_len);
   memcpy(RAW(out), md_value, md_len);
   return out;
 }
@@ -66,12 +66,12 @@ void fin_hmac(SEXP ptr){
 
 SEXP R_hmac_init(SEXP algo, SEXP key){
 #ifdef HAS_OPENSSL3_API
-  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(asChar(algo)), NULL);
+  EVP_MD *md = EVP_MD_fetch(NULL, CHAR(Rf_asChar(algo)), NULL);
 #else
-  const EVP_MD *md = EVP_get_digestbyname(CHAR(asChar(algo)));
+  const EVP_MD *md = EVP_get_digestbyname(CHAR(Rf_asChar(algo)));
 #endif
   if(!md)
-    error("Unknown cryptographic algorithm %s\n", CHAR(asChar(algo)));
+    Rf_error("Unknown cryptographic algorithm %s\n", CHAR(Rf_asChar(algo)));
 #ifdef HAS_OPENSSL11_API
   HMAC_CTX* ctx = HMAC_CTX_new();
 #else
@@ -81,7 +81,7 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
   bail(HMAC_Init_ex(ctx, RAW(key), LENGTH(key), md, NULL));
   SEXP ptr = PROTECT(R_MakeExternalPtr(ctx, R_NilValue, R_NilValue));
   R_RegisterCFinalizerEx(ptr, fin_hmac, TRUE);
-  setAttrib(ptr, R_ClassSymbol, mkString("md"));
+  Rf_setAttrib(ptr, R_ClassSymbol, Rf_mkString("md"));
   UNPROTECT(1);
   return ptr;
 }
@@ -89,15 +89,15 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
 SEXP R_hmac_feed(SEXP ptr, SEXP data){
   HMAC_CTX *ctx = R_ExternalPtrAddr(ptr);
   if(!ctx)
-    error("ctx is null");
+    Rf_error("ctx is null");
   bail(HMAC_Update(ctx, RAW(data), LENGTH(data)));
-  return ScalarLogical(1);
+  return Rf_ScalarLogical(1);
 }
 
 SEXP R_hmac_final(SEXP ptr){
   HMAC_CTX *ctx = R_ExternalPtrAddr(ptr);
   if(!ctx)
-    error("ctx is null");
+    Rf_error("ctx is null");
 
   /* Calculates the hash */
   unsigned char md_value[EVP_MAX_MD_SIZE];
@@ -105,7 +105,7 @@ SEXP R_hmac_final(SEXP ptr){
   bail(HMAC_Final(ctx, (unsigned char *) &md_value, &md_len));
 
   /* create output raw vec */
-  SEXP out = PROTECT(allocVector(RAWSXP, md_len));
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, md_len));
   memcpy(RAW(out), md_value, md_len);
   UNPROTECT(1);
   return out;

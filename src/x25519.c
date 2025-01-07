@@ -18,7 +18,7 @@ static SEXP R_read_raw_key(SEXP x, int type){
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
   EVP_PKEY_free(pkey);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -34,7 +34,7 @@ static SEXP R_read_raw_pubkey(SEXP x, int type){
   unsigned char *buf = NULL;
   int len = i2d_PUBKEY(pkey, &buf);
   bail(len);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -116,7 +116,7 @@ SEXP R_data_sign(SEXP data, SEXP key){
   bail(EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey));
   size_t siglen;
   bail(EVP_DigestSign(ctx, NULL, &siglen, RAW(data), LENGTH(data)) > 0);
-  SEXP res = allocVector(RAWSXP, siglen);
+  SEXP res = Rf_allocVector(RAWSXP, siglen);
   bail(EVP_DigestSign(ctx, RAW(res), &siglen, RAW(data), LENGTH(data)) > 0);
   EVP_MD_CTX_free(ctx);
   EVP_PKEY_free(pkey);
@@ -139,8 +139,8 @@ SEXP R_data_verify(SEXP data, SEXP sig, SEXP pubkey){
   EVP_PKEY_free(pkey);
   bail(res >= 0);
   if(res == 0)
-    error("Verification failed: incorrect signature");
-  return ScalarLogical(1);
+    Rf_error("Verification failed: incorrect signature");
+  return Rf_ScalarLogical(1);
 #else
   Rf_error("Curve25519 requires OpenSSL 1.1.1 or newer.");
 #endif

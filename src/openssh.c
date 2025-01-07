@@ -17,8 +17,8 @@ SEXP bignum_to_r_size(const BIGNUM *bn, int bytes){
     bytes = (bits/8) + 1;
   int numbytes = BN_num_bytes(bn);
   int diff = bytes - numbytes;
-  SEXP res = PROTECT(allocVector(RAWSXP, bytes));
-  setAttrib(res, R_ClassSymbol, mkString("bignum"));
+  SEXP res = PROTECT(Rf_allocVector(RAWSXP, bytes));
+  Rf_setAttrib(res, R_ClassSymbol, Rf_mkString("bignum"));
   UNPROTECT(1);
   unsigned char *ptr = RAW(res);
   memset(ptr, 0, diff);
@@ -45,7 +45,7 @@ SEXP R_rsa_pubkey_build(SEXP expdata, SEXP moddata){
   int len = i2d_RSA_PUBKEY(rsa, &buf);
   bail(len);
   RSA_free(rsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -61,7 +61,7 @@ SEXP R_rsa_key_build(SEXP n, SEXP e, SEXP d, SEXP qi, SEXP p, SEXP q, SEXP dp, S
   int len = i2d_RSAPrivateKey(rsa, &buf);
   bail(len);
   RSA_free(rsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -71,7 +71,7 @@ SEXP R_rsa_pubkey_decompose(SEXP bin){
   RSA *rsa = RSA_new();
   const unsigned char *ptr = RAW(bin);
   bail(!!d2i_RSA_PUBKEY(&rsa, &ptr, LENGTH(bin)));
-  SEXP res = PROTECT(allocVector(VECSXP, 2));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 2));
   const BIGNUM *e, *n;
   MY_RSA_get0_key(rsa, &n, &e, NULL);
   SET_VECTOR_ELT(res, 0, bignum_to_r(e));
@@ -88,7 +88,7 @@ SEXP R_rsa_priv_decompose(SEXP bin){
   MY_RSA_get0_key(rsa, &n, &e, &d);
   MY_RSA_get0_factors(rsa, &p, &q);
   MY_RSA_get0_crt_params(rsa, &dmp1, &dmq1, &iqmp);
-  SEXP res = PROTECT(allocVector(VECSXP, 8));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 8));
   SET_VECTOR_ELT(res, 0, bignum_to_r(e));
   SET_VECTOR_ELT(res, 1, bignum_to_r(n));
   SET_VECTOR_ELT(res, 2, bignum_to_r(p));
@@ -110,7 +110,7 @@ SEXP R_dsa_pubkey_build(SEXP p, SEXP q, SEXP g, SEXP y){
   int len = i2d_DSA_PUBKEY(dsa, &buf);
   bail(len);
   DSA_free(dsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -124,7 +124,7 @@ SEXP R_dsa_key_build(SEXP p, SEXP q, SEXP g, SEXP y, SEXP x){
   int len = i2d_DSAPrivateKey(dsa, &buf);
   bail(len);
   DSA_free(dsa);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -137,7 +137,7 @@ SEXP R_dsa_pubkey_decompose(SEXP bin){
   const BIGNUM *p, *q, *g, *pub_key;
   MY_DSA_get0_pqg(dsa, &p, &q, &g);
   MY_DSA_get0_key(dsa, &pub_key, NULL);
-  SEXP res = PROTECT(allocVector(VECSXP, 4));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
   SET_VECTOR_ELT(res, 0, bignum_to_r(p));
   SET_VECTOR_ELT(res, 1, bignum_to_r(q));
   SET_VECTOR_ELT(res, 2, bignum_to_r(g));
@@ -153,7 +153,7 @@ SEXP R_dsa_priv_decompose(SEXP bin){
   const BIGNUM *p, *q, *g, *pub_key, *priv_key;
   MY_DSA_get0_pqg(dsa, &p, &q, &g);
   MY_DSA_get0_key(dsa, &pub_key, &priv_key);
-  SEXP res = PROTECT(allocVector(VECSXP, 5));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 5));
   SET_VECTOR_ELT(res, 0, bignum_to_r(p));
   SET_VECTOR_ELT(res, 1, bignum_to_r(q));
   SET_VECTOR_ELT(res, 2, bignum_to_r(g));
@@ -206,12 +206,12 @@ SEXP R_ecdsa_pubkey_build(SEXP x, SEXP y, SEXP nist){
   EC_KEY *pubkey = EC_KEY_new_by_curve_name(nid);
   EC_KEY_set_asn1_flag(pubkey, OPENSSL_EC_NAMED_CURVE);
   if(!EC_KEY_set_public_key_affine_coordinates(pubkey, new_bignum_from_r(x), new_bignum_from_r(y)))
-    error("Failed to construct EC key. Perhaps invalid point or curve.");
+    Rf_error("Failed to construct EC key. Perhaps invalid point or curve.");
   unsigned char *buf = NULL;
   int len = i2d_EC_PUBKEY(pubkey, &buf);
   bail(len);
   EC_KEY_free(pubkey);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -227,13 +227,13 @@ SEXP R_ecdsa_key_build(SEXP x, SEXP y, SEXP d, SEXP nist){
   EC_KEY *key = EC_KEY_new_by_curve_name(nid);
   EC_KEY_set_asn1_flag(key, OPENSSL_EC_NAMED_CURVE);
   if(!EC_KEY_set_public_key_affine_coordinates(key, new_bignum_from_r(x), new_bignum_from_r(y)))
-    error("Failed to construct EC key. Perhaps invalid point or curve.");
+    Rf_error("Failed to construct EC key. Perhaps invalid point or curve.");
   EC_KEY_set_private_key(key, new_bignum_from_r(d));
   unsigned char *buf = NULL;
   int len = i2d_ECPrivateKey(key, &buf);
   bail(len);
   EC_KEY_free(key);
-  SEXP res = allocVector(RAWSXP, len);
+  SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
   return res;
@@ -257,8 +257,8 @@ SEXP R_ecdsa_pubkey_decompose(SEXP input){
   BN_CTX *ctx = BN_CTX_new();
   bail(EC_POINT_get_affine_coordinates_GFp(group, pubkey, x, y, ctx));
   BN_CTX_free(ctx);
-  SEXP res = PROTECT(allocVector(VECSXP, 3));
-  SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(res, 0, Rf_mkString(my_nid2nist(nid)));
   SET_VECTOR_ELT(res, 1, bignum_to_r_size(x, keysize));
   SET_VECTOR_ELT(res, 2, bignum_to_r_size(y, keysize));
   BN_free(x);
@@ -288,8 +288,8 @@ SEXP R_ecdsa_priv_decompose(SEXP input){
   BN_CTX *ctx = BN_CTX_new();
   bail(EC_POINT_get_affine_coordinates_GFp(group, pubkey, x, y, ctx));
   BN_CTX_free(ctx);
-  SEXP res = PROTECT(allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, mkString(my_nid2nist(nid)));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
+  SET_VECTOR_ELT(res, 0, Rf_mkString(my_nid2nist(nid)));
   SET_VECTOR_ELT(res, 1, bignum_to_r_size(x, keysize));
   SET_VECTOR_ELT(res, 2, bignum_to_r_size(y, keysize));
   SET_VECTOR_ELT(res, 3, bignum_to_r_size(z, keysize));

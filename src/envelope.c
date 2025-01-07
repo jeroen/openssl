@@ -41,10 +41,10 @@ SEXP R_envelope_encrypt(SEXP data, SEXP pubkey) {
   EVP_CIPHER_CTX_free(ctx);
 
   /* Create output vector */
-  SEXP res = PROTECT(allocVector(VECSXP, 3));
-  SET_VECTOR_ELT(res, 0, allocVector(RAWSXP, ivlen));
-  SET_VECTOR_ELT(res, 1, allocVector(RAWSXP, ekl[0]));
-  SET_VECTOR_ELT(res, 2, allocVector(RAWSXP, len1 + len2));
+  SEXP res = PROTECT(Rf_allocVector(VECSXP, 3));
+  SET_VECTOR_ELT(res, 0, Rf_allocVector(RAWSXP, ivlen));
+  SET_VECTOR_ELT(res, 1, Rf_allocVector(RAWSXP, ekl[0]));
+  SET_VECTOR_ELT(res, 2, Rf_allocVector(RAWSXP, len1 + len2));
   memcpy(RAW(VECTOR_ELT(res, 0)), iv, ivlen);
   memcpy(RAW(VECTOR_ELT(res, 1)), ek[0], ekl[0]);
   memcpy(RAW(VECTOR_ELT(res, 2)), out, len1 + len2);
@@ -66,14 +66,14 @@ SEXP R_envelope_decrypt(SEXP data, SEXP iv, SEXP session, SEXP key) {
 
   /* Verify key size */
   if(LENGTH(session) != EVP_PKEY_size(pkey))
-    error("Invalid Session key, must be %d bytes", EVP_PKEY_size(pkey));
+    Rf_error("Invalid Session key, must be %d bytes", EVP_PKEY_size(pkey));
 
 
   /* Alloc buffers and init */
   const EVP_CIPHER *cipher = EVP_aes_256_cbc();
   int ivlen = EVP_CIPHER_iv_length(cipher);
   if(ivlen != LENGTH(iv))
-    error("Invalid IV, must be %d bytes", ivlen);
+    Rf_error("Invalid IV, must be %d bytes", ivlen);
   bail(EVP_OpenInit(ctx, EVP_aes_256_cbc(), RAW(session), LENGTH(session), RAW(iv), pkey));
 
   /* This is an overestimate */
@@ -89,7 +89,7 @@ SEXP R_envelope_decrypt(SEXP data, SEXP iv, SEXP session, SEXP key) {
   EVP_CIPHER_CTX_free(ctx);
 
   /* Create RAW vector */
-  SEXP res = allocVector(RAWSXP, len1 + len2);
+  SEXP res = Rf_allocVector(RAWSXP, len1 + len2);
   memcpy(RAW(res), out,  len1 + len2);
   free(out);
   return res;

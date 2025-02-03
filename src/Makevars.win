@@ -8,7 +8,7 @@ else
 RWINLIB = ../windows/libssl
 TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
 OPENSSL_CFLAGS = -I$(RWINLIB)/include
-OPENSSL_LIBS = -L$(RWINLIB)/$(TARGET) -L$(RWINLIB)/lib -lssl -lcrypto -lz -lws2_32 -lgdi32 -lcrypt32
+OPENSSL_LIBS = -L$(RWINLIB)/$(TARGET) -L$(RWINLIB)/lib -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
 endif
 
 STATLIB = bcrypt/libstatbcrypt.a

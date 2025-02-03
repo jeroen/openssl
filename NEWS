@@ -1,5 +1,6 @@
 2.3.2
  - Remove R_unload_openssl() as it may interfere with other packages
+ - Windows: update to openssl 3.4.0 and fix build on compilers without zlib
 
 2.3.1
  - Fix case base64_decode(NA) for libssl 3.4.0 (#130)

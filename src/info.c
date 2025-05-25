@@ -25,7 +25,7 @@ SEXP R_openssl_config(void) {
   has_fips = 1;
   #endif
   SEXP res = PROTECT(Rf_allocVector(VECSXP, 4));
-  SET_VECTOR_ELT(res, 0, Rf_mkString(OPENSSL_VERSION_TEXT));
+  SET_VECTOR_ELT(res, 0, Rf_mkString(OpenSSL_version(OPENSSL_VERSION)));
   SET_VECTOR_ELT(res, 1, Rf_ScalarLogical(has_ec));
   SET_VECTOR_ELT(res, 2, Rf_ScalarLogical(has_x25519));
   SET_VECTOR_ELT(res, 3, Rf_ScalarLogical(has_fips));

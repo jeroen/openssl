@@ -34,7 +34,9 @@ SEXP R_openssl_config(void) {
 }
 
 SEXP R_openssl_fips_mode(void){
-#if OPENSSL_VERSION_MAJOR < 3
+#ifdef LIBRESSL_VERSION_NUMBER
+  int enabled = 0;
+#elif OPENSSL_VERSION_MAJOR < 3
   int enabled = FIPS_mode();
 #else
   int enabled = EVP_default_properties_is_fips_enabled(NULL);

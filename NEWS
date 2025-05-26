@@ -1,3 +1,6 @@
+2.3.3
+ - Fix a unit test for CRAN Fedora builds
+
 2.3.2
  - Remove R_unload_openssl() as it may interfere with other packages
  - Windows: update to openssl 3.4.0 and fix build on compilers without zlib

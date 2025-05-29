@@ -1,3 +1,6 @@
+2.3.4
+ - Fix build on legacy openssl 1.0.2
+
 2.3.3
  - Fix a unit test for CRAN Fedora builds
 

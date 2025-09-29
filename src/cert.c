@@ -9,9 +9,9 @@
 #include "compatibility.h"
 
 SEXP R_cert_info(SEXP bin, SEXP name_format){
-  X509 *cert = X509_new();
   const unsigned char *ptr = RAW(bin);
-  bail(!!d2i_X509(&cert, &ptr, LENGTH(bin)));
+  X509 *cert = d2i_X509(NULL, &ptr, LENGTH(bin));
+  bail(!!cert);
 
   //out list
   int bufsize = 8192;
@@ -32,7 +32,6 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   BIO_free(b);
   SET_VECTOR_ELT(out, 0, Rf_allocVector(STRSXP, 1));
   SET_STRING_ELT(VECTOR_ELT(out, 0), 0, Rf_mkCharLenCE(buf, len, CE_UTF8));
-  X509_NAME_free(name);
 
   //issuer name name
   name = X509_get_issuer_name(cert);
@@ -42,7 +41,6 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   BIO_free(b);
   SET_VECTOR_ELT(out, 1, Rf_allocVector(STRSXP, 1));
   SET_STRING_ELT(VECTOR_ELT(out, 1), 0, Rf_mkCharLenCE(buf, len, CE_UTF8));
-  X509_NAME_free(name);
 
   //sign algorithm
   const ASN1_BIT_STRING *signature;
@@ -88,6 +86,9 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
       }
     }
   }
+  GENERAL_NAMES_free(subjectAltNames);
+
+  X509_free(cert);
 
   //return
   UNPROTECT(1);

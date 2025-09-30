@@ -21,9 +21,10 @@ test_that("ssl-ctx integration works", {
   req1 <- curl::curl_fetch_memory('https://cran.r-project.org', handle = h1)
   expect_equal(req1$status_code, 200)
 
+  # forbid_reuse does not seem to affect ALPN reuse
   h2 <- curl::new_handle(forbid_reuse = TRUE, ssl_ctx_function = function(ssl_ctx){
     ssl_ctx_set_verify_callback(ssl_ctx, cb2)
   })
 
-  expect_error(curl::curl_fetch_memory('https://cran.r-project.org', handle = h2), "certificate")
+  expect_error(curl::curl_fetch_memory('https://cloud.r-project.org', handle = h2), "certificate")
 })

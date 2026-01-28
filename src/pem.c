@@ -32,6 +32,9 @@ SEXP R_parse_pem(SEXP input){
   }
   UNPROTECT(1);
   BIO_free(mem);
+  if(name) OPENSSL_free(name);
+  if(header) OPENSSL_free(header);
+  if(data) OPENSSL_free(data);
   ERR_clear_error();
   return out;
 }

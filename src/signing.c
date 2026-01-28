@@ -91,6 +91,7 @@ SEXP R_parse_ecdsa(SEXP buf){
   SET_VECTOR_ELT(out, 0, bignum2r(r));
   SET_VECTOR_ELT(out, 1, bignum2r(s));
   UNPROTECT(1);
+  ECDSA_SIG_free(sig);
   return out;
 }
 
@@ -102,7 +103,7 @@ SEXP R_write_ecdsa(SEXP r, SEXP s){
   bail(siglen > 0);
   SEXP res = Rf_allocVector(RAWSXP, siglen);
   memcpy(RAW(res), buf, siglen);
-  free(buf);
+  OPENSSL_free(buf);
   ECDSA_SIG_free(sig);
   return res;
 }

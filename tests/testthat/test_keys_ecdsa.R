@@ -102,6 +102,15 @@ test_that("ec_keygen works", {
   rm(key)
 })
 
+test_that("ecdsa_write works", {
+  msg <- readBin("../keys/message", raw(), 100)
+  key <- ec_keygen()
+  sig <- signature_create(msg, sha256, key)
+  params <- ecdsa_parse(sig)
+  out <- ecdsa_write(params$r, params$s)
+  expect_identical(sig, out)
+})
+  
 # Cleanup
 rm(sk1, pk1)
 

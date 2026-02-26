@@ -1,3 +1,6 @@
+2.3.5
+ - Windows: add workaround for 'bcrypt' name conflict
+
 2.3.4
  - Fix build on legacy openssl 1.0.2
 

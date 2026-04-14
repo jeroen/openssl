@@ -2,7 +2,7 @@
 #'
 #' Password based key derivation function with bcrypt. This is not
 #' part of openssl. It is needed to parse private key files which are
-#' encoded in the [new openssh format](https://cvsweb.openbsd.org/src/usr.bin/ssh/PROTOCOL.key?annotate=HEAD).
+#' encoded in the [new openssh format](https://github.com/openbsd/src/blob/HEAD/usr.bin/ssh/PROTOCOL.key).
 #'
 #' @export
 #' @rdname pbkdf

@@ -17,7 +17,7 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   int bufsize = 8192;
   char buf[bufsize];
   int len;
-  X509_NAME *name;
+  const X509_NAME *name;
   BIO *b;
   SEXP out = PROTECT(Rf_allocVector(VECSXP, 7));
 
@@ -50,8 +50,8 @@ SEXP R_cert_info(SEXP bin, SEXP name_format){
   SET_VECTOR_ELT(out, 2, Rf_mkString(buf));
 
   //signature
-  SET_VECTOR_ELT(out, 3, Rf_allocVector(RAWSXP, signature->length));
-  memcpy(RAW(VECTOR_ELT(out, 3)), signature->data, signature->length);
+  SET_VECTOR_ELT(out, 3, Rf_allocVector(RAWSXP, ASN1_STRING_length(signature)));
+  memcpy(RAW(VECTOR_ELT(out, 3)), MY_ASN1_STRING_get0_data(signature), ASN1_STRING_length(signature));
 
   //start date
   SET_VECTOR_ELT(out, 4, Rf_allocVector(STRSXP, 2));

@@ -11,6 +11,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{askpass}{\code{\link[askpass]{askpass}}}
+  \item{askpass}{\code{\link[askpass:askpass]{askpass()}}}
 }}
 

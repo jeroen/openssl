@@ -1,3 +1,6 @@
+2.4.0
+ - Small fixes for OpenSSL 4
+
 2.3.5
  - Windows: add workaround for 'bcrypt' name conflict
 

@@ -8,8 +8,8 @@
 \description{
 Bindings to OpenSSL libssl and libcrypto, plus custom SSH \link[=read_key]{pubkey}
 parsers. Supports RSA, DSA and NIST curves P-256, P-384 and P-521. Cryptographic
-\link[=signatures]{signatures} can either be created and verified
-manually or via x509 \link[=certificates]{certificates}. The
+\link{signatures} can either be created and verified
+manually or via x509 \link{certificates}. The
 \link[=aes_cbc]{AES block cipher} is used in CBC mode for symmetric
 encryption; RSA for \link[=rsa_encrypt]{asymmetric (public key)}
 encryption. High-level \link[=encrypt_envelope]{envelope} methods

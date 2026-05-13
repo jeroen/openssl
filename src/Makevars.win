@@ -8,13 +8,13 @@ else
 RWINLIB = ../windows/libssl
 TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
 OPENSSL_CFLAGS = -I$(RWINLIB)/include
-OPENSSL_LIBS = -L$(RWINLIB)/$(TARGET) -L$(RWINLIB)/lib -lssl -lcrypto -lws2_32 -lgdi32 -lcrypt32
+OPENSSL_LIBS = -L$(RWINLIB)/$(TARGET) -L$(RWINLIB)/lib -lssl -lcrypto
 endif
 
 STATLIB = bcrypt/libstatbcrypt.a
 LIBBCRYPT = bcrypt/bcrypt_pbkdf.o bcrypt/blowfish.o
 PKG_CPPFLAGS = $(OPENSSL_CFLAGS) -DOPENSSL_SUPPRESS_DEPRECATED -DSTRICT_R_HEADERS -DR_NO_REMAP
-PKG_LIBS = $(OPENSSL_LIBS) -Lbcrypt -lstatbcrypt
+PKG_LIBS = $(OPENSSL_LIBS) -Lbcrypt -lstatbcrypt -lws2_32 -lgdi32 -lcrypt32
 
 
 #all: clean

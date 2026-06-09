@@ -1,3 +1,6 @@
+2.4.2
+ - Added rsa_sign() to bypass FIPS when using legacy hashes
+
 2.4.1
  - Fix build on msys2 with dynamic openssl
 

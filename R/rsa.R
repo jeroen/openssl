@@ -6,6 +6,9 @@
 #' cipher such as [aes_cbc]. See [encrypt_envelope] or [pkcs7_encrypt] for a high-level
 #' wrappers combining RSA and AES in this way.
 #'
+#' Note that [rsa_sign] is a legacy function that does not enforce FIPS-mode. It is safer
+#' to the more general [signature_create], unless you specifically want to bypass FIPS.
+#'
 #' @export
 #' @param data raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt
 #' @param oaep if TRUE, changes padding to EME-OAEP as defined in PKCS #1 v2.0
@@ -51,8 +54,8 @@ rsa_decrypt <- function(data, key = my_key(), password = askpass, oaep = FALSE){
 #' @useDynLib openssl R_rsa_sign
 #' @export
 #' @param hash raw vector of length 16, 20, or 32 (md5/sha1/sha256)
-#' @rdname rsa_sign
-rsa_sign <- function(hash, key = my_key()){
+#' @rdname rsa_encrypt
+rsa_sign <- function(hash, key = my_key(), password = askpass){
   sk <- read_key(key, password)
   stopifnot(inherits(sk, "rsa"))
   stopifnot(is.raw(hash))

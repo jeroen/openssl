@@ -5,11 +5,14 @@
 \alias{rsa}
 \alias{encrypt}
 \alias{rsa_decrypt}
+\alias{rsa_sign}
 \title{Low-level RSA encryption}
 \usage{
 rsa_encrypt(data, pubkey = my_pubkey(), oaep = FALSE)
 
 rsa_decrypt(data, key = my_key(), password = askpass, oaep = FALSE)
+
+rsa_sign(hash, key = my_key(), password = askpass)
 }
 \arguments{
 \item{data}{raw vector of max 245 bytes (for 2048 bit keys) with data to encrypt/decrypt}
@@ -21,6 +24,8 @@ rsa_decrypt(data, key = my_key(), password = askpass, oaep = FALSE)
 \item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 
 \item{password}{string or a function to read protected keys. See \code{\link[=read_key]{read_key()}}.}
+
+\item{hash}{raw vector of length 16, 20, or 32 (md5/sha1/sha256)}
 }
 \description{
 Asymmetric encryption and decryption with RSA. Because RSA can only encrypt messages
@@ -28,6 +33,10 @@ smaller than the size of the key, it is typically used only for exchanging a ran
 session-key. This session key is used to encipher arbitrary sized data via a stream
 cipher such as \link{aes_cbc}. See \link{encrypt_envelope} or \link{pkcs7_encrypt} for a high-level
 wrappers combining RSA and AES in this way.
+}
+\details{
+Note that \link{rsa_sign} is a legacy function that does not enforce FIPS-mode. It is safer
+to the more general \link{signature_create}, unless you specifically want to bypass FIPS.
 }
 \examples{
 # Generate test keys

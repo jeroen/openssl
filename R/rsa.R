@@ -47,3 +47,14 @@ rsa_decrypt <- function(data, key = my_key(), password = askpass, oaep = FALSE){
   oaep <- as.logical(oaep)
   .Call(R_rsa_decrypt, data, sk, oaep)
 }
+
+#' @useDynLib openssl R_rsa_sign
+#' @export
+#' @param hash raw vector of length 16, 20, or 32 (md5/sha1/sha256)
+#' @rdname rsa_sign
+rsa_sign <- function(hash, key = my_key()){
+  sk <- read_key(key, password)
+  stopifnot(inherits(sk, "rsa"))
+  stopifnot(is.raw(hash))
+  .Call(R_rsa_sign, hash, sk)
+}

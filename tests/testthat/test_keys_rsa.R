@@ -51,9 +51,15 @@ test_that("pubkey ssh fingerprint", {
 })
 
 test_that("SHA1 signatures", {
-  skip_on_redhat()
   msg <- readBin("../keys/message", raw(), 100)
   sig <- readBin("../keys/message.sig.rsa.sha1", raw(), 1000)
+
+  # Legacy API (that bypasses FIPS)
+  hash <- base64_decode("bbzk4sy2aOyXV1NsEFyt2Mp6rI0=")
+  expect_equal(rsa_sign(hash, sk1), sig)
+
+  # sha1 signatures blocked by FIPS
+  skip_on_redhat()
   expect_equal(signature_create(msg, sha1, sk1), sig)
   expect_true(signature_verify(msg, sig, sha1, pk1))
 })
@@ -63,6 +69,7 @@ test_that("SHA256 signatures", {
   sig <- readBin("../keys/message.sig.rsa.sha256", raw(), 1000)
   expect_equal(signature_create(msg, sha256, sk1), sig)
   expect_true(signature_verify(msg, sig, sha256, pk1))
+  expect_equal(rsa_sign(sha256(msg), sk1), sig)
 
   # MD5 signature
   skip_if(fips_mode())

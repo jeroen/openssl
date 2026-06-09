@@ -36,3 +36,30 @@ SEXP R_rsa_decrypt(SEXP data, SEXP keydata, SEXP oaep){
   OPENSSL_free(buf);
   return res;
 }
+
+static int get_hashtype(SEXP hash){
+  switch(Rf_length(hash)){
+  case 16:
+    return NID_md5;
+  case 20:
+    return NID_sha1;
+  case 32:
+    return NID_sha256;
+  }
+  Rf_error("RSA hash must be length 16, 20, or 32");
+}
+
+// This is a legacy function that ignores FIPS-mode
+SEXP R_rsa_sign(SEXP hash, SEXP keydata){
+  const unsigned char *ptr = RAW(keydata);
+  RSA *rsa = d2i_RSAPrivateKey(NULL, &ptr, LENGTH(keydata));
+  bail(!!rsa);
+  unsigned int siglen;
+  unsigned char *sig = OPENSSL_malloc(RSA_size(rsa));
+  bail(RSA_sign(get_hashtype(hash),  RAW(hash), Rf_length(hash), sig, &siglen, rsa) == 1);
+  RSA_free(rsa);
+  SEXP res = Rf_allocVector(RAWSXP, siglen);
+  memcpy(RAW(res), sig, siglen);
+  OPENSSL_free(sig);
+  return res;
+}

@@ -36,21 +36,25 @@
 #' # Sign a file
 #' data <- system.file("DESCRIPTION")
 #' sig <- signature_create(data, sha256, key = key)
-#' stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+#' stopifnot("Verification failed: incorrect signature" =
+#'           signature_verify(data, sig, sha256, pubkey = pubkey))
 #'
 #' # Sign raw data
 #' data <- serialize(iris, NULL)
 #' sig <- signature_create(data, sha256, key = key)
-#' stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+#' stopifnot("Verification failed: incorrect signature" =
+#'           signature_verify(data, sig, sha256, pubkey = pubkey))
 #'
 #' # Sign a hash
 #' md <- md5(data)
 #' sig <- signature_create(md, hash = sha256, key = key)
-#' stopifnot(signature_verify(md, sig, hash = sha256, pubkey = pubkey))
+#' stopifnot("Verification failed: incorrect signature" =
+#'           signature_verify(md, sig, hash = sha256, pubkey = pubkey))
 #' sig <- signature_create(md, hash = sha256, key = key, pad = "pss",
 #'                         salt_length = "max")
-#' stopifnot(signature_verify(md, sig, hash = sha256, pubkey = pubkey,
-#'                            pad = "pss"))
+#' stopifnot("Verification failed: incorrect signature" =
+#'           signature_verify(md, sig, hash = sha256, pubkey = pubkey,
+#'           pad = "pss"))
 signature_create <- function(data, hash = sha1, key = my_key(), password = askpass, pad = NULL, salt_length = NULL){
   data <- path_or_raw(data)
   sk <- read_key(key, password = password)

@@ -43,13 +43,8 @@ test_that("RSA-PSS with SHA256", {
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(
-      signature_verify(msg, sig, sha256, pk1, pad = "pss", salt_length = 64),
-      error = function(e) if (
-        e$message == "Verification failed: incorrect signature") FALSE
-      else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1,
+                                pad = "pss", salt_length = 64))
 
   sig <- signature_create(msg, sha256, sk1, pad = "pss", salt_length = 32)
   expect_true(signature_verify(msg, sig, sha256, pk1,
@@ -57,26 +52,15 @@ test_that("RSA-PSS with SHA256", {
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(
-      signature_verify(msg, sig, sha256, pk1, salt_length = 64),
-      error = function(e) if (
-        e$message == "Verification failed: incorrect signature") FALSE
-      else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1, salt_length = 64))
 
   sig <- readBin("../keys/message.sig.rsa-pss.sha256.saltdig", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss", "digest"))
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(
-      signature_verify(msg, sig, sha256, pk1, pad = "pss", salt_length = 64),
-    error = function(e) if (
-      e$message == "Verification failed: incorrect signature") FALSE
-    else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1,
+                                pad = "pss", salt_length = 64))
 
   sig <- signature_create(msg, sha256, sk1,
                           pad = "pss", salt_length = "digest")
@@ -85,26 +69,16 @@ test_that("RSA-PSS with SHA256", {
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(
-      signature_verify(msg, sig, sha256, pk1, pad = "pss", salt_length = 64),
-      error = function(e) if (
-        e$message == "Verification failed: incorrect signature") FALSE
-      else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1,
+                                pad = "pss", salt_length = 64))
 
   sig <- readBin("../keys/message.sig.rsa-pss.sha256.saltmax", raw(), 1000)
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss", "max"))
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(signature_verify(msg, sig, sha256, pk1,
-                                pad = "pss", salt_length = 64),
-             error = function(e) if (
-               e$message == "Verification failed: incorrect signature") FALSE
-             else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1,
+                                pad = "pss", salt_length = 64))
 
   sig <- signature_create(msg, sha256, sk1, pad = "pss", salt_length = "max")
   expect_true(signature_verify(msg, sig, sha256, pk1,
@@ -112,13 +86,8 @@ test_that("RSA-PSS with SHA256", {
   # Can also verify with default "auto" salt length
   expect_true(signature_verify(msg, sig, sha256, pk1, pad = "pss"))
   # But not with wrong salt length
-  expect_false({
-    tryCatch(signature_verify(msg, sig, sha256, pk1,
-                              pad = "pss", salt_length = 64),
-             error = function(e) if (
-               e$message == "Verification failed: incorrect signature") FALSE
-             else stop(e))
-  })
+  expect_false(signature_verify(msg, sig, sha256, pk1,
+                                pad = "pss", salt_length = 64))
 })
 
 # Cleanup

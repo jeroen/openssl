@@ -126,11 +126,11 @@ SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey, SEXP pad, SEXP saltlen){
   bail(EVP_PKEY_CTX_set_signature_md(ctx, md_func) > 0);
   int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
   bail(res >= 0); // OpenSSL internal error
-  if(res == 0)
-    Rf_error("Verification failed: incorrect signature");
+  // if(res == 0)
+  //   Rf_error("Verification failed: incorrect signature");
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
-  return Rf_ScalarLogical(1);
+  return Rf_ScalarLogical(res == 1);
 }
 
 /* Note: DSA and ECDSA signatures have the same ASN.1 structure */

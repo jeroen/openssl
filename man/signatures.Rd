@@ -8,9 +8,23 @@
 \alias{ecdsa_write}
 \title{Signatures}
 \usage{
-signature_create(data, hash = sha1, key = my_key(), password = askpass)
+signature_create(
+  data,
+  hash = sha1,
+  key = my_key(),
+  password = askpass,
+  pad = NULL,
+  salt_length = NULL
+)
 
-signature_verify(data, sig, hash = sha1, pubkey = my_pubkey())
+signature_verify(
+  data,
+  sig,
+  hash = sha1,
+  pubkey = my_pubkey(),
+  pad = NULL,
+  salt_length = NULL
+)
 
 ecdsa_parse(sig)
 
@@ -26,6 +40,17 @@ If \code{hash == NULL} then \code{data} must be a hash string or raw vector.}
 \item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 
 \item{password}{string or a function to read protected keys. See \code{\link[=read_key]{read_key()}}.}
+
+\item{pad}{padding type. Must be \code{NULL} (default) or \code{"pss"}.
+For RSA keys, \code{"pss"} enables RSA-PSS padding. For non-RSA keys (ECDSA, DSA,
+Ed25519, X25519), this is ignored.  RSA-PSS signatures are stochastic,
+but can still be verified.}
+
+\item{salt_length}{salt length for RSA-PSS padding. This can be
+a character string (e.g., \code{"digest"}, \code{"auto"}, \code{"max"}) or an integer.
+Defaults to \code{NULL} which is the same as auto salt length
+(\code{RSA_PSS_SALTLEN_AUTO}). Only used when \code{pad = "pss"}.  When verifying,
+salt_length = "auto" will verify an RSA-PSS signature with any salt length.}
 
 \item{sig}{raw vector or file path for the signature data.}
 
@@ -54,17 +79,25 @@ pubkey <- key$pubkey
 # Sign a file
 data <- system.file("DESCRIPTION")
 sig <- signature_create(data, sha256, key = key)
-stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+stopifnot("Verification failed: incorrect signature" =
+          signature_verify(data, sig, sha256, pubkey = pubkey))
 
 # Sign raw data
 data <- serialize(iris, NULL)
 sig <- signature_create(data, sha256, key = key)
-stopifnot(signature_verify(data, sig, sha256, pubkey = pubkey))
+stopifnot("Verification failed: incorrect signature" =
+          signature_verify(data, sig, sha256, pubkey = pubkey))
 
 # Sign a hash
 md <- md5(data)
 sig <- signature_create(md, hash = sha256, key = key)
-stopifnot(signature_verify(md, sig, hash = sha256, pubkey = pubkey))
+stopifnot("Verification failed: incorrect signature" =
+          signature_verify(md, sig, hash = sha256, pubkey = pubkey))
+sig <- signature_create(md, hash = sha256, key = key, pad = "pss",
+                        salt_length = "max")
+stopifnot("Verification failed: incorrect signature" =
+          signature_verify(md, sig, hash = sha256, pubkey = pubkey,
+          pad = "pss"))
 #
 # ECDSA example
 data <- serialize(iris, NULL)

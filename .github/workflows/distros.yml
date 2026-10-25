@@ -12,12 +12,12 @@ concurrency:
 
 jobs:
   rhel:
-    runs-on: ubuntu-24.04${{matrix.arch=='arm64' && '-arm' || ''}}
+    runs-on: ubuntu-26.04${{matrix.arch=='arm64' && '-arm' || ''}}
     name: ${{ matrix.distro }} ${{ matrix.arch }}
     strategy:
       fail-fast: false
       matrix:
-        distro: ['fedora', 'opensuse', 'rocky-9', 'ubuntu-22.04', 'debian-11', 'debian-12', 'debian-13', 'debian-14' ]
+        distro: ['fedora', 'opensuse', 'rocky-9', 'rocky-10', 'ubuntu-22.04', 'ubuntu-24.04', 'debian-11', 'debian-12', 'debian-13', 'debian-14' ]
         arch: [ 'amd64', 'arm64' ]
         include:
           - distro: rocky-8
@@ -29,7 +29,7 @@ jobs:
     container:
       image: ghcr.io/r-devel/${{ matrix.distro }}:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

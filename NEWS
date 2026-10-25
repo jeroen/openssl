@@ -1,6 +1,8 @@
 2.4.3
  - ca_bundle() now prefers the system CA bundle, falling back on a recent cacert.pem
    that is downloaded from curl.se at install time (#143)
+ - Fix memory leak in base64_encode() by switching to EVP_EncodeBlock (#142, #132)
+ - base64_decode() now raises an error for invalid input instead of returning raw(0)
 
 2.4.2
  - Added rsa_sign() to bypass FIPS when using legacy hashes

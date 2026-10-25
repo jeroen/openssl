@@ -99,4 +99,12 @@ int MY_ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s){
   return 1;
 }
 
+EVP_ENCODE_CTX *MY_EVP_ENCODE_CTX_new(void){
+  return OPENSSL_malloc(sizeof(EVP_ENCODE_CTX));
+}
+
+void MY_EVP_ENCODE_CTX_free(EVP_ENCODE_CTX *ctx){
+  OPENSSL_free(ctx);
+}
+
 #endif

@@ -71,9 +71,30 @@ pubkey_verify_cert <- function(cert, pubkey){
 
 #' @export
 #' @rdname certificates
+#' @details The `ca_bundle()` function first looks for the default CA bundle
+#' of the system libssl, which may be overridden with the `SSL_CERT_FILE`
+#' environment variable. If no system bundle is found, it falls back on the
+#' Mozilla CA bundle that was downloaded from <https://curl.se/ca/cacert.pem>
+#' when the package was installed.
 ca_bundle <- function(){
-  path <- system.file("cacert.pem", package = "openssl")
-  read_cert_bundle(path)
+  for(path in ca_bundle_paths()){
+    if(nzchar(path) && isTRUE(file.size(path) > 0)){
+      bundle <- tryCatch(read_cert_bundle(path), error = function(e) NULL)
+      if(length(bundle))
+        return(bundle)
+    }
+  }
+  stop("No CA bundle found on this system. Set SSL_CERT_FILE to the path of a CA bundle.")
+}
+
+ca_bundle_paths <- function(){
+  files <- default_cert_file()
+  c(Sys.getenv(files[1]), files[2], system.file("cacert.pem", package = "openssl"))
+}
+
+#' @useDynLib openssl R_default_cert_file
+default_cert_file <- function(){
+  .Call(R_default_cert_file)
 }
 
 #' @useDynLib openssl R_cert_info

@@ -1,3 +1,7 @@
+2.4.3
+ - ca_bundle() now prefers the system CA bundle, falling back on a recent cacert.pem
+   that is downloaded from curl.se at install time (#143)
+
 2.4.2
  - Added rsa_sign() to bypass FIPS when using legacy hashes
 

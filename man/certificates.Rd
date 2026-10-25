@@ -27,6 +27,13 @@ ca_bundle()
 \description{
 Read, download, analyze and verify X.509 certificates.
 }
+\details{
+The \code{ca_bundle()} function first looks for the default CA bundle
+of the system libssl, which may be overridden with the \code{SSL_CERT_FILE}
+environment variable. If no system bundle is found, it falls back on the
+Mozilla CA bundle that was downloaded from \url{https://curl.se/ca/cacert.pem}
+when the package was installed.
+}
 \examples{
 \donttest{
 # Verify the r-project HTTPS cert

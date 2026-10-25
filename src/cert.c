@@ -150,3 +150,11 @@ SEXP R_cert_verify_cert(SEXP cert, SEXP chain, SEXP bundle) {
 
   return Rf_ScalarLogical(TRUE);
 }
+
+SEXP R_default_cert_file(void){
+  SEXP out = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_STRING_ELT(out, 0, Rf_mkChar(X509_get_default_cert_file_env()));
+  SET_STRING_ELT(out, 1, Rf_mkChar(X509_get_default_cert_file()));
+  UNPROTECT(1);
+  return out;
+}

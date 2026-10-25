@@ -102,5 +102,8 @@ echo "Using PKG_LIBS=$PKG_LIBS"
 # Write to Makevars
 sed -e "s|@cflags@|$PKG_CFLAGS|" -e "s|@libs@|$PKG_LIBS|" src/Makevars.in > src/Makevars
 
+# Try to download a recent CA bundle (not fatal)
+"${R_HOME}/bin/Rscript" tools/cacert.R
+
 # Success
 exit 0

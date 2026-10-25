@@ -57,7 +57,7 @@ pubkey <- read_pubkey("~/.ssh/id_rsa.pub")
 str(pubkey)
 
 # Read certificates
-txt <- readLines("https://curl.haxx.se/ca/cacert.pem")
+txt <- readLines("https://curl.se/ca/cacert.pem")
 bundle <- read_cert_bundle(txt)
 print(bundle)
 }

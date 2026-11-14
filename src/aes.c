@@ -9,7 +9,7 @@
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_EncryptInit.html
  */
 
-SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
+SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
   int strength = LENGTH(key);
   if(strength != 16 && strength != 24 && strength != 32)
     Rf_error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
@@ -19,20 +19,18 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   if(!cph)
     Rf_error("Invalid cipher: %s", CHAR(STRING_ELT(cipher, 0)));
 
-#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0 does not have GCM
-  if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){
-    if(LENGTH(iv) != 12){
-      Rf_error("aes-gcm requires an iv of length 12");
+  int gcm = EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE;
+  if(gcm){
+    if(LENGTH(iv) < 1){
+      Rf_error("aes-gcm requires a non-empty iv");
     }
     //GCM mode has shorter IV from the others
     bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, Rf_asLogical(encrypt)));
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, LENGTH(iv), NULL));
-  } else
-#endif //EVP_CIPH_GCM_MODE
-  if(LENGTH(iv) != 16){
+  } else if(LENGTH(iv) != 16){
     Rf_error("aes requires an iv of length 16");
   }
-  bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), Rf_asLogical(encrypt)));
+  bail(EVP_CipherInit_ex(ctx, gcm ? NULL : cph, NULL, RAW(key), RAW(iv), Rf_asLogical(encrypt)));
 
   int blocksize = EVP_CIPHER_CTX_block_size(ctx);
   int remainder = LENGTH(x) % blocksize;
@@ -44,22 +42,31 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher) {
   bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 
-
-#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0
+  if(gcm && !Rf_asLogical(encrypt) && Rf_length(tag))
+    bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, LENGTH(tag), RAW(tag)));
   //in GCM mode, res indicates if the security tag was verified successfully.
   int res = EVP_CipherFinal_ex(ctx, cur, &tmp);
-  if(EVP_CIPHER_mode(cph) != EVP_CIPH_GCM_MODE)
+  if(!gcm)
     bail(res);
-#else
-  EVP_CipherFinal_ex(ctx, cur, &tmp);
-#endif //EVP_CIPH_GCM_MODE
+  if(gcm && !Rf_asLogical(encrypt) && Rf_length(tag) && res != 1){
+    EVP_CIPHER_CTX_free(ctx);
+    OPENSSL_free(buf);
+    Rf_error("aes-gcm authentication failed: data or tag has been modified");
+  }
   cur += tmp;
 
   int total = cur - buf;
-  EVP_CIPHER_CTX_cleanup(ctx);
-  EVP_CIPHER_CTX_free(ctx);
-  SEXP out = Rf_allocVector(RAWSXP, total);
+  SEXP out = PROTECT(Rf_allocVector(RAWSXP, total));
   memcpy(RAW(out), buf, total);
   OPENSSL_free(buf);
+  if(gcm && Rf_asLogical(encrypt)){
+    SEXP tagout = PROTECT(Rf_allocVector(RAWSXP, 16));
+    bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, RAW(tagout)));
+    Rf_setAttrib(out, Rf_install("tag"), tagout);
+    UNPROTECT(1);
+  }
+  EVP_CIPHER_CTX_cleanup(ctx);
+  EVP_CIPHER_CTX_free(ctx);
+  UNPROTECT(1);
   return out;
 }

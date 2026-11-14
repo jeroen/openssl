@@ -1,3 +1,6 @@
+2.6.0
+ - aes_gcm_decrypt() gains a tag parameter
+
 2.5.0
  - base64_decode() raises an error for some invalid input instead of returning raw(0)
  - ca_bundle() now prefers the system CA bundle, falling back on a recent cacert.pem

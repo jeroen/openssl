@@ -21,8 +21,8 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
 
   int gcm = EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE;
   if(gcm){
-    if(LENGTH(iv) != 12){
-      Rf_error("aes-gcm requires an iv of length 12");
+    if(LENGTH(iv) < 1){
+      Rf_error("aes-gcm requires a non-empty iv");
     }
     //GCM mode has shorter IV from the others
     bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, Rf_asLogical(encrypt)));
@@ -30,7 +30,7 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
   } else if(LENGTH(iv) != 16){
     Rf_error("aes requires an iv of length 16");
   }
-  bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), Rf_asLogical(encrypt)));
+  bail(EVP_CipherInit_ex(ctx, gcm ? NULL : cph, NULL, RAW(key), RAW(iv), Rf_asLogical(encrypt)));
 
   int blocksize = EVP_CIPHER_CTX_block_size(ctx);
   int remainder = LENGTH(x) % blocksize;

@@ -19,17 +19,15 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
   if(!cph)
     Rf_error("Invalid cipher: %s", CHAR(STRING_ELT(cipher, 0)));
 
-#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0 does not have GCM
-  if(EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE){
+  int gcm = EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE;
+  if(gcm){
     if(LENGTH(iv) != 12){
       Rf_error("aes-gcm requires an iv of length 12");
     }
     //GCM mode has shorter IV from the others
     bail(EVP_CipherInit_ex(ctx, cph, NULL, NULL, NULL, Rf_asLogical(encrypt)));
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, LENGTH(iv), NULL));
-  } else
-#endif //EVP_CIPH_GCM_MODE
-  if(LENGTH(iv) != 16){
+  } else if(LENGTH(iv) != 16){
     Rf_error("aes requires an iv of length 16");
   }
   bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), RAW(iv), Rf_asLogical(encrypt)));
@@ -44,9 +42,6 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
   bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 
-  int gcm = 0;
-#ifdef EVP_CIPH_GCM_MODE //openssl 1.0.0
-  gcm = EVP_CIPHER_mode(cph) == EVP_CIPH_GCM_MODE;
   if(gcm && !Rf_asLogical(encrypt) && Rf_length(tag))
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, LENGTH(tag), RAW(tag)));
   //in GCM mode, res indicates if the security tag was verified successfully.
@@ -58,23 +53,18 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
     OPENSSL_free(buf);
     Rf_error("aes-gcm authentication failed: data or tag has been modified");
   }
-#else
-  EVP_CipherFinal_ex(ctx, cur, &tmp);
-#endif //EVP_CIPH_GCM_MODE
   cur += tmp;
 
   int total = cur - buf;
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, total));
   memcpy(RAW(out), buf, total);
   OPENSSL_free(buf);
-#ifdef EVP_CIPH_GCM_MODE
   if(gcm && Rf_asLogical(encrypt)){
     SEXP tagout = PROTECT(Rf_allocVector(RAWSXP, 16));
     bail(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, RAW(tagout)));
     Rf_setAttrib(out, Rf_install("tag"), tagout);
     UNPROTECT(1);
   }
-#endif
   EVP_CIPHER_CTX_cleanup(ctx);
   EVP_CIPHER_CTX_free(ctx);
   UNPROTECT(1);

@@ -19,7 +19,9 @@ rsa_sign(hash, key = my_key(), password = askpass)
 
 \item{pubkey}{public key or file path. See \code{\link[=read_pubkey]{read_pubkey()}}.}
 
-\item{oaep}{if TRUE, changes padding to EME-OAEP as defined in PKCS #1 v2.0}
+\item{oaep}{if TRUE, changes padding to EME-OAEP as defined in PKCS #1 v2.0.
+Alternatively a string with the name of the hash function to use for EME-OAEP
+and MGF1, e.g. \code{"sha256"} (\code{TRUE} uses the default \code{"sha1"}).}
 
 \item{key}{private key or file path. See \code{\link[=read_key]{read_key()}}.}
 

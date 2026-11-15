@@ -37,3 +37,22 @@ openssl dgst -sha256 -verify id_ecdsa521.pem -signature message.sig.ecdsa521.sha
 
 openssl dgst -sha256 -sign id_ed25519 -out message.sig.ed25519.sha256 message
 openssl dgst -sha256 -verify id_ed25519.pem -signature message.sig.ed25519.sha256 message
+
+
+openssl dgst -md5 -sign id_rsa -sigopt rsa_padding_mode:pss -out message.sig.rsa-pss.md5 message
+openssl dgst -md5 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -signature message.sig.rsa-pss.md5 message
+
+openssl dgst -sha1 -sign id_rsa -sigopt rsa_padding_mode:pss -out message.sig.rsa-pss.sha1 message
+openssl dgst -sha1 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -signature message.sig.rsa-pss.sha1 message
+
+openssl dgst -sha256 -sign id_rsa -sigopt rsa_padding_mode:pss -out message.sig.rsa-pss.sha256 message
+openssl dgst -sha256 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -signature message.sig.rsa-pss.sha256 message
+
+openssl dgst -sha256 -sign id_rsa -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:32 -out message.sig.rsa-pss.sha256.salt32 message
+openssl dgst -sha256 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:32 -signature message.sig.rsa-pss.sha256.salt32 message
+
+openssl dgst -sha256 -sign id_rsa -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 -out message.sig.rsa-pss.sha256.saltdig message
+openssl dgst -sha256 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 -out message.sig.rsa-pss.sha256.saltdig message
+
+openssl dgst -sha256 -sign id_rsa -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-3 -out message.sig.rsa-pss.sha256.saltmax message
+openssl dgst -sha256 -verify id_rsa.pem -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-3 -out message.sig.rsa-pss.sha256.saltmax message

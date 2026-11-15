@@ -30,20 +30,48 @@ static const EVP_MD* guess_hashfun(int length){
   return NULL;
 }
 
-SEXP R_hash_sign(SEXP md, SEXP key){
+SEXP R_hash_sign(SEXP md, SEXP key, SEXP pad, SEXP saltlen){
   BIO *mem = BIO_new_mem_buf(RAW(key), LENGTH(key));
   EVP_PKEY *pkey = d2i_PrivateKey_bio(mem, NULL);
   BIO_free(mem);
   bail(!!pkey);
+
+  // Check if key is RSA by getting the key type
+  int pkey_type = EVP_PKEY_base_id(pkey);
+
+  // Determine padding mode based on pad argument
+  // If pad is NULL/empty (length 0), default to PKCS1
+  int padding_mode = RSA_PKCS1_PADDING;
+
+  if(LENGTH(pad) > 0) {
+    const char *pad_str = CHAR(STRING_ELT(pad, 0));
+    if(strcmp(pad_str, "pss") == 0) {
+      padding_mode = RSA_PKCS1_PSS_PADDING;
+      // anything else should be excluded in R
+    } else bail(0);
+  }
+
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
   bail(!!ctx);
   bail(EVP_PKEY_sign_init(ctx) > 0);
-  //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
+
+  // For RSA keys only, set padding
+  if(pkey_type == EVP_PKEY_RSA) {
+    bail(EVP_PKEY_CTX_set_rsa_padding(ctx, padding_mode) > 0);
+
+    // If PSS padding, set salt length
+    if(padding_mode == RSA_PKCS1_PSS_PADDING && LENGTH(saltlen) > 0) {
+      // anything but an integer should be caught in R
+      const int *slen = INTEGER(saltlen);
+      bail(EVP_PKEY_CTX_set_rsa_pss_saltlen(ctx, *slen) > 0);
+    }
+  }
+
   const EVP_MD *md_func = guess_hashfun(LENGTH(md));
   bail(!!md_func);
   bail(EVP_PKEY_CTX_set_signature_md(ctx, md_func) > 0);
 
-  //detemine buffer length (this is really required, over/under estimate can crash)
+  //determine buffer length (this is really required, over/under estimate can crash)
   size_t siglen;
   bail(EVP_PKEY_sign(ctx, NULL, &siglen, RAW(md), LENGTH(md)) > 0);
 
@@ -58,24 +86,51 @@ SEXP R_hash_sign(SEXP md, SEXP key){
   return res;
 }
 
-SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey){
+SEXP R_hash_verify(SEXP md, SEXP sig, SEXP pubkey, SEXP pad, SEXP saltlen){
   const unsigned char *ptr = RAW(pubkey);
   EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(pubkey));
   bail(!!pkey);
+
+  // Check if key is RSA by getting the key type
+  int pkey_type = EVP_PKEY_base_id(pkey);
+
+  // Determine padding mode based on pad argument
+  // If pad is NULL/empty (length 0), default to PKCS1
+  int padding_mode = RSA_PKCS1_PADDING;
+
+  if(LENGTH(pad) > 0) {
+    const char *pad_str = CHAR(STRING_ELT(pad, 0));
+    if(strcmp(pad_str, "pss") == 0) {
+      padding_mode = RSA_PKCS1_PSS_PADDING;
+      // anything else should be excluded in R
+    } else bail(0);
+  }
+
   EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
   bail(!!ctx);
   bail(EVP_PKEY_verify_init(ctx) > 0);
-  //bail(EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_PADDING) >= 0);
+
+  // For RSA keys only, set padding
+  if(pkey_type == EVP_PKEY_RSA) {
+    bail(EVP_PKEY_CTX_set_rsa_padding(ctx, padding_mode) > 0);
+
+    // If PSS padding, set salt length
+    if(padding_mode == RSA_PKCS1_PSS_PADDING && LENGTH(saltlen) > 0) {
+      const int *slen = INTEGER(saltlen);
+      bail(EVP_PKEY_CTX_set_rsa_pss_saltlen(ctx, *slen) > 0);
+    }
+  }
+
   const EVP_MD *md_func = guess_hashfun(LENGTH(md));
   bail(!!md_func);
   bail(EVP_PKEY_CTX_set_signature_md(ctx, md_func) > 0);
   int res = EVP_PKEY_verify(ctx, RAW(sig), LENGTH(sig), RAW(md), LENGTH(md));
-  bail(res >= 0);
-  if(res == 0)
-    Rf_error("Verification failed: incorrect signature");
+  bail(res >= 0); // OpenSSL internal error
+  // if(res == 0)
+  //   Rf_error("Verification failed: incorrect signature");
   EVP_PKEY_CTX_free(ctx);
   EVP_PKEY_free(pkey);
-  return Rf_ScalarLogical(1);
+  return Rf_ScalarLogical(res == 1);
 }
 
 /* Note: DSA and ECDSA signatures have the same ASN.1 structure */

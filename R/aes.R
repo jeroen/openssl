@@ -108,3 +108,34 @@ aes_keygen <- function(length = 16){
 print.aes <- function(x, ...){
   cat("aes", paste(x, collapse = ":"), "\n")
 }
+
+#' AES key wrap
+#'
+#' Encrypt a key with another key (the key-encryption key) using the AES key
+#' wrap algorithm from [RFC 3394](https://www.rfc-editor.org/rfc/rfc3394).
+#' This is used for example by JWE (`A128KW`, `A256KW`). Unwrapping verifies
+#' the integrity of the wrapped key.
+#'
+#' @export
+#' @rdname aes_keywrap
+#' @param data raw vector with the key to wrap (a multiple of 8 bytes, at least 16)
+#' or the wrapped key to unwrap
+#' @param key raw vector of length 16, 24 or 32 with the key-encryption key
+#' @useDynLib openssl R_aes_keywrap
+#' @examples kek <- rand_bytes(32)
+#' cek <- rand_bytes(32)
+#' wrapped <- aes_keywrap(cek, kek)
+#' stopifnot(identical(aes_keyunwrap(wrapped, kek), cek))
+aes_keywrap <- function(data, key){
+  stopifnot(is.raw(data))
+  stopifnot(is.raw(key))
+  .Call(R_aes_keywrap, data, key, TRUE)
+}
+
+#' @export
+#' @rdname aes_keywrap
+aes_keyunwrap <- function(data, key){
+  stopifnot(is.raw(data))
+  stopifnot(is.raw(key))
+  .Call(R_aes_keywrap, data, key, FALSE)
+}

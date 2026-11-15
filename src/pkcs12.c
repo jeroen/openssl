@@ -72,7 +72,7 @@ SEXP R_parse_pkcs12(SEXP input, SEXP pass){
   int success = 0;
   int max_size = 200;
   char passwd[max_size];
-  if(PKCS12_verify_mac(p12, NULL, 0) || PKCS12_verify_mac(p12, "", 1)){
+  if(PKCS12_verify_mac(p12, NULL, 0) || PKCS12_verify_mac(p12, "", 0)){
     success = PKCS12_parse(p12, "", &pkey, &cert, &ca);
   } else {
     password_cb(passwd, max_size, 0, pass);

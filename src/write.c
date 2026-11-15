@@ -35,6 +35,13 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   char *pass = NULL;
   if(Rf_length(password) && Rf_length(STRING_ELT(password, 0)))
     pass = (char*) CHAR(STRING_ELT(password, 0));
+#ifdef HAS_OPENSSL3_API
+  if(type == EVP_PKEY_RSA || type == EVP_PKEY_DSA || type == EVP_PKEY_EC){
+    bail(PEM_write_bio_PrivateKey_traditional(out, pkey, pass ? EVP_des_ede3_cbc() : NULL, NULL, 0, NULL, pass));
+  } else {
+    Rf_error("This key type cannot be exported to PKCS1");
+  }
+#else
   if(type == EVP_PKEY_RSA){
     RSA *rsa = (RSA*) MY_EVP_PKEY_get0_RSA(pkey);
     if(pass){
@@ -59,6 +66,7 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
   } else {
     Rf_error("This key type cannot be exported to PKCS1");
   }
+#endif
   EVP_PKEY_free(pkey);
   int bufsize = 8192;
   char buf[bufsize];
@@ -71,10 +79,19 @@ SEXP R_pem_write_pkcs1_privkey(SEXP keydata, SEXP password){
 /* legacy format but still used by old ssh clients */
 SEXP R_pem_write_pkcs1_pubkey(SEXP keydata){
   const unsigned char *ptr = RAW(keydata);
-  RSA *rsa = d2i_RSA_PUBKEY(NULL, &ptr, LENGTH(keydata));
-  bail(!!rsa);
+  EVP_PKEY *pkey = d2i_PUBKEY(NULL, &ptr, LENGTH(keydata));
+  bail(!!pkey);
+  if(EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA){
+    EVP_PKEY_free(pkey);
+    Rf_error("Only RSA public keys can be exported to PKCS1");
+  }
+  unsigned char *der = NULL;
+  int derlen = i2d_PublicKey(pkey, &der);
+  EVP_PKEY_free(pkey);
+  bail(derlen > 0);
   BIO *out = BIO_new(BIO_s_mem());
-  PEM_write_bio_RSAPublicKey(out, rsa);
+  PEM_write_bio(out, PEM_STRING_RSA_PUBLIC, "", der, derlen);
+  OPENSSL_free(der);
   int bufsize = 8192;
   char buf[bufsize];
   int len = BIO_read(out, buf, bufsize);

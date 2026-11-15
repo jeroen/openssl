@@ -5,6 +5,7 @@
 #include <openssl/rsa.h>
 #include <openssl/dsa.h>
 #include "utils.h"
+#include "compatibility.h"
 
 #ifndef OPENSSL_NO_EC
 #include <openssl/ec.h>
@@ -33,13 +34,24 @@ SEXP R_keygen_rsa(SEXP bits){
 }
 
 SEXP R_keygen_dsa(SEXP bits){
-  DSA *dsa = DSA_new();
-  bail(DSA_generate_parameters_ex(dsa, Rf_asInteger(bits), NULL, 0, NULL, NULL, NULL));
-  bail(DSA_generate_key(dsa));
+  EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_DSA, NULL);
+  bail(!!pctx);
+  bail(EVP_PKEY_paramgen_init(pctx) > 0);
+  bail(EVP_PKEY_CTX_set_dsa_paramgen_bits(pctx, Rf_asInteger(bits)) > 0);
+  EVP_PKEY *params = NULL;
+  bail(EVP_PKEY_paramgen(pctx, &params) > 0);
+  EVP_PKEY_CTX_free(pctx);
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(params, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_keygen_init(ctx) > 0);
+  EVP_PKEY *pkey = NULL;
+  bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
+  EVP_PKEY_CTX_free(ctx);
+  EVP_PKEY_free(params);
   unsigned char *buf = NULL;
-  int len = i2d_DSAPrivateKey(dsa, &buf);
+  int len = i2d_PrivateKey(pkey, &buf);
   bail(len);
-  DSA_free(dsa);
+  EVP_PKEY_free(pkey);
   SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);
@@ -49,13 +61,26 @@ SEXP R_keygen_dsa(SEXP bits){
 SEXP R_keygen_ecdsa(SEXP curve){
 #ifndef OPENSSL_NO_EC
   int nid = my_nist2nid(CHAR(STRING_ELT(curve, 0)));
-  EC_KEY *eckey = EC_KEY_new_by_curve_name(nid);
-  bail(!!eckey);
-  bail(EC_KEY_generate_key(eckey) > 0);
-  EC_KEY_set_asn1_flag(eckey, OPENSSL_EC_NAMED_CURVE);
-  EVP_PKEY *pkey = EVP_PKEY_new();
-  bail(!!pkey);
-  bail(EVP_PKEY_assign_EC_KEY(pkey, eckey) > 0);
+  EVP_PKEY_CTX *pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
+  bail(!!pctx);
+  bail(EVP_PKEY_paramgen_init(pctx) > 0);
+  bail(EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, nid) > 0);
+#ifdef HAS_OPENSSL11_API
+  bail(EVP_PKEY_CTX_set_ec_param_enc(pctx, OPENSSL_EC_NAMED_CURVE) > 0);
+#endif
+  EVP_PKEY *params = NULL;
+  bail(EVP_PKEY_paramgen(pctx, &params) > 0);
+  EVP_PKEY_CTX_free(pctx);
+  EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(params, NULL);
+  bail(!!ctx);
+  bail(EVP_PKEY_keygen_init(ctx) > 0);
+  EVP_PKEY *pkey = NULL;
+  bail(EVP_PKEY_keygen(ctx, &pkey) > 0);
+  EVP_PKEY_CTX_free(ctx);
+  EVP_PKEY_free(params);
+#ifndef HAS_OPENSSL11_API
+  EC_KEY_set_asn1_flag(MY_EVP_PKEY_get0_EC_KEY(pkey), OPENSSL_EC_NAMED_CURVE);
+#endif
   unsigned char *buf = NULL;
   int len = i2d_PrivateKey(pkey, &buf);
   bail(len > 0);

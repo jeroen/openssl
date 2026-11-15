@@ -85,11 +85,17 @@ SEXP R_parse_pem_cert(SEXP input){
 /* Legacy pubkey format */
 SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  RSA *rsa = PEM_read_bio_RSAPublicKey(mem, NULL, password_cb, NULL);
-  bail(!!rsa);
+  unsigned char *data = NULL;
+  long datalen = 0;
+  bail(PEM_bytes_read_bio(&data, &datalen, NULL, PEM_STRING_RSA_PUBLIC, mem, password_cb, NULL));
+  BIO_free(mem);
+  const unsigned char *ptr = data;
+  EVP_PKEY *pkey = d2i_PublicKey(EVP_PKEY_RSA, NULL, &ptr, datalen);
+  OPENSSL_free(data);
+  bail(!!pkey);
   unsigned char *buf = NULL;
-  int len = i2d_RSA_PUBKEY(rsa, &buf);
-  RSA_free(rsa);
+  int len = i2d_PUBKEY(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
   SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
@@ -100,12 +106,17 @@ SEXP R_parse_pem_pubkey_pkcs1(SEXP input){
 /* Legacy rsa key format */
 SEXP R_parse_pem_key_pkcs1(SEXP input){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
-  RSA *rsa = PEM_read_bio_RSAPrivateKey(mem, NULL, password_cb, NULL);
-  bail(!!rsa);
+  EVP_PKEY *pkey = PEM_read_bio_PrivateKey(mem, NULL, password_cb, NULL);
+  BIO_free(mem);
+  bail(!!pkey);
+  if(EVP_PKEY_base_id(pkey) != EVP_PKEY_RSA){
+    EVP_PKEY_free(pkey);
+    Rf_error("Key is not an RSA key");
+  }
   unsigned char *buf = NULL;
-  int len = i2d_RSAPrivateKey(rsa, &buf);
+  int len = i2d_PrivateKey(pkey, &buf);
+  EVP_PKEY_free(pkey);
   bail(len);
-  RSA_free(rsa);
   SEXP res = Rf_allocVector(RAWSXP, len);
   memcpy(RAW(res), buf, len);
   OPENSSL_free(buf);

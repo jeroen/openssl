@@ -7,6 +7,10 @@
 #include "utils.h"
 #include "compatibility.h"
 
+#ifdef HAS_OPENSSL3_API
+#include <openssl/core_names.h>
+#endif
+
 void fin_md(SEXP ptr){
   if(!R_ExternalPtrAddr(ptr)) return;
   EVP_MD_CTX_destroy(R_ExternalPtrAddr(ptr));
@@ -55,7 +59,9 @@ SEXP R_md_final(SEXP md){
 
 void fin_hmac(SEXP ptr){
   if(!R_ExternalPtrAddr(ptr)) return;
-#ifdef HAS_OPENSSL11_API
+#ifdef HAS_OPENSSL3_API
+  EVP_MAC_CTX_free(R_ExternalPtrAddr(ptr));
+#elif defined(HAS_OPENSSL11_API)
   HMAC_CTX_free(R_ExternalPtrAddr(ptr));
 #else
   HMAC_CTX_cleanup(R_ExternalPtrAddr(ptr));
@@ -72,6 +78,22 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
 #endif
   if(!md)
     Rf_error("Unknown cryptographic algorithm %s\n", CHAR(Rf_asChar(algo)));
+#ifdef HAS_OPENSSL3_API
+  EVP_MAC *mac = EVP_MAC_fetch(NULL, "HMAC", NULL);
+  bail(!!mac);
+  EVP_MAC_CTX *ctx = EVP_MAC_CTX_new(mac);
+  EVP_MAC_free(mac);
+  bail(!!ctx);
+  OSSL_PARAM params[] = {
+    OSSL_PARAM_construct_utf8_string(OSSL_MAC_PARAM_DIGEST, (char*) EVP_MD_get0_name(md), 0),
+    OSSL_PARAM_construct_end()
+  };
+  int ok = EVP_MAC_init(ctx, RAW(key), LENGTH(key), params);
+  EVP_MD_free(md);
+  if(!ok)
+    EVP_MAC_CTX_free(ctx);
+  bail(ok);
+#else
 #ifdef HAS_OPENSSL11_API
   HMAC_CTX* ctx = HMAC_CTX_new();
 #else
@@ -79,6 +101,7 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
   HMAC_CTX_init(ctx);
 #endif
   bail(HMAC_Init_ex(ctx, RAW(key), LENGTH(key), md, NULL));
+#endif
   SEXP ptr = PROTECT(R_MakeExternalPtr(ctx, R_NilValue, R_NilValue));
   R_RegisterCFinalizerEx(ptr, fin_hmac, TRUE);
   Rf_setAttrib(ptr, R_ClassSymbol, Rf_mkString("md"));
@@ -87,22 +110,36 @@ SEXP R_hmac_init(SEXP algo, SEXP key){
 }
 
 SEXP R_hmac_feed(SEXP ptr, SEXP data){
+#ifdef HAS_OPENSSL3_API
+  EVP_MAC_CTX *ctx = R_ExternalPtrAddr(ptr);
+  if(!ctx)
+    Rf_error("ctx is null");
+  bail(EVP_MAC_update(ctx, RAW(data), LENGTH(data)));
+#else
   HMAC_CTX *ctx = R_ExternalPtrAddr(ptr);
   if(!ctx)
     Rf_error("ctx is null");
   bail(HMAC_Update(ctx, RAW(data), LENGTH(data)));
+#endif
   return Rf_ScalarLogical(1);
 }
 
 SEXP R_hmac_final(SEXP ptr){
+  /* Calculates the hash */
+  unsigned char md_value[EVP_MAX_MD_SIZE];
+#ifdef HAS_OPENSSL3_API
+  EVP_MAC_CTX *ctx = R_ExternalPtrAddr(ptr);
+  if(!ctx)
+    Rf_error("ctx is null");
+  size_t md_len;
+  bail(EVP_MAC_final(ctx, md_value, &md_len, sizeof(md_value)));
+#else
   HMAC_CTX *ctx = R_ExternalPtrAddr(ptr);
   if(!ctx)
     Rf_error("ctx is null");
-
-  /* Calculates the hash */
-  unsigned char md_value[EVP_MAX_MD_SIZE];
   unsigned int md_len;
   bail(HMAC_Final(ctx, (unsigned char *) &md_value, &md_len));
+#endif
 
   /* create output raw vec */
   SEXP out = PROTECT(Rf_allocVector(RAWSXP, md_len));

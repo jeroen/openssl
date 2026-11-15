@@ -16,6 +16,9 @@
 #' is not secret but should be random
 #' @param tag raw vector with the authentication tag for `aes_gcm`, which is
 #' returned as an attribute by `aes_gcm_encrypt`. If `NULL`, the data is not verified.
+#' @param aad optional additional authenticated data for `aes_gcm`: a raw vector or
+#' string that is authenticated by the tag but not encrypted. The same value must be
+#' supplied when decrypting.
 #' @examples # aes-256 requires 32 byte key
 #' passphrase <- charToRaw("This is super secret")
 #' key <- sha256(passphrase)
@@ -49,35 +52,38 @@ aes_cbc_decrypt <- function(data, key, iv = attr(data, "iv")){
 
 #' @export
 #' @rdname aes_cbc
-aes_gcm_encrypt <- function(data, key, iv = rand_bytes(12)){
-  aes_encrypt(data, key, iv, "gcm")
+aes_gcm_encrypt <- function(data, key, iv = rand_bytes(12), aad = NULL){
+  aes_encrypt(data, key, iv, "gcm", aad)
 }
 
 #' @export
 #' @rdname aes_cbc
-aes_gcm_decrypt <- function(data, key, iv = attr(data, "iv"), tag = attr(data, "tag")){
+aes_gcm_decrypt <- function(data, key, iv = attr(data, "iv"), tag = attr(data, "tag"), aad = NULL){
   if(is.null(tag))
     warning("No authentication tag supplied: aes-gcm data is decrypted without verification")
-  aes_decrypt(data, key, iv, "gcm", tag)
+  aes_decrypt(data, key, iv, "gcm", tag, aad)
 }
 
-aes_encrypt <- function(data, key, iv, mode){
+aes_encrypt <- function(data, key, iv, mode, aad = NULL){
   data <- path_or_raw(data)
   if(!is.raw(data))
     stop("The 'data' must path to a file or raw vector")
-  out <- aes_any(data, key, iv, TRUE, mode)
+  out <- aes_any(data, key, iv, TRUE, mode, aad = aad)
   structure(out, iv = iv)
 }
 
-aes_decrypt <- function(data, key, iv, mode, tag = NULL){
+aes_decrypt <- function(data, key, iv, mode, tag = NULL, aad = NULL){
   data <- path_or_raw(data)
   if(!is.raw(data))
     stop("The 'data' must be raw vector")
-  aes_any(data, key, iv, FALSE, mode, tag)
+  aes_any(data, key, iv, FALSE, mode, tag, aad)
 }
 
 #' @useDynLib openssl R_aes_any
-aes_any <- function(x, key, iv = NULL, encrypt, mode, tag = NULL){
+aes_any <- function(x, key, iv = NULL, encrypt, mode, tag = NULL, aad = NULL){
+  if(is.character(aad)){
+    aad <- charToRaw(aad)
+  }
   if(is.null(iv)){
     iv <- as.raw(rep(0, 16))
   }
@@ -87,8 +93,9 @@ aes_any <- function(x, key, iv = NULL, encrypt, mode, tag = NULL){
   stopifnot(is.logical(encrypt))
   stopifnot(is.character(mode))
   stopifnot(is.null(tag) || is.raw(tag))
+  stopifnot(is.null(aad) || is.raw(aad))
   cipher <- paste("aes", length(key) * 8, mode, sep = "-")
-  .Call(R_aes_any, x, key, iv, encrypt, cipher, tag)
+  .Call(R_aes_any, x, key, iv, encrypt, cipher, tag, aad)
 }
 
 #' @rdname aes_cbc

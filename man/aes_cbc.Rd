@@ -19,9 +19,15 @@ aes_cbc_encrypt(data, key, iv = rand_bytes(16))
 
 aes_cbc_decrypt(data, key, iv = attr(data, "iv"))
 
-aes_gcm_encrypt(data, key, iv = rand_bytes(12))
+aes_gcm_encrypt(data, key, iv = rand_bytes(12), aad = NULL)
 
-aes_gcm_decrypt(data, key, iv = attr(data, "iv"), tag = attr(data, "tag"))
+aes_gcm_decrypt(
+  data,
+  key,
+  iv = attr(data, "iv"),
+  tag = attr(data, "tag"),
+  aad = NULL
+)
 
 aes_keygen(length = 16)
 }
@@ -32,6 +38,10 @@ aes_keygen(length = 16)
 
 \item{iv}{raw vector of length 16 (aes block size) or NULL. The initialization vector
 is not secret but should be random}
+
+\item{aad}{optional additional authenticated data for \code{aes_gcm}: a raw vector or
+string that is authenticated by the tag but not encrypted. The same value must be
+supplied when decrypting.}
 
 \item{tag}{raw vector with the authentication tag for \code{aes_gcm}, which is
 returned as an attribute by \code{aes_gcm_encrypt}. If \code{NULL}, the data is not verified.}

@@ -9,7 +9,7 @@
  * Adapted from example at: https://www.openssl.org/docs/crypto/EVP_EncryptInit.html
  */
 
-SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
+SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag, SEXP aad) {
   int strength = LENGTH(key);
   if(strength != 16 && strength != 24 && strength != 32)
     Rf_error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
@@ -39,6 +39,8 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag) {
   unsigned char *cur = buf;
 
   int tmp;
+  if(gcm && Rf_length(aad))
+    bail(EVP_CipherUpdate(ctx, NULL, &tmp, RAW(aad), LENGTH(aad)));
   bail(EVP_CipherUpdate(ctx, cur, &tmp, RAW(x), LENGTH(x)));
   cur += tmp;
 

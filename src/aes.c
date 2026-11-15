@@ -72,3 +72,33 @@ SEXP R_aes_any(SEXP x, SEXP key, SEXP iv, SEXP encrypt, SEXP cipher, SEXP tag, S
   UNPROTECT(1);
   return out;
 }
+
+SEXP R_aes_keywrap(SEXP x, SEXP key, SEXP encrypt) {
+  const EVP_CIPHER *cph = NULL;
+  switch(LENGTH(key)){
+  case 16: cph = EVP_aes_128_wrap(); break;
+  case 24: cph = EVP_aes_192_wrap(); break;
+  case 32: cph = EVP_aes_256_wrap(); break;
+  default: Rf_error("key must be of length 16 (aes-128), 24 (aes-192) or 32 (aes-256)");
+  }
+  int wrap = Rf_asLogical(encrypt);
+  if(LENGTH(x) % 8 || LENGTH(x) < (wrap ? 16 : 24))
+    Rf_error("data must be a multiple of 8 bytes with a minimum of %d", wrap ? 16 : 24);
+
+  EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+  EVP_CIPHER_CTX_set_flags(ctx, EVP_CIPHER_CTX_FLAG_WRAP_ALLOW);
+  bail(EVP_CipherInit_ex(ctx, cph, NULL, RAW(key), NULL, wrap));
+  unsigned char *buf = OPENSSL_malloc(LENGTH(x) + 16);
+  int len = 0, tmp = 0;
+  int ok = EVP_CipherUpdate(ctx, buf, &len, RAW(x), LENGTH(x)) &&
+    EVP_CipherFinal_ex(ctx, buf + len, &tmp);
+  EVP_CIPHER_CTX_free(ctx);
+  if(!ok){
+    OPENSSL_free(buf);
+    Rf_error(wrap ? "aes key wrap failed" : "aes key unwrap failed: wrong key or data has been modified");
+  }
+  SEXP out = Rf_allocVector(RAWSXP, len + tmp);
+  memcpy(RAW(out), buf, len + tmp);
+  OPENSSL_free(buf);
+  return out;
+}

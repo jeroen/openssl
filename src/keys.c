@@ -115,18 +115,6 @@ SEXP R_pubkey_type(SEXP input){
   return Rf_mkString(keytype);
 }
 
-int ec_bitsize(int nid){
-  switch(nid){
-  case NID_X9_62_prime256v1:
-    return 256;
-  case NID_secp384r1:
-    return 384;
-  case NID_secp521r1:
-    return 521;
-  }
-  return 0;
-}
-
 SEXP R_pubkey_bitsize(SEXP input){
   BIO *mem = BIO_new_mem_buf(RAW(input), LENGTH(input));
   EVP_PKEY *pkey = d2i_PUBKEY_bio(mem, NULL);
@@ -134,15 +122,13 @@ SEXP R_pubkey_bitsize(SEXP input){
   if(!pkey)
     return R_NilValue;
   int size = 0;
-  const BIGNUM * val;
   switch(EVP_PKEY_base_id(pkey)){
   case EVP_PKEY_RSA:
-    MY_RSA_get0_key(EVP_PKEY_get1_RSA(pkey), &val, NULL, NULL);
-    size = BN_num_bits(val);
-    break;
   case EVP_PKEY_DSA:
-    MY_DSA_get0_pqg(EVP_PKEY_get1_DSA(pkey), &val, NULL, NULL);
-    size = BN_num_bits(val);
+#ifndef OPENSSL_NO_EC
+  case EVP_PKEY_EC:
+#endif
+    size = EVP_PKEY_bits(pkey);
     break;
 #ifdef EVP_PKEY_ED25519
   case EVP_PKEY_ED25519:
@@ -150,11 +136,6 @@ SEXP R_pubkey_bitsize(SEXP input){
     size = 256;
     break;
 #endif
-#ifndef OPENSSL_NO_EC
-  case EVP_PKEY_EC:
-    size = ec_bitsize(EC_GROUP_get_curve_name(EC_KEY_get0_group(EVP_PKEY_get1_EC_KEY(pkey))));
-    break;
-#endif //OPENSSL_NO_EC
   default:
     Rf_error("Unsupported key type: %d", EVP_PKEY_base_id(pkey));
   }

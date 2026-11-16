@@ -1,4 +1,4 @@
 # Don't remove this, other packages use openssl::askpass()
 #' @export
-#' @import askpass askpass
+#' @importFrom askpass askpass
 askpass::askpass

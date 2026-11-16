@@ -112,7 +112,7 @@ print.aes <- function(x, ...){
 #' AES key wrap
 #'
 #' Encrypt a key with another key (the key-encryption key) using the AES key
-#' wrap algorithm from [RFC 3394](https://www.rfc-editor.org/rfc/rfc3394).
+#' wrap algorithm from [RFC 3394](https://www.rfc-editor.org/info/rfc3394/).
 #' This is used for example by JWE (`A128KW`, `A256KW`). Unwrapping verifies
 #' the integrity of the wrapped key.
 #'

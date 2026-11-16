@@ -17,7 +17,7 @@ or the wrapped key to unwrap}
 }
 \description{
 Encrypt a key with another key (the key-encryption key) using the AES key
-wrap algorithm from \href{https://www.rfc-editor.org/rfc/rfc3394}{RFC 3394}.
+wrap algorithm from \href{https://www.rfc-editor.org/info/rfc3394/}{RFC 3394}.
 This is used for example by JWE (\code{A128KW}, \code{A256KW}). Unwrapping verifies
 the integrity of the wrapped key.
 }
